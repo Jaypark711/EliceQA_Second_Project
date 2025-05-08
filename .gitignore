@@ -119,3 +119,4 @@ frontend/
 backend/
 qa/db/
 qa/requirements.txt
+qa/reports/logs/
