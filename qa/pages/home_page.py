@@ -1,6 +1,6 @@
 from selenium.webdriver.common.by import By
 
-from qa.pages.base_page import BasePage
+from pages.base_page import BasePage
 
 class HomePage(BasePage):
     # 로케이터 정의

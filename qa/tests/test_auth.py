@@ -1,7 +1,7 @@
 import pytest
 
-from qa.pages.home_page import HomePage
-from qa.pages.login_page import LoginPage
+from pages.home_page import HomePage
+from pages.login_page import LoginPage
 
 @pytest.mark.usefixtures("driver")
 class TestAuthentication:
