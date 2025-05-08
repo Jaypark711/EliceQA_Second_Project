@@ -2,8 +2,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 
-from qa.config.config import BASE_URL
-from qa.utils.helpers import setupLogger
+from config.config import BASE_URL
+from utils.helpers import setupLogger
 
 class BasePage:
     def __init__(self, driver):
