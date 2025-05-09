@@ -25,5 +25,5 @@ class LoginPage(BasePage):
 
     def login(self):
         self.send_keys(self.EMAIL_INPUT, VALID_USER["email"])
-        self.send_keys(self.PASSWORD_INPUT, VALID_USER["email"])
+        self.send_keys(self.PASSWORD_INPUT, VALID_USER["password"])
         self.click_element(self.SIGN_IN_BTN)
