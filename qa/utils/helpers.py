@@ -2,7 +2,7 @@ import os
 import logging
 from datetime import datetime
 
-def setupLogger(name, log_dir="qa/reports/logs"):
+def setupLogger(name, log_dir="reports/logs"):
     os.makedirs(log_dir, exist_ok=True)
 
     logFile = os.path.join(log_dir, f"{name}_{datetime.now().strftime('%Y%m%d')}.log")
