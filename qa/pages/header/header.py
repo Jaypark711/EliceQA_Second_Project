@@ -3,7 +3,7 @@ from selenium.webdriver.common.by import By
 from data.user_data import VALID_USER 
 from pages.base_page import BasePage
 
-class HomePage(BasePage):
+class Header(BasePage):
     # 공통 로케이터
     HOME_LINK = (By.XPATH, '//a[text()="Home"]')
 
