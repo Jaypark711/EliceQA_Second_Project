@@ -67,3 +67,6 @@ class BasePage:
         except (NoSuchElementException, TimeoutException) as e:
             self.logger.error(f"{locator} 요소를 찾지 못하거나 대기 시간 초과: {e}")
             return False
+        
+    def current_url(self):
+        return self.driver.current_url
