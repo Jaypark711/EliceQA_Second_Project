@@ -10,6 +10,7 @@ class SignInPage(BasePage):
     EMAIL_INPUT = (By.CSS_SELECTOR, 'input[type="email"]')
     PASSWORD_INPUT = (By.CSS_SELECTOR, 'input[type="password"]')
     SIGN_IN_BTN = (By.CSS_SELECTOR, 'button[type="submit"]')
+    ERROR_TXT = (By.CSS_SELECTOR, 'ul.error-messages li')
 
     def __init__(self, driver):
         super().__init__(driver)
@@ -22,6 +23,9 @@ class SignInPage(BasePage):
 
     def click_sign_in_btn(self):
         self.click_element(self.SIGN_IN_BTN)
+
+    def get_error_messages_text(self):
+        return self.find_element(self.ERROR_TXT).text()
 
     def login(self):
         self.send_keys(self.EMAIL_INPUT, VALID_USER["email"])

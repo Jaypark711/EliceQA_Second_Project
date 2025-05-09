@@ -3,8 +3,8 @@ import pytest
 from data.user_data import VALID_USER 
 from utils.logger import setupLogger
 from pages.header.header import Header
-from pages.body.signin_page import SignInPage
 from pages.body.signup_page import SignUpPage
+from pages.body.signin_page import SignInPage
 from pages.body.settings_page import SettingsPage
 
 @pytest.mark.usefixtures("driver")
@@ -12,7 +12,7 @@ class TestAuthentication:
     logger = setupLogger(__qualname__)
 
     @pytest.fixture(autouse=True)
-    def setup(self):
+    def teardown(self):
         yield
         self.logger.info("==================================")
 
