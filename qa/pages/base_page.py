@@ -59,6 +59,16 @@ class BasePage:
             self.logger.error(f"{locator} 요소를 찾지 못하거나 대기 시간 초과: {e}")
             raise
 
+    
+    def get_text(self, locator):
+        try:
+            element = self.find_element(locator)
+            return element.text
+        
+        except (NoSuchElementException, TimeoutException) as e:
+            self.logger.error(f"{locator} 요소를 찾지 못하거나 대기 시간 초과: {e}")
+            return False
+
     def is_element_disappear(self, locator):
         try:
             self.wait.until_not(EC.presence_of_element_located(locator))
