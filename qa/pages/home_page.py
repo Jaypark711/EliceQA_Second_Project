@@ -1,12 +1,14 @@
 from selenium.webdriver.common.by import By
 
+from data.user_data import VALID_USER 
 from pages.base_page import BasePage
 
 class HomePage(BasePage):
     # 로케이터 정의
-    HOME_LINK = (By.XPATH, "//a[text()='Home']")
-    SIGN_IN_LINK = (By.XPATH, "//a[@href='/login']")
-    SIGN_UP_LINK = (By.XPATH, "//a[@href='/register']")
+    HOME_LINK = (By.XPATH, '//a[text()="Home"]')
+    SIGN_IN_LINK = (By.XPATH, '//a[@href="/login"]')
+    SIGN_UP_LINK = (By.XPATH, '//a[@href="/register"]')
+    USER_PROFILE_LINK = (By.XPATH, f"//a[@href='/{VALID_USER["username"]}']")
 
     def __init__(self, driver):
         super().__init__(driver)

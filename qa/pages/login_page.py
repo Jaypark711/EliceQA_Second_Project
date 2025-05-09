@@ -1,10 +1,7 @@
-import os
-from dotenv import load_dotenv
 from selenium.webdriver.common.by import By
 
+from data.user_data import VALID_USER
 from pages.base_page import BasePage
-
-load_dotenv(dotenv_path="config/.env")
 
 class LoginPage(BasePage):
     # 로케이터 정의
@@ -27,6 +24,6 @@ class LoginPage(BasePage):
         self.click_element(self.SIGN_IN_BTN)
 
     def login(self):
-        self.send_keys(self.EMAIL_INPUT, os.getenv("LOGIN_EMAIL"))
-        self.send_keys(self.PASSWORD_INPUT, os.getenv("LOGIN_PWD"))
+        self.send_keys(self.EMAIL_INPUT, VALID_USER["email"])
+        self.send_keys(self.PASSWORD_INPUT, VALID_USER["email"])
         self.click_element(self.SIGN_IN_BTN)
