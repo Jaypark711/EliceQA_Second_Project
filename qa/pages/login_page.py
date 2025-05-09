@@ -6,10 +6,10 @@ from pages.base_page import BasePage
 class LoginPage(BasePage):
     # 로케이터 정의
     PAGE_TITLE = (By.XPATH, '//h1[text()="Sign In"]')
-    SIGN_UP_LINK = (By.XPATH, '//a[@href="register"]')
+    SIGN_UP_LINK = (By.CSS_SELECTOR, 'a[href="register"]')
     EMAIL_INPUT = (By.CSS_SELECTOR, 'input[type="email"]')
     PASSWORD_INPUT = (By.CSS_SELECTOR, 'input[type="password"]')
-    SIGN_IN_BTN = (By.XPATH, '//button[@type="submit"]')
+    SIGN_IN_BTN = (By.CSS_SELECTOR, 'button[type="submit"]')
 
     def __init__(self, driver):
         super().__init__(driver)
