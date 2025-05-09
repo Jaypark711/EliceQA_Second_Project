@@ -34,8 +34,11 @@ class HomePage(BasePage):
     def click_settings_link(self):
         self.click_element(self.SETTINGS_LINK)
 
-    def wait_for_user_profile_link(self):
+    def wait_for_user_profile_link_appear(self):
         self.find_element(self.USER_PROFILE_LINK)
 
+    def is_user_profile_link_disappear(self):
+        return self.is_element_disappear(self.USER_PROFILE_LINK)
+
     def get_username_link_text(self):
-        href = self.get_attribute(self.USER_PROFILE_LINK, "href")
+        return self.get_attribute(self.USER_PROFILE_LINK, "href")
