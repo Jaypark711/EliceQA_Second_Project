@@ -1,13 +1,10 @@
-import os
 import pytest
-from dotenv import load_dotenv
 
+from data.user_data import VALID_USER 
 from utils.logger import setupLogger
 from pages.home_page import HomePage
 from pages.login_page import LoginPage
 from pages.signup_page import SignUpPage
-
-load_dotenv(dotenv_path="config/.env")
 
 @pytest.mark.usefixtures("driver")
 class TestAuthentication:
@@ -29,8 +26,8 @@ class TestAuthentication:
 
         homePage.click_sign_in_link()
 
-        loginPage.send_email_input(os.getenv("LOGIN_EMAIL"))
-        loginPage.send_password_input(os.getenv("LOGIN_PWD"))
+        loginPage.send_email_input(VALID_USER["email"])
+        loginPage.send_password_input(VALID_USER["password"])
         loginPage.click_sign_in_btn()
         self.logger.info("로그인 정보 입력 및 제출 완료")
 
