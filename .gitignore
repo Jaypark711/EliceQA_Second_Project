@@ -118,5 +118,6 @@ dmypy.json
 frontend/
 backend/
 qa/db/
+qa/data/
 qa/requirements.txt
 qa/reports/logs/
