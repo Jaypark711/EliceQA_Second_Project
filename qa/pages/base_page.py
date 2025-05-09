@@ -11,6 +11,7 @@ class BasePage:
 
         driver.get(BASE_URL)
 
+    # TODO: find/click/send_keys 등 동작별로 적절한 예외 분리 및 처리 메시지 세분화
     def find_element(self, locator):
         try:
             element = self.wait.until(EC.presence_of_element_located(locator))
@@ -57,3 +58,12 @@ class BasePage:
         except (NoSuchElementException, TimeoutException) as e:
             self.logger.error(f"{locator} 요소를 찾지 못하거나 대기 시간 초과: {e}")
             raise
+
+    def is_element_disappear(self, locator):
+        try:
+            self.wait.until_not(EC.presence_of_element_located(locator))
+            return True
+        
+        except (NoSuchElementException, TimeoutException) as e:
+            self.logger.error(f"{locator} 요소를 찾지 못하거나 대기 시간 초과: {e}")
+            return False
