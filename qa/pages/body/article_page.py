@@ -1,5 +1,4 @@
 from pages.base_page import BasePage
-from pages.home_page import HomePage
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
@@ -16,12 +15,11 @@ class ArticlePage(BasePage):
         'textarea[placeholder*="Write your article (in markdown)"]',
     )
     ARTICLE_TAG_INPUT = (By.CSS_SELECTOR, 'input[placeholder*="Enter tags"]')
+    ARTICLE_TAG_LIST_SPAN = (By.CSS_SELECTOR, 'div span[class*="tag-default"]')
 
-    PUBLISH_BTN = (By.CSS_SELECTOR, 'button')
-    # ARTICLE_TAG_DELETE_ICONS = (By.CLASS_NAME, 'ion-close-round') - 태그 삭제는 우선 게시글 등록 함수 만들고 나서 개발 예정
+    TAG_DEL_I = (By.TAG_NAME, "i")
 
-
-
+    PUBLISH_BTN = (By.CSS_SELECTOR, "button")
 
     def __init__(self, driver):
         super().__init__(driver)
@@ -50,6 +48,20 @@ class ArticlePage(BasePage):
         self.save_article_tags(tags)
         self.click_publish_btn()
 
+    # 아직 정상 동작하는지 확인하지 못 했음. 이거 부터 먼저 작업 이어서 필요
+    def delete_selected_tags(self, tag_names):
+        for tag_name in tag_names:
+            # 루프 시마다 태그 요소 리스트 & 태그 삭제 버튼 리스트 불러오기
+            article_tag_element_list = self.find_elements(self.ARTICLE_TAG_LIST_SPAN)
+            tag_del_btns = self.find_elements(self.TAG_DEL_I)
 
-    # def delete_artigle_tag(self,indexes):
-    #     pass
+            # 현재 태그 요소 리스트의 텍스트 값만 추출하여 리스트로 저장
+            tag_text_list = []
+            for elem in article_tag_element_list:
+                tag_text_list.append(self.get_text(elem))
+
+            # 태그 요소 텍스트 리스트에서 tag_name과 동일한 값의 index 값 찾기
+            del_index = tag_text_list.index(tag_name)
+
+            # 태그 삭제 버튼 리스트에서 삭제할 index 값의 요소 선택하여 클릭
+            self.click_element(tag_del_btns[del_index])
