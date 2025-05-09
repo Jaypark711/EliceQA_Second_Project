@@ -3,7 +3,7 @@ import pytest
 from data.user_data import VALID_USER 
 from utils.logger import setupLogger
 from pages.home_page import HomePage
-from pages.login_page import LoginPage
+from qa.pages.signin_page import SignInPage
 from pages.signup_page import SignUpPage
 
 @pytest.mark.usefixtures("driver")
@@ -22,7 +22,7 @@ class TestAuthentication:
         """AUTH_02: 유효한 정보로 로그인 성공 및 사용자 정보 확인"""
         self.logger.info("로그인 테스트 시작")
         homePage = HomePage(driver)
-        loginPage = LoginPage(driver)
+        loginPage = SignInPage(driver)
 
         homePage.click_sign_in_link()
 
