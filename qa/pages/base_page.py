@@ -20,6 +20,16 @@ class BasePage:
             self.logger.error(f"{locator} 요소를 찾지 못하거나 대기 시간 초과: {e}")
             raise
 
+    def find_elements(self, locator):
+        try:
+            elements = self.wait.until(EC.presence_of_all_elements_located(locator))
+            return elements
+        
+        except (NoSuchElementException, TimeoutException) as e:
+            self.logger.error(f"{locator} 요소를 찾지 못하거나 대기 시간 초과: {e}")
+            raise
+
+
     def click_element(self, locator):
         try:
             element = self.wait.until(EC.element_to_be_clickable(locator))
