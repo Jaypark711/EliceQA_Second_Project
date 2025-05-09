@@ -17,11 +17,11 @@ class LoginPage(BasePage):
     def __init__(self, driver):
         super().__init__(driver)
 
-    def send_email_input(self):
-        self.send_keys(self.EMAIL_INPUT, os.getenv("LOGIN_EMAIL"))
+    def send_email_input(self, email):
+        self.send_keys(self.EMAIL_INPUT, email)
 
-    def send_password_input(self):
-        self.send_keys(self.PASSWORD_INPUT, os.getenv("LOGIN_PWD"))
+    def send_password_input(self, password):
+        self.send_keys(self.PASSWORD_INPUT, password)
 
     def click_sign_in_btn(self):
         self.click_element(self.SIGN_IN_BTN)
