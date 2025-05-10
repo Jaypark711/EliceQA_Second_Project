@@ -1,6 +1,6 @@
 from selenium.webdriver.common.by import By
 
-from config.config import MY_PROFILE_URL, SETTINGS_URL
+from config.config import BASE_URL, MY_PROFILE_URL, SETTINGS_URL
 from data.user_data import VALID_USER 
 from pages.base_page import BasePage
 
@@ -38,16 +38,31 @@ class Header(BasePage):
     def click_my_profile_link(self):
         self.click_element(self.MY_PROFILE_LINK)
     
+    def is_go_to_home_page(self):
+        return self.get_current_url() == BASE_URL
+
     def is_go_to_settings_page(self):
         return self.get_current_url() == SETTINGS_URL
 
     def is_go_to_myprofile_page(self):
         return self.get_current_url() == MY_PROFILE_URL
 
-    def wait_for_user_profile_link_appear(self):
+    def wait_for_new_post_link_appear(self):
+        self.find_element(self.NEW_POST_LINK)
+
+    def wait_for_settings_link_appear(self):
+        self.find_element(self.SETTINGS_LINK)
+
+    def wait_for_my_profile_link_appear(self):
         self.find_element(self.MY_PROFILE_LINK)
 
-    def is_user_profile_link_disappear(self):
+    def is_new_post_link_disappear(self):
+        return self.is_element_disappear(self.NEW_POST_LINK)
+    
+    def is_settings_link_disappear(self):
+        return self.is_element_disappear(self.SETTINGS_LINK)
+
+    def is_my_profile_link_disappear(self):
         return self.is_element_disappear(self.MY_PROFILE_LINK)
 
     def get_username_link_text(self):

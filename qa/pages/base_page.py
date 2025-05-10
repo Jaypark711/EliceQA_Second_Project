@@ -1,13 +1,13 @@
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.remote.webdriver import WebDriver
-from config.config import BASE_URL, TIMEOUT
+
+from config.config import TIMEOUT
 
 class BasePage:
     def __init__(self, driver: WebDriver):
         self.driver = driver
         self.wait = WebDriverWait(driver, TIMEOUT)
-        driver.get(BASE_URL)
 
     def find_element(self, locator):
         return self.wait.until(EC.presence_of_element_located(locator))
