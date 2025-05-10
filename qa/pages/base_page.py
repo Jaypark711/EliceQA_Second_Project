@@ -41,5 +41,6 @@ class BasePage:
         value = self.get_attribute(locator, "class")
         return "active" in value
 
-    def get_current_url(self):
+    def wait_until_url_and_get(self, expected_url):
+        self.wait.until(EC.url_to_be(expected_url))
         return self.driver.current_url
