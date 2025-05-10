@@ -14,7 +14,7 @@ class Header(BasePage):
     # 로그인 상태 로케이터
     NEW_POST_LINK = (By.CSS_SELECTOR, 'a[href="/editor"]')
     SETTINGS_LINK = (By.CSS_SELECTOR, 'a[href="/settings"]')
-    USER_PROFILE_LINK = (By.CSS_SELECTOR, f'a[href="/@{VALID_USER["username"]}"]')
+    MY_PROFILE_LINK = (By.CSS_SELECTOR, f'a[href="/@{VALID_USER["username"]}"]')
 
     def __init__(self, driver):
         super().__init__(driver)
@@ -33,6 +33,9 @@ class Header(BasePage):
 
     def click_settings_link(self):
         self.click_element(self.SETTINGS_LINK)
+
+    def click_my_profile_link(self):
+        self.click_element(self.MY_PROFILE_LINK)
 
     def wait_for_user_profile_link_appear(self):
         self.find_element(self.USER_PROFILE_LINK)
