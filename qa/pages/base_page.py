@@ -11,7 +11,6 @@ class BasePage:
 
         driver.get(BASE_URL)
 
-    # TODO: find/click/send_keys 등 동작별로 적절한 예외 분리 및 처리 메시지 세분화
     def find_element(self, locator):
         try:
             element = self.wait.until(EC.presence_of_element_located(locator))
