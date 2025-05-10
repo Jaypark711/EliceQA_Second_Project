@@ -12,8 +12,8 @@ class HomePage(BasePage):
     def __init__(self, driver):
         super().__init__(driver)
 
-    def wait_for_your_feed_tab_link_appear(self):
-        self.find_element(self.YOUR_FEED_TAB_LINK)
+    def is_your_feed_tab_link_appear(self):
+        return self.is_element_appear(self.YOUR_FEED_TAB_LINK)
 
     def is_your_feed_tab_link_disappear(self):
         return self.is_element_disappear(self.YOUR_FEED_TAB_LINK)
