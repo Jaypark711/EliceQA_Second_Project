@@ -1,5 +1,6 @@
 from selenium.webdriver.common.by import By
 
+from config.config import MY_PROFILE_URL, SETTINGS_URL
 from data.user_data import VALID_USER 
 from pages.base_page import BasePage
 
@@ -36,6 +37,12 @@ class Header(BasePage):
 
     def click_my_profile_link(self):
         self.click_element(self.MY_PROFILE_LINK)
+    
+    def is_go_to_settings_page(self):
+        return self.get_current_url() == SETTINGS_URL
+
+    def is_go_to_myprofile_page(self):
+        return self.get_current_url() == MY_PROFILE_URL
 
     def wait_for_user_profile_link_appear(self):
         self.find_element(self.MY_PROFILE_LINK)

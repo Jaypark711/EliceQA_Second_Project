@@ -1,6 +1,5 @@
 from selenium.webdriver.common.by import By
 
-from config.config import MY_PROFILE_URL, SETTINGS_URL
 from pages.base_page import BasePage
 
 class ProfilePage(BasePage):
@@ -29,9 +28,3 @@ class ProfilePage(BasePage):
 
     def is_favorited_article_tab_active(self):
         return self.is_element_active(self.FAVORITED_ARTICLE_TAB_LINK)
-    
-    def is_go_to_myprofile_page(self):
-        return self.get_current_url() == MY_PROFILE_URL
-
-    def is_go_to_settings_page(self):
-        return self.get_current_url() == SETTINGS_URL
