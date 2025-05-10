@@ -14,8 +14,9 @@ class TestFilter():
         yield
         self.logger.info("==================================")
 
-    def test_popular_tags_update_correctly(self, driver):
+    def test_filter_articles_by_tag(self, driver):
         """FILTER_01: 태그 선택 시 해당 태그를 포함한 게시글만 필터링되어 표시되는지 확인"""
+        self.logger.info("태그 선택 및 게시글 필터링 테스트 시작")
         header = Header(driver)
         signInPage = SignInPage(driver)
         home = HomePage(driver)
@@ -32,7 +33,7 @@ class TestFilter():
         assert clicked_tag_text == tag_tab_text
         self.logger.info("클릭한 인기 태그와 화면에 표시된 태그 탭 텍스트가 일치함을 확인")
 
-        # TODO: 태그를 포함한 게시글 필터링 확인
+        # TODO: 태그를 포함한 게시글 필터링 확인 (게시글 정보 불러오는 함수 구현 전까지 대기)
 
     # def test_popular_tags_update_correctly(self):
     #     """FILTER_02: Popular Tags가 게시글 태그 등록 상황에 따라 정확히 반영되는지 확인"""
