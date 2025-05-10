@@ -33,17 +33,15 @@ class ArticlePage(BasePage):
         super().__init__(driver)
 
     # 모든 자식 요소 찾기
-    def find_child_elements(self, parents_elem:WebElement, child_locator):
+    def find_child_elements(self, parents_elem: WebElement, child_locator):
         return parents_elem.find_element(*child_locator)
 
     def confirm_article_lists(self):
-        article_elems = self.find_elements(self.ARTICLE_PREVIEW_DIV)
-        article_count = len(article_elems)
+        article_count = len(self.find_elements(self.ARTICLE_PREVIEW_DIV))
 
         if article_count < 1:
             return None
         else:  # 등록 게시물이 1개 이상 존재하는 경우
-            # 게시물 항목들 내용을 담을 리스트 생성
             article_titles = []
             article_bodies = []
             article_tags = []
@@ -64,16 +62,16 @@ class ArticlePage(BasePage):
 
             # 태그 텍스트 추출
             for tag in all_article_tags:
-                current_article_tags = self.find_child_elements(
-                    tag, self.ARTICLE_PREVIEW_TAGS_LI
-                )
+                current_article_tags = self.find_child_elements(tag, self.ARTICLE_PREVIEW_TAGS_LI)
                 if len(current_article_tags) == 0:
                     article_tags.append("")
                 elif len(current_article_tags) == 1:
-                    article_tags.append(self.get_text(tag))
-                elif len(current_article_tags) > 1:
-                    current_tags = []   # 태그 담을 리스트
-                    
+                    article_tags.append(self.get_text(current_article_tags[0]))
+                elif len(current_article_tags) >= 2:
+                    tag_group_list = []
+                    for tag in current_article_tags:
+                        tag_group_list.append(self.get_text(tag))
+                    article_tags.append(tag_group_list)
 
     def send_article_title(self, title):
         self.send_keys(self.ARTICLE_TITLE_INPUT, title)
