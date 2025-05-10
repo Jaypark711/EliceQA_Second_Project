@@ -24,6 +24,12 @@ class SignInPage(BasePage):
     def click_sign_in_btn(self):
         self.click_element(self.SIGN_IN_BTN)
 
+    def get_email_input_value(self):
+        return self.get_attribute(self.EMAIL_INPUT, "value")
+    
+    def get_password_input_value(self):
+        return self.get_attribute(self.PASSWORD_INPUT, "value")
+
     def get_error_messages_text(self):
         return self.find_element(self.ERROR_TXT).text()
 

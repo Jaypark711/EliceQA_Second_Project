@@ -33,6 +33,10 @@ class BasePage:
         element = self.find_element(locator)
         return element.text
 
+    def is_element_appear(self, locator):
+        self.wait.until(EC.presence_of_element_located(locator))
+        return True
+
     def is_element_disappear(self, locator):
         self.wait.until_not(EC.presence_of_element_located(locator))
         return True

@@ -1,6 +1,6 @@
 from selenium.webdriver.common.by import By
 
-from config.config import BASE_URL, MY_PROFILE_URL, SETTINGS_URL
+from config.config import BASE_URL, SIGNIN_URL, SIGNUP_URL, SETTINGS_URL, MY_PROFILE_URL
 from data.user_data import VALID_USER 
 from pages.base_page import BasePage
 
@@ -39,22 +39,28 @@ class Header(BasePage):
         self.click_element(self.MY_PROFILE_LINK)
     
     def is_go_to_home_page(self):
-        return self.get_current_url() == BASE_URL
+        return self.wait_until_url_and_get(BASE_URL) == BASE_URL
+    
+    def is_go_to_sign_in_page(self):
+        return self.wait_until_url_and_get(SIGNIN_URL) == SIGNIN_URL
+    
+    def is_go_to_sign_up_page(self):
+        return self.wait_until_url_and_get(SIGNUP_URL) == SIGNUP_URL
 
     def is_go_to_settings_page(self):
-        return self.get_current_url() == SETTINGS_URL
+        return self.wait_until_url_and_get(SETTINGS_URL) == SETTINGS_URL
 
     def is_go_to_myprofile_page(self):
-        return self.get_current_url() == MY_PROFILE_URL
+        return self.wait_until_url_and_get(MY_PROFILE_URL) == MY_PROFILE_URL
 
-    def wait_for_new_post_link_appear(self):
-        self.find_element(self.NEW_POST_LINK)
+    def is_new_post_link_appear(self):
+        return self.is_element_appear(self.NEW_POST_LINK)
 
-    def wait_for_settings_link_appear(self):
-        self.find_element(self.SETTINGS_LINK)
+    def is_settings_link_appear(self):
+        return self.is_element_appear(self.SETTINGS_LINK)
 
-    def wait_for_my_profile_link_appear(self):
-        self.find_element(self.MY_PROFILE_LINK)
+    def is_my_profile_link_appear(self):
+        return self.is_element_appear(self.MY_PROFILE_LINK)
 
     def is_new_post_link_disappear(self):
         return self.is_element_disappear(self.NEW_POST_LINK)
