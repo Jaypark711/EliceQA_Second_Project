@@ -26,24 +26,28 @@ class TestAuthentication:
         header = Header(driver)
         signInPage = SignInPage(driver)
 
-        header.click_sign_in_link()
+        try:
+            header.click_sign_in_link()
+            signInPage.send_email_input(VALID_USER["email"])
+            signInPage.send_password_input(VALID_USER["password"])
+            signInPage.click_sign_in_btn()
+            self.logger.info("로그인 정보 입력 및 제출 완료")
 
-        signInPage.send_email_input(VALID_USER["email"])
-        signInPage.send_password_input(VALID_USER["password"])
-        signInPage.click_sign_in_btn()
-        self.logger.info("로그인 정보 입력 및 제출 완료")
+            header.wait_for_user_profile_link_appear()
+            self.logger.info("사용자 정보 확인 완료")
 
-        header.wait_for_user_profile_link_appear()
-        self.logger.info("사용자 정보 확인 완료")
+            assert VALID_USER["username"] in header.get_username_link_text()
+            self.logger.info("유효한 정보로 로그인 테스트 성공")
 
-        assert VALID_USER["username"] in header.get_username_link_text()
-        self.logger.info("유효한 정보로 로그인 테스트 성공")
+        except Exception as e:
+            self.logger.error(f"❌ 로그인 테스트 중 오류 발생: {e}")
+            assert False
 
     # def test_login_fail(self, driver):
     #     """AUTH_03: 잘못된 정보로 로그인 시 오류 메시지 제공 확인"""
     #     self.logger.info("맞지 않는 비밀번호로 로그인 테스트 시작")
     #     self.logger.info("미가입 이메일로 로그인 테스트 시작")
-        
+
     def test_logout(self, driver):
         """AUTH_04: 로그인 상태에서 로그아웃 성공"""
         self.logger.info("로그아웃 테스트 시작")
@@ -51,11 +55,17 @@ class TestAuthentication:
         signInPage = SignInPage(driver)
         settingsPage = SettingsPage(driver)
 
-        header.click_sign_in_link()
-        signInPage.login()
-        self.logger.info("로그인 정보 입력 및 제출 완료")
+        try:
+            header.click_sign_in_link()
+            signInPage.login()
+            self.logger.info("로그인 정보 입력 및 제출 완료")
 
-        header.click_settings_link()
-        settingsPage.click_logout_btn()
-        assert header.is_user_profile_link_disappear() == True
-        self.logger.info("로그아웃 테스트 성공")
+            header.click_settings_link()
+            settingsPage.click_logout_btn()
+
+            assert header.is_user_profile_link_disappear() == True
+            self.logger.info("로그아웃 테스트 성공")
+
+        except Exception as e:
+            self.logger.error(f"❌ 로그아웃 테스트 중 오류 발생: {e}")
+            assert False

@@ -57,18 +57,23 @@ class TestMyProfile:
         signInPage = SignInPage(driver)
         profilePage = ProfilePage(driver)
 
-        header.click_sign_in_link()
-        signInPage.login()
-        self.logger.info("로그인 성공")
+        try:
+            header.click_sign_in_link()
+            signInPage.login()
+            self.logger.info("로그인 성공")
 
-        header.click_my_profile_link()
-        self.logger.info("My Profile 링크 클릭 완료")
+            header.click_my_profile_link()
+            self.logger.info("My Profile 링크 클릭 완료")
 
-        assert profilePage.is_go_to_myprofile_page() == True
-        self.logger.info("마이프로필 페이지 이동 확인 완료")
+            assert profilePage.is_go_to_myprofile_page() == True
+            self.logger.info("마이프로필 페이지 이동 확인 완료")
 
-        profilePage.click_edit_profile_settings_btn()
-        self.logger.info("Edit Profile Settings 버튼 클릭 완료")
+            profilePage.click_edit_profile_settings_btn()
+            self.logger.info("Edit Profile Settings 버튼 클릭 완료")
 
-        assert profilePage.is_go_to_settings_page() == True
-        self.logger.info("설정 페이지 이동 확인 완료")
+            assert profilePage.is_go_to_settings_page() == True
+            self.logger.info("설정 페이지 이동 확인 완료")
+
+        except Exception as e:
+            self.logger.error(f"❌ MYPROFILE_03 테스트 중 오류 발생: {e}")
+            assert False
