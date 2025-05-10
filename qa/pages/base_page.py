@@ -58,7 +58,6 @@ class BasePage:
             self.logger.error(f"{locator} 요소에서 {attribute} 속성 값을 가져오는 중 오류 발생: {e}")
             raise
 
-    
     def get_text(self, locator):
         try:
             element = self.find_element(locator)
@@ -75,6 +74,14 @@ class BasePage:
         
         except Exception as e:
             self.logger.error(f"{locator} 요소가 사라질때까지 대기하는 중 오류 발생: {e}")
+            raise
+
+    def is_element_active(self, locator):
+        try:
+            value = self.get_attribute(locator, "class")
+            return "active" in value
+        except Exception as e:
+            self.logger.error(f"{locator} 요소의 class 속성에서 'active' 포함 여부 확인 중 오류 발생: {e}")
             raise
         
     def get_current_url(self):
