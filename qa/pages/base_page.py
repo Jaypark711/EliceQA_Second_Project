@@ -1,11 +1,11 @@
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
-
+from selenium.webdriver.remote.webdriver import WebDriver
 from config.config import BASE_URL, TIMEOUT
 
 class BasePage:
-    def __init__(self, driver):
+    def __init__(self, driver: WebDriver):
         self.driver = driver
         self.wait = WebDriverWait(driver, TIMEOUT)
 
