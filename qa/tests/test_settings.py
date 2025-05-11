@@ -57,10 +57,6 @@ class TestSettings:
             self.logger.info("기대 결과 2 - 입력한 값이 입력 필드에 입력됨")
 
             settingsPage.click_update_btn()
-            print(f"header url = {header.get_profile_img()}")
-            print(f"header username = {header.get_username()}")
-            print(f"url = {url}")
-            print(f"username = {username}")
             assert all([
                 url in header.get_profile_img(),
                 header.get_username() == username
@@ -71,4 +67,12 @@ class TestSettings:
             self.logger.error(f"❌ 회원 정보 업데이트 테스트 중 오류 발생: {e}")
             assert False, "❌ 회원 정보 업데이트 테스트 중 오류 발생"
         finally:
-            update("User", {"username":"user1", "email":"1@1.1"}, {"username":username}) # 테스트 종료 후 username, email 정보 초기화
+            update("User", {"username":self.username[0], "email":self.email[0]}, {"username":username}) # 테스트 종료 후 username, email 정보 초기화
+
+    @pytest.mark.skip(reason="미구현")
+    def test_successful_update_password(self,driver,password):
+        """SETTING_02: 유효한 정보로 비밀번호 업데이트 성공"""
+        self.logger.info("비밀번호 업데이트 테스트 시작")
+        header = Header(driver)
+        loginPage = SignInPage(driver)
+        settingsPage = SettingsPage(driver)
