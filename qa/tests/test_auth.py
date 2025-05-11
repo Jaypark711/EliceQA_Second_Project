@@ -2,12 +2,13 @@ import pytest
 
 from config.config import BASE_URL
 from data.user_data import VALID_USER 
-from utils.logger import setupLogger
 from pages.header.header import Header
 from pages.body.home_page import HomePage
 from pages.body.signup_page import SignUpPage
 from pages.body.signin_page import SignInPage
 from pages.body.settings_page import SettingsPage
+from utils.logger import setupLogger
+from db.db_utils import delete_all_user
 
 @pytest.mark.usefixtures("driver")
 class TestAuthentication:
@@ -15,22 +16,111 @@ class TestAuthentication:
 
     @pytest.fixture(autouse=True)
     def setup_and_teardown(self, driver):
+        delete_all_user() # 테스트 환경 초기화: 상태 의존성을 제거하고 동일한 초기 조건 보장
         driver.get(BASE_URL)
+
         yield
+
         self.logger.info("==================================")
 
-    # def test_successful_signup(self, driver):
-    #     """AUTH_01: 유효한 정보로 회원가입 성공"""
-    #     self.logger.info("회원가입 테스트 시작")
+    def test_successful_signup(self, driver):
+        """AUTH_01: 유효한 정보로 회원가입 성공 및 사용자 정보 확인"""
+        self.logger.info("회원가입 테스트 시작")
+        header = Header(driver)
+        homePage = HomePage(driver)
+        signUpPage = SignUpPage(driver)
 
-    def test_successful_login(self, driver):
-        """AUTH_02: 유효한 정보로 로그인 성공 및 사용자 정보 확인"""
+        try:
+            header.click_sign_up_link()
+            assert header.is_go_to_sign_up_page() # 기대 결과 1: Sign up 페이지로 진입되어야 함
+
+            signUpPage.send_username_input(VALID_USER["username"])
+            assert signUpPage.get_username_input_value() == VALID_USER["username"] # 기대 결과 2: {사용자명}이 "Username" 입력 필드에 정상 반영됨
+
+            signUpPage.send_email_input(VALID_USER["email"])
+            assert signUpPage.get_email_input_value() == VALID_USER["email"] # 기대 결과 3: {이메일}이 "Email" 입력 필드에 정상 반영됨
+
+            signUpPage.send_password_input(VALID_USER["password"])
+            assert signUpPage.get_password_input_value() == VALID_USER["password"] # 기대 결과 4: {비밀번호}가 "Password" 입력 필드에 정상 반영됨
+        
+            signUpPage.click_sign_up_btn()
+            assert header.is_go_to_home_page() # 기대 결과 5: 메인 화면 진입  
+            self.logger.info("회원가입 정보 입력 및 제출 완료")
+
+            assert all([ # 기대 결과 6: 메인 화면에 Your Feed 탭, New Post 링크, Settings 링크, MyProfile 링크 추가 표시
+                homePage.is_your_feed_tab_link_appear(),
+                header.is_new_post_link_appear(),
+                header.is_settings_link_appear(),
+                header.is_my_profile_link_appear()
+            ])
+            self.logger.info("사용자 정보 확인 완료")
+            self.logger.info("유효한 정보로 회원가입 테스트 성공")
+        except Exception as e:
+            self.logger.error(f"❌ AUTH_01 테스트 중 오류 발생: {e}")
+            assert False
+
+    @pytest.mark.parametrize("username, email, password, expected_result, description", [ # TODO: 데이터 임시 하드코딩 (추후 분리하기)
+        ("", "", "", "email can't be blank", "사용자명, 이메일, 비밀번호 입력창을 모두 공백"),
+        (VALID_USER["username"], "", "", "email can't be blank", "이메일, 비밀번호 입력창을 공백"),
+        (VALID_USER["username"], VALID_USER["email"], "", "password can't be blank", "비밀번호 입력창을 공백"),
+        (VALID_USER["username"], VALID_USER["email"], VALID_USER["password"], ["email has already been taken", "username has already been taken"], "유효한 정보로")
+    ])
+    def test_fail_signup(self, driver, username, email, password, expected_result, description):
+        """AUTH_02: 잘못된 정보로 회원가입 시 오류 메시지 제공 확인"""
+        self.logger.info(f"{description}(으)로 회원가입 테스트 시작")
+        header = Header(driver)
+        signInPage = SignInPage(driver)
+        signUpPage = SignUpPage(driver)
+        settingsPage = SettingsPage(driver)
+        
+        try:
+            # 테스트 환경 세팅
+            header.click_sign_up_link()
+            signUpPage.sign_up()
+            header.click_settings_link()
+            settingsPage.click_logout_btn()
+
+            # 테스트 시나리오 시작
+            header.click_sign_up_link()
+            assert header.is_go_to_sign_up_page() # 기대 결과 1: Sign up 페이지로 진입되어야 함
+
+            signUpPage.send_username_input(username)
+            assert signUpPage.get_username_input_value() == username # 기대 결과 2: {사용자명}이 "Username" 입력 필드에 정상 반영됨
+
+            signUpPage.send_email_input(email)
+            assert signUpPage.get_email_input_value() == email # 기대 결과 3: {이메일}이 "Email" 입력 필드에 정상 반영됨
+
+            signUpPage.send_password_input(password)
+            assert signUpPage.get_password_input_value() == password # 기대 결과 4: {비밀번호}가 "Password" 입력 필드에 정상 반영됨
+
+            signUpPage.click_sign_up_btn()
+            if isinstance(expected_result, str):
+                assert expected_result in signUpPage.get_error_message_text() # 기대 결과 5: {경고창}이 표시됨
+            else:
+                assert set(signUpPage.get_error_messages_text()) == set(expected_result) # 기대 결과 5: {경고창}이 표시됨
+            self.logger.info(f"{description}로 회원가입 테스트 시 {expected_result} 경고창 출력 확인")
+
+        except Exception as e:
+            self.logger.error(f"❌ AUTH_04 테스트 중 오류 발생: {e}")
+            assert False
+
+    def test_successful_signin(self, driver):
+        """AUTH_03: 유효한 정보로 로그인 성공 및 사용자 정보 확인"""
         self.logger.info("유효한 정보로 로그인 테스트 시작")
         header = Header(driver)
         homePage = HomePage(driver)
         signInPage = SignInPage(driver)
+        signUpPage = SignUpPage(driver)
+        settingsPage = SettingsPage(driver)
 
         try:
+            # 테스트 환경 세팅
+            header.click_sign_up_link()
+            signUpPage.sign_up()
+            header.click_settings_link()
+            settingsPage.click_logout_btn()
+
+            # 테스트 시나리오 시작
             header.click_sign_in_link()
             assert header.is_go_to_sign_in_page() # 기대 결과 1: Sign in 페이지로 진입되어야 함
 
@@ -51,32 +141,89 @@ class TestAuthentication:
                 header.is_my_profile_link_appear()
             ])
             self.logger.info("사용자 정보 확인 완료")
-
-            assert VALID_USER["username"] in header.get_username_link_text()
             self.logger.info("유효한 정보로 로그인 테스트 성공")
 
         except Exception as e:
-            self.logger.error(f"❌ 로그인 테스트 중 오류 발생: {e}")
+            self.logger.error(f"❌ AUTH_03 테스트 중 오류 발생: {e}")
             assert False
 
-    # def test_login_fail(self, driver):
-    #     """AUTH_03: 잘못된 정보로 로그인 시 오류 메시지 제공 확인"""
-    #     self.logger.info("맞지 않는 비밀번호로 로그인 테스트 시작")
-    #     self.logger.info("미가입 이메일로 로그인 테스트 시작")
+    @pytest.mark.parametrize("email, password, expected_result, description", [ # TODO: 데이터 임시 하드코딩 (추후 분리하기)
+        ("", "", "email can't be blank", "이메일 및 비밀번호 입력창 모두 공백"),
+        ("", VALID_USER["password"], "email can't be blank", "이메일 입력창을 공백"),
+        (VALID_USER["email"], "", "password can't be blank", "비밀번호 입력창을 공백"),
+        (VALID_USER["email"], "wrong_password", "email or password is invalid", "맞지 않는 비밀번호"),
+        ("wrong@email.com", VALID_USER["password"], "email or password is invalid", "미가입 이메일")
+    ])
+    def test_fail_signin(self, driver, email, password, expected_result, description):
+        """AUTH_04: 잘못된 정보로 로그인 시 오류 메시지 제공 확인"""
+        self.logger.info(f"{description}(으)로 로그인 테스트 시작")
+        header = Header(driver)
+        signInPage = SignInPage(driver)
+        signUpPage = SignUpPage(driver)
+        settingsPage = SettingsPage(driver)
+        
+        try:
+            # 테스트 환경 세팅
+            header.click_sign_up_link()
+            signUpPage.sign_up()
+            header.click_settings_link()
+            settingsPage.click_logout_btn()
+
+            # 테스트 시나리오 시작
+            header.click_sign_in_link()
+            assert header.is_go_to_sign_in_page() # 기대 결과 1: Sign in 페이지로 진입되어야 함
+
+            signInPage.send_email_input(email)
+            assert signInPage.get_email_input_value() == email # 기대 결과 2: {이메일}이 "Email" 입력 필드에 정상 반영됨
+
+            signInPage.send_password_input(password)
+            assert signInPage.get_password_input_value() == password # 기대 결과 3: {비밀번호}가 "Password" 입력 필드에 정상 반영됨
+
+            signInPage.click_sign_in_btn()
+            assert signInPage.get_error_messages_text() == expected_result # 기대 결과 4: {경고창}이 표시됨
+            self.logger.info(f"{description}로 로그인 테스트 시 {expected_result} 경고창 출력 확인")
+
+        except Exception as e:
+            self.logger.error(f"❌ AUTH_04 테스트 중 오류 발생: {e}")
+            assert False
+
+    def test_redirection(self, driver):
+        """AUTH_05: 회원가입 페이지와 로그인 페이지 간의 리다이렉션 기능 확인"""
+        self.logger.info("리다이렉션 테스트 시작")
+        header = Header(driver)
+        signUpPage = SignUpPage(driver)
+        signInPage = SignInPage(driver)
+
+        try:
+            # 테스트 시나리오 시작
+            header.click_sign_in_link()
+            assert header.is_go_to_sign_in_page() # 기대 결과 1: Sign in 페이지로 진입되어야 함
+            
+            signInPage.click_sign_up_link()
+            assert header.is_go_to_sign_up_page() # 기대 결과 2: Sign up 페이지로 진입되어야 함
+
+            signUpPage.click_sign_in_link()
+            assert header.is_go_to_sign_in_page() # 기대 결과 3: Sign in 페이지로 진입되어야 함
+            self.logger.info("리다이렉션 테스트 성공")
+
+        except Exception as e:
+            self.logger.error(f"❌ AUTH_05 테스트 중 오류 발생: {e}")
+            assert False
 
     def test_logout(self, driver):
-        """AUTH_04: 로그인 상태에서 로그아웃 성공"""
+        """AUTH_06: 로그인 상태에서 로그아웃 성공"""
         self.logger.info("로그아웃 테스트 시작")
         header = Header(driver)
         homePage = HomePage(driver)
-        signInPage = SignInPage(driver)
+        signUpPage = SignUpPage(driver)
         settingsPage = SettingsPage(driver)
 
         try:
-            header.click_sign_in_link()
-            signInPage.login()
-            self.logger.info("로그인 정보 입력 및 제출 완료")
+            # 테스트 환경 세팅
+            header.click_sign_up_link()
+            signUpPage.sign_up()
 
+            # 테스트 시나리오 시작
             header.click_settings_link()
             assert header.is_go_to_settings_page() # 기대 결과 1: Settings 페이지로 진입되어야 함
 
@@ -92,5 +239,5 @@ class TestAuthentication:
             self.logger.info("로그아웃 테스트 성공")
 
         except Exception as e:
-            self.logger.error(f"❌ 로그아웃 테스트 중 오류 발생: {e}")
+            self.logger.error(f"❌ AUTH_06 테스트 중 오류 발생: {e}")
             assert False
