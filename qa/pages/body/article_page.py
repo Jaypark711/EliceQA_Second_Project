@@ -7,7 +7,7 @@ from selenium.webdriver.remote.webelement import WebElement
 class ArticlePage(BasePage):
     # 로케이터 정의
     # Article 목록 관련 로케이터
-    ARTICLE_PREVIEW_DIV = (By.CSS_SELECTOR, 'div.article-preview')
+    ARTICLE_PREVIEW_DIV = (By.CSS_SELECTOR, "div.article-preview")
     ARTICLE_PREVIEW_USERNAME_ = (By.CSS_SELECTOR, "a.author")
     ARTICLE_PREVIEW_TITLE_H1 = (By.CSS_SELECTOR, "a.preview-link > h1")
     ARTICLE_PREVIEW_BODY_P = (By.CSS_SELECTOR, "div.article-preview")
@@ -26,13 +26,13 @@ class ArticlePage(BasePage):
     )
     ARTICLE_TAG_INPUT = (By.CSS_SELECTOR, 'input[placeholder*="Enter tags"]')
     ARTICLE_TAG_LIST_SPAN = (By.CSS_SELECTOR, 'div span[class*="tag-default"]')
-    TAG_DEL_I = (By.TAG_NAME, "i")
+    TAG_DEL_I = (By.CSS_SELECTOR, "i.ion-close-round")
     PUBLISH_BTN = (By.CSS_SELECTOR, "button")
 
     def __init__(self, driver):
         super().__init__(driver)
 
-    # 모든 자식 요소 찾기
+    # 특정 요소의 자식 요소 찾기
     def find_child_elements(self, parents_elem: WebElement, child_locator):
         return parents_elem.find_elements(*child_locator)
 
@@ -116,7 +116,6 @@ class ArticlePage(BasePage):
         self.save_article_tags(tags)
         self.click_publish_btn()
 
-    # 아직 정상 동작하는지 확인하지 못 했음. 작업 이어서 필요
     def delete_selected_tags(self, tag_names):
         for tag_name in tag_names:
             # 루프 시마다 태그 요소 리스트 & 태그 삭제 버튼 리스트 불러오기
@@ -126,7 +125,7 @@ class ArticlePage(BasePage):
             # 현재 태그 요소 리스트의 텍스트 값만 추출하여 리스트로 저장
             tag_text_list = []
             for elem in article_tag_element_list:
-                tag_text_list.append(self.get_text(elem))
+                tag_text_list.append(elem.text)
 
             # 태그 요소 텍스트 리스트에서 tag_name과 동일한 값의 index 값 찾기
             del_index = tag_text_list.index(tag_name)
