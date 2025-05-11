@@ -16,6 +16,7 @@ class Header(BasePage):
     NEW_POST_LINK = (By.CSS_SELECTOR, 'a[href="/editor"]')
     SETTINGS_LINK = (By.CSS_SELECTOR, 'a[href="/settings"]')
     MY_PROFILE_LINK = (By.CSS_SELECTOR, f'a[href="/@{VALID_USER["username"]}"]')
+    My_PROFILE_INFO = (By.CSS_SELECTOR, '.user-pic')
 
     def __init__(self, driver):
         super().__init__(driver)
@@ -73,3 +74,9 @@ class Header(BasePage):
 
     def get_username_link_text(self):
         return self.get_attribute(self.MY_PROFILE_LINK, "href")
+
+    def get_profile_img(self):
+        return self.get_attribute(self.My_PROFILE_INFO, "src")
+    
+    def get_username(self):
+        return self.get_attribute(self.My_PROFILE_INFO,"alt")
