@@ -7,9 +7,9 @@ from selenium.webdriver.remote.webelement import WebElement
 class ArticlePage(BasePage):
     # 로케이터 정의
     # Article 목록 관련 로케이터
-    ARTICLE_PREVIEW_DIV = (By.CSS_SELECTOR, 'div[class*="article-preview"]')
+    ARTICLE_PREVIEW_DIV = (By.CSS_SELECTOR, 'div.article-preview')
     ARTICLE_PREVIEW_USERNAME_ = (By.CSS_SELECTOR, "a.author")
-    ARTICLE_PREVIEW_TITLE_H1 = (By.CSS_SELECTOR, "div.article-preview > h1")
+    ARTICLE_PREVIEW_TITLE_H1 = (By.CSS_SELECTOR, "a.preview-link > h1")
     ARTICLE_PREVIEW_BODY_P = (By.CSS_SELECTOR, "div.article-preview")
     ARTICLE_PREVIEW_TAGS_UL = (By.CSS_SELECTOR, "ul.tag-list")
     ARTICLE_PREVIEW_TAGS_LI = (By.TAG_NAME, "li")
@@ -34,44 +34,63 @@ class ArticlePage(BasePage):
 
     # 모든 자식 요소 찾기
     def find_child_elements(self, parents_elem: WebElement, child_locator):
-        return parents_elem.find_element(*child_locator)
+        return parents_elem.find_elements(*child_locator)
 
-    def confirm_article_lists(self):
+    def load_article_lists(self):
+        # 작성된 게시글이 있는지 여부 판단 (하나라도 있으면 1로 count됨)
         article_count = len(self.find_elements(self.ARTICLE_PREVIEW_DIV))
-
+        articles = {}  # 정제된 articles 데이터를 담을 딕셔너리 변수
         if article_count < 1:
             return None
         else:  # 등록 게시물이 1개 이상 존재하는 경우
-            article_titles = []
-            article_bodies = []
-            article_tags = []
+            pre_titles = []
+            pre_bodies = []
+            pre_tags = []
 
-            all_article_titles = self.find_elements(self.ARTICLE_PREVIEW_TITLE_H1)
-            all_article_bodies = self.find_elements(self.ARTICLE_PREVIEW_BODY_P)
-            all_article_tags = self.find_elements(self.ARTICLE_PREVIEW_TAGS_UL)
+            pre_title_elems = self.find_elements(self.ARTICLE_PREVIEW_TITLE_H1)
+            pre_body_elems = self.find_elements(self.ARTICLE_PREVIEW_BODY_P)
+            pre_tag_elems = self.find_elements(self.ARTICLE_PREVIEW_TAGS_UL)
 
             # 게시글 제목 텍스트 값 추출
-            for title in all_article_titles:
-                title_text = self.get_text(title)
-                article_titles.append(title_text)
+            for title in pre_title_elems:
+                title_text = title.text
+                pre_titles.append(title_text)
 
             # 게시글 본문 텍스트 값 추출
-            for body in all_article_bodies:
-                body_text = self.get_text(body)
-                article_bodies.append(body_text)
+            for body in pre_body_elems:
+                # 본문 내용에 글 작성자, 날짜 정보와 read more 부분도 포함되어 필요 내용 외 삭제
+                lines = body.text.split("\n")
+                body_text = lines[4]
+                pre_bodies.append(body_text)
 
             # 태그 텍스트 추출
-            for tag in all_article_tags:
-                current_article_tags = self.find_child_elements(tag, self.ARTICLE_PREVIEW_TAGS_LI)
+            for tag_ul in pre_tag_elems:
+                current_article_tags = self.find_child_elements(
+                    tag_ul, self.ARTICLE_PREVIEW_TAGS_LI
+                )
                 if len(current_article_tags) == 0:
-                    article_tags.append("")
+                    pre_tags.append("")
                 elif len(current_article_tags) == 1:
-                    article_tags.append(self.get_text(current_article_tags[0]))
+                    pre_tags.append(current_article_tags[0].text)
                 elif len(current_article_tags) >= 2:
                     tag_group_list = []
-                    for tag in current_article_tags:
-                        tag_group_list.append(self.get_text(tag))
-                    article_tags.append(tag_group_list)
+                    for tag_li in current_article_tags:
+                        tag_group_list.append(tag_li.text)
+                    pre_tags.append(tag_group_list)
+
+        # 디버깅용
+        # print(f"수집된 제목 총{len(pre_titles)}개 - : {pre_titles}\n")
+        # print(f"수집된 본문 내용 총{len(pre_bodies)}개 - : {pre_bodies}\n")
+        # print(f"수집된 태그 총{len(pre_tags)}개 - : {pre_tags}\n")
+
+        for i in range(len(pre_titles)):
+            articles[f"article{i+1}"] = {
+                "title": pre_titles[i],
+                "body": pre_bodies[i],
+                "tags": pre_tags[i],
+            }
+        # print(articles)   # 디버깅용
+        return articles
 
     def send_article_title(self, title):
         self.send_keys(self.ARTICLE_TITLE_INPUT, title)
