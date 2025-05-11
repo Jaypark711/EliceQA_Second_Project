@@ -33,7 +33,7 @@ class SignInPage(BasePage):
     def get_error_messages_text(self):
         return self.find_element(self.ERROR_TXT).text()
 
-    def login(self):
+    def login(self): # TODO: 추후에 signin으로 이름 변경하기
         self.send_keys(self.EMAIL_INPUT, VALID_USER["email"])
         self.send_keys(self.PASSWORD_INPUT, VALID_USER["password"])
         self.click_element(self.SIGN_IN_BTN)
