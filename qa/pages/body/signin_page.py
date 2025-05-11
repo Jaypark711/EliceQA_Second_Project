@@ -6,7 +6,7 @@ from pages.base_page import BasePage
 class SignInPage(BasePage):
     # 로케이터 정의
     PAGE_TITLE = (By.XPATH, '//h1[text()="Sign In"]')
-    SIGN_UP_LINK = (By.CSS_SELECTOR, 'a[href="register"]')
+    SIGN_UP_LINK = (By.CSS_SELECTOR, 'a[href="/register"]')
     EMAIL_INPUT = (By.CSS_SELECTOR, 'input[type="email"]')
     PASSWORD_INPUT = (By.CSS_SELECTOR, 'input[type="password"]')
     SIGN_IN_BTN = (By.CSS_SELECTOR, 'button[type="submit"]')
@@ -21,6 +21,9 @@ class SignInPage(BasePage):
     def send_password_input(self, password):
         self.send_keys(self.PASSWORD_INPUT, password)
 
+    def click_sign_up_link(self):
+        self.click_element(self.SIGN_UP_LINK)
+
     def click_sign_in_btn(self):
         self.click_element(self.SIGN_IN_BTN)
 
@@ -33,7 +36,7 @@ class SignInPage(BasePage):
     def get_error_messages_text(self):
         return self.find_element(self.ERROR_TXT).text
 
-    def login(self): # TODO: 추후에 signin으로 이름 변경하기
+    def login(self): # TODO: 추후에 sign_in으로 이름 변경하기
         self.send_keys(self.EMAIL_INPUT, VALID_USER["email"])
         self.send_keys(self.PASSWORD_INPUT, VALID_USER["password"])
         self.click_element(self.SIGN_IN_BTN)
