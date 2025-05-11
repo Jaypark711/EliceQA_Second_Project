@@ -1,5 +1,6 @@
 import pytest
 
+from config.config import BASE_URL
 from pages.header.header import Header
 from pages.body.signin_page import SignInPage
 from pages.body.profile_page import ProfilePage
@@ -10,7 +11,8 @@ class TestMyProfile:
     logger = setupLogger(__qualname__)
 
     @pytest.fixture(autouse=True)
-    def teardown(self):
+    def setup_and_teardown(self, driver):
+        driver.get(BASE_URL)
         yield
         self.logger.info("==================================")
 
@@ -65,13 +67,13 @@ class TestMyProfile:
             header.click_my_profile_link()
             self.logger.info("My Profile 링크 클릭 완료")
 
-            assert profilePage.is_go_to_myprofile_page() == True
+            assert header.is_go_to_myprofile_page() # 기대 결과 1: 마이프로필로 진입되어야 함
             self.logger.info("마이프로필 페이지 이동 확인 완료")
 
             profilePage.click_edit_profile_settings_btn()
             self.logger.info("Edit Profile Settings 버튼 클릭 완료")
 
-            assert profilePage.is_go_to_settings_page() == True
+            assert header.is_go_to_settings_page() # 기대 결과 2: Settings 페이지로 진입되어야 함
             self.logger.info("설정 페이지 이동 확인 완료")
 
         except Exception as e:

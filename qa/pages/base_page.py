@@ -1,13 +1,13 @@
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.remote.webdriver import WebDriver
-from config.config import BASE_URL, TIMEOUT
+
+from config.config import TIMEOUT
 
 class BasePage:
     def __init__(self, driver: WebDriver):
         self.driver = driver
         self.wait = WebDriverWait(driver, TIMEOUT)
-        driver.get(BASE_URL)
 
     def find_element(self, locator):
         return self.wait.until(EC.presence_of_element_located(locator))
@@ -33,6 +33,10 @@ class BasePage:
         element = self.find_element(locator)
         return element.text
 
+    def is_element_appear(self, locator):
+        self.wait.until(EC.presence_of_element_located(locator))
+        return True
+
     def is_element_disappear(self, locator):
         self.wait.until_not(EC.presence_of_element_located(locator))
         return True
@@ -41,5 +45,6 @@ class BasePage:
         value = self.get_attribute(locator, "class")
         return "active" in value
 
-    def get_current_url(self):
+    def wait_until_url_and_get(self, expected_url):
+        self.wait.until(EC.url_to_be(expected_url))
         return self.driver.current_url

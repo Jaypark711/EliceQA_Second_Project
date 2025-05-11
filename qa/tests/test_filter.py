@@ -1,5 +1,6 @@
 import pytest
 
+from config.config import BASE_URL
 from pages.header.header import Header
 from pages.body.signin_page import SignInPage
 from pages.body.home_page import HomePage
@@ -10,7 +11,8 @@ class TestFilter():
     logger = setupLogger(__qualname__)
 
     @pytest.fixture(autouse=True)
-    def teardown(self):
+    def setup_and_teardown(self, driver):
+        driver.get(BASE_URL)
         yield
         self.logger.info("==================================")
 
