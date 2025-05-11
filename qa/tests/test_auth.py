@@ -154,7 +154,7 @@ class TestAuthentication:
         (VALID_USER["email"], "wrong_password", "email or password is invalid", "맞지 않는 비밀번호"),
         ("wrong@email.com", VALID_USER["password"], "email or password is invalid", "미가입 이메일")
     ])
-    def test_signin_fail(self, driver, email, password, expected_result, description):
+    def test_fail_signin(self, driver, email, password, expected_result, description):
         """AUTH_04: 잘못된 정보로 로그인 시 오류 메시지 제공 확인"""
         self.logger.info(f"{description}(으)로 로그인 테스트 시작")
         header = Header(driver)
