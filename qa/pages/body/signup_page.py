@@ -23,11 +23,20 @@ class SignUpPage(BasePage):
     def send_password_input(self, password):
         self.send_keys(self.PASSWORD_INPUT, password)
 
-    def click_sign_in_btn(self):
+    def click_sign_up_btn(self):
         self.click_element(self.SIGN_UP_BTN)
+
+    def get_username_input_value(self):
+        return self.get_attribute(self.USERNAME_INPUT, "value")
+
+    def get_email_input_value(self):
+        return self.get_attribute(self.EMAIL_INPUT, "value")
+    
+    def get_password_input_value(self):
+        return self.get_attribute(self.PASSWORD_INPUT, "value")
 
     def sign_up(self):
         self.send_username_input(VALID_USER["username"])
         self.send_email_input(VALID_USER["email"])
         self.send_password_input(VALID_USER["password"])
-        self.click_sign_in_btn()
+        self.click_sign_up_btn()

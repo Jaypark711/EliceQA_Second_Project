@@ -13,8 +13,8 @@ class TestFilter():
 
     @pytest.fixture(autouse=True)
     def setup_and_teardown(self, driver):
-        delete_all_user()
-        run_prisma_seed()
+        delete_all_user() # 테스트 환경 초기화: 상태 의존성을 제거하고 동일한 초기 조건 보장
+        run_prisma_seed() # 초기 데이터 생성
         driver.get(BASE_URL)
 
         yield
@@ -55,11 +55,13 @@ class TestFilter():
         signUpPage = SignUpPage(driver)
 
         try:
+            # 테스트 환경 세팅
             header.click_sign_up_link()
             signUpPage.sign_up()
             
+            # 테스트 시나리오 시작
             popular_tag_texts = home.get_popular_tag_texts()
-            self.logger.info("인기 태그 목록에서 태그 텍스트들 추출 완료")
+            self.logger.info("인기 태그 목록에서 태그 텍스트 추출 완료")
 
             prev_count = None
             for tag_text in popular_tag_texts:
@@ -69,7 +71,7 @@ class TestFilter():
                     assert False
                 prev_count = current_count
             assert True # 기대 결과 1: Popular Tags가 게시글 태그 등록 상황에 따라 정확하게 반영되어야 함
-            self.logger.info("태그 등록 상황에 따른 순위 반영 테스트 성공")
+            self.logger.info("태그 순위가 게시글 수 기준으로 정확하게 반영됨")
 
         except Exception as e:
             self.logger.error(f"❌ FILTER_02 테스트 중 오류 발생: {e}")
