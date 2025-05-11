@@ -1,5 +1,6 @@
 from selenium.webdriver.common.by import By
 
+from data.user_data import VALID_USER
 from pages.base_page import BasePage
 
 class SignUpPage(BasePage):
@@ -25,8 +26,8 @@ class SignUpPage(BasePage):
     def click_sign_in_btn(self):
         self.click_element(self.SIGN_UP_BTN)
 
-    def sign_up(self, username, email, password):
-        self.send_username_input(username)
-        self.send_email_input(email)
-        self.send_password_input(password)
+    def sign_up(self):
+        self.send_username_input(VALID_USER["username"])
+        self.send_email_input(VALID_USER["email"])
+        self.send_password_input(VALID_USER["password"])
         self.click_sign_in_btn()

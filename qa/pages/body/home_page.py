@@ -30,3 +30,11 @@ class HomePage(BasePage):
 
     def get_tag_tab_link_text(self):
         return self.get_text(self.TAG_TAB_LINK)
+    
+    def get_popular_tag_texts(self):
+        popular_tags_text = []
+        popular_tags = self.find_elements(self.POPULAR_TAG_LINK)
+        for tag in popular_tags:
+            popular_tags_text.append(tag.text)
+
+        return popular_tags_text
