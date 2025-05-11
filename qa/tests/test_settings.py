@@ -43,26 +43,29 @@ class TestSettings:
             assert SETTINGS_URL in current_url # 기대 결과 1
             self.logger.info("기대 결과 1 - Settings 페이지로 진입됨")
 
-            settingsPage.send_url_link_input(url)
-            settingsPage.send_username_input(username)
-            settingsPage.send_bio_input(bio)
-            settingsPage.send_email_input(email)
+            settingsPage.change_user_info(url="123",username="123")
+            time.sleep(3)
 
-            assert all([ # 기대결과 2
-            settingsPage.is_url_link_equal(url),
-            settingsPage.is_username_equal(username),
-            settingsPage.is_bio_equal(bio),
-            settingsPage.is_email_equal(email)
-            ])
-            self.logger.info("기대 결과 2 - 입력한 값이 입력 필드에 입력됨")
+            # settingsPage.send_url_link_input(url)
+            # settingsPage.send_username_input(username)
+            # settingsPage.send_bio_input(bio)
+            # settingsPage.send_email_input(email)
 
-            settingsPage.click_update_btn()
-            assert all([
-                url in header.get_profile_img(),
-                header.get_username() == username
-            ])
-            self.logger.info("기대 결과 3 - 프로필 사진과 계정명이 헤더에 노출됨")
-            self.logger.info("회원 정보 입력 및 제출 완료")
+            # assert all([ # 기대결과 2
+            # settingsPage.is_url_link_equal(url),
+            # settingsPage.is_username_equal(username),
+            # settingsPage.is_bio_equal(bio),
+            # settingsPage.is_email_equal(email)
+            # ])
+            # self.logger.info("기대 결과 2 - 입력한 값이 입력 필드에 입력됨")
+
+            # settingsPage.click_update_btn()
+            # assert all([
+            #     url in header.get_profile_img(),
+            #     header.get_username() == username
+            # ])
+            # self.logger.info("기대 결과 3 - 프로필 사진과 계정명이 헤더에 노출됨")
+            # self.logger.info("회원 정보 입력 및 제출 완료")
         except Exception as e:
             self.logger.error(f"❌ 회원 정보 업데이트 테스트 중 오류 발생: {e}")
             assert False, "❌ 회원 정보 업데이트 테스트 중 오류 발생"

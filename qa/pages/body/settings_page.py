@@ -57,3 +57,19 @@ class SettingsPage(BasePage):
 
     def reset_user_info_by_username(username):
         update("User", {"username":"user1", "email":"1@1.1"}, {"username":username})
+
+    def change_user_info(self, **kwargs):
+    # 키와 메서드 매핑 테이블
+        actions = {
+            "url": self.send_url_link_input,
+            "username": self.send_username_input,
+            "bio": self.send_bio_input,
+            "email": self.send_email_input,
+            "password": self.send_password_input,
+        }
+
+        for key, func in actions.items():
+            if key in kwargs and kwargs[key] is not None:
+                func(kwargs[key])
+
+        self.click_update_btn()
