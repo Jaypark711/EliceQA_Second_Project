@@ -18,6 +18,12 @@ class HomePage(BasePage):
     def is_your_feed_tab_link_disappear(self):
         return self.is_element_disappear(self.YOUR_FEED_TAB_LINK)
 
+    def click_your_feed_tab_link(self):
+        self.click_element(self.YOUR_FEED_TAB_LINK)
+
+    def click_global_feed_tab_link(self):
+        self.click_element(self.GLOBAL_FEED_TAB_LINK)
+
     def click_tag_tab_link(self):
         self.click_element(self.TAG_TAB_LINK)
 

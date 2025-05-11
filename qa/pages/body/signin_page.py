@@ -31,7 +31,7 @@ class SignInPage(BasePage):
         return self.get_attribute(self.PASSWORD_INPUT, "value")
 
     def get_error_messages_text(self):
-        return self.find_element(self.ERROR_TXT).text()
+        return self.find_element(self.ERROR_TXT).text
 
     def login(self): # TODO: 추후에 signin으로 이름 변경하기
         self.send_keys(self.EMAIL_INPUT, VALID_USER["email"])

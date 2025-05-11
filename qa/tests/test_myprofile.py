@@ -2,9 +2,10 @@ import pytest
 
 from config.config import BASE_URL
 from pages.header.header import Header
-from pages.body.signin_page import SignInPage
+from pages.body.signup_page import SignUpPage
 from pages.body.profile_page import ProfilePage
 from utils.logger import setupLogger
+from db.db_utils import delete_all_user
 
 @pytest.mark.usefixtures("driver")
 class TestMyProfile:
@@ -12,8 +13,11 @@ class TestMyProfile:
 
     @pytest.fixture(autouse=True)
     def setup_and_teardown(self, driver):
+        delete_all_user() # 테스트 환경 초기화: 상태 의존성을 제거하고 동일한 초기 조건 보장
         driver.get(BASE_URL)
+
         yield
+
         self.logger.info("==================================")
 
     # def test_show_my_articles(self, driver):
@@ -56,14 +60,15 @@ class TestMyProfile:
         """MYPROFILE_03: 마이프로필에서 '프로필 수정(Edit Profile Settings)' 버튼 클릭 시 설정 페이지로 이동 확인"""
         self.logger.info("마이 프로필에서 Edit Profile Settings 버튼 테스트 시작")
         header = Header(driver)
-        signInPage = SignInPage(driver)
+        signUpPage = SignUpPage(driver)
         profilePage = ProfilePage(driver)
 
         try:
-            header.click_sign_in_link()
-            signInPage.login()
-            self.logger.info("로그인 성공")
+            # 테스트 환경 세팅
+            header.click_sign_up_link()
+            signUpPage.sign_up()
 
+            # 테스트 시나리오 시작
             header.click_my_profile_link()
             self.logger.info("My Profile 링크 클릭 완료")
 
