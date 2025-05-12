@@ -68,3 +68,13 @@ def get_user_info_by_username(username):
     conn.close()
     
     return result
+
+def get_title_where_favorite(username):
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute(db_queries.SQL_GET_TITLE_WHERE_FAVORITE, (username,))
+    result = cur.fetchone()[0]
+    cur.close()
+    conn.close()
+    return result
