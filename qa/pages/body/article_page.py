@@ -2,17 +2,24 @@ from pages.base_page import BasePage
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.support.ui import WebDriverWait
 
 
 class ArticlePage(BasePage):
     # 로케이터 정의
+    # 공통 로케이터
+    TAGS_UL = (By.CSS_SELECTOR, "ul.tag-list")
+    TAGS_LI = (By.TAG_NAME, "li")
+
     # Article 목록 관련 로케이터
-    ARTICLE_PREVIEW_DIV = (By.CSS_SELECTOR, 'div.article-preview')
-    ARTICLE_PREVIEW_USERNAME_ = (By.CSS_SELECTOR, "a.author")
+    ARTICLE_PREVIEW_DIV = (By.CSS_SELECTOR, "div.article-preview")
+    ARTICLE_PREVIEW_DATE = (By.CSS_SELECTOR, "span.date")
+    ARTICLE_PREVIEW_USERNAME = (By.CSS_SELECTOR, "a.author")
+    ARTICLE_PREVIEW_FAVOR_BTN = (By.CSS_SELECTOR, "button:has(> i.ion-heart)")
     ARTICLE_PREVIEW_TITLE_H1 = (By.CSS_SELECTOR, "a.preview-link > h1")
     ARTICLE_PREVIEW_BODY_P = (By.CSS_SELECTOR, "div.article-preview")
-    ARTICLE_PREVIEW_TAGS_UL = (By.CSS_SELECTOR, "ul.tag-list")
-    ARTICLE_PREVIEW_TAGS_LI = (By.TAG_NAME, "li")
+    ARTICLE_PREVIEW_READMORE_A = (By.CSS_SELECTOR, "a.preview-link")
+    ARTICLE_PREVIEW_PAGE_A = (By.CSS_SELECTOR, "a.page-link")
 
     # New Post 페이지 관련 로케이터
     ARTICLE_TITLE_INPUT = (By.CSS_SELECTOR, 'input[placeholder*="Article Title"]')
@@ -26,30 +33,70 @@ class ArticlePage(BasePage):
     )
     ARTICLE_TAG_INPUT = (By.CSS_SELECTOR, 'input[placeholder*="Enter tags"]')
     ARTICLE_TAG_LIST_SPAN = (By.CSS_SELECTOR, 'div span[class*="tag-default"]')
-    TAG_DEL_I = (By.TAG_NAME, "i")
+    TAG_DEL_I = (By.CSS_SELECTOR, "i.ion-close-round")
     PUBLISH_BTN = (By.CSS_SELECTOR, "button")
+
+    # 글 상세 페이지 관련 로케이터
+    ARTICLE_DETAIL_TITLE_H1 = (By.TAG_NAME, "h1")
+    ARTICLE_DETAIL_PROFILE_IMG = (By.CSS_SELECTOR, "div a img")
+    ARTICLE_DETAIL_AUTHOR = (By.CSS_SELECTOR, "div.info > a.author")
+    ARTICLE_DETAIL_DATE = (By.CSS_SELECTOR, "div.info > span.date")
+    EDIT_ARTICLE_BTN = (By.CSS_SELECTOR, "span a.btn.btn-outline-secondary.btn-sm")
+    DELETE_ARTICLE_BTN = (By.CSS_SELECTOR, "span button.btn.btn-outline-danger.btn-sm")
+    ARTICLE_DETAIL_BODY_P = (By.CSS_SELECTOR, "div p")
+    ARTICLE_COMMENT_TEXTAREA = (
+        By.CSS_SELECTOR,
+        'textarea[placeholder*="Write a comment..."]',
+    )
+    ARTICLE_POST_COMMENT_BTN = (By.CSS_SELECTOR, 'button[type*="submit"]')
+    ARTICLE_COMMENT_P = (By.CSS_SELECTOR, "p.card-text")
+    ARTICLE_COMMENT_AUTHOR_PROFILE_IMG = (By.CSS_SELECTOR, "a.comment-author > img")
+    ARTICLE_COMMENT_AUTHOR_LINK = (By.CSS_SELECTOR, "a.comment-author:empty")
+    ARTICLE_COMMENT_DEL_BTN = (By.CSS_SELECTOR, "i.ion-trash-a")
 
     def __init__(self, driver):
         super().__init__(driver)
 
-    # 모든 자식 요소 찾기
+    # 특정 요소의 자식 요소 찾기
     def find_child_elements(self, parents_elem: WebElement, child_locator):
         return parents_elem.find_elements(*child_locator)
-
+    
     def load_article_lists(self):
-        # 작성된 게시글이 있는지 여부 판단 (하나라도 있으면 1로 count됨)
+        # 작성된 게시글이 있는지 여부 판단 (하나라도 있으면 1로 count)
+        # 페이지 로드상태 확인하는 함수 추가 후 코드 수정 필요
         article_count = len(self.find_elements(self.ARTICLE_PREVIEW_DIV))
         articles = {}  # 정제된 articles 데이터를 담을 딕셔너리 변수
         if article_count < 1:
             return None
         else:  # 등록 게시물이 1개 이상 존재하는 경우
+            pre_authors = []
+            pre_create_dates = []
+            pre_favors = []
             pre_titles = []
             pre_bodies = []
             pre_tags = []
 
+            pre_author_elems = self.find_elements(self.ARTICLE_PREVIEW_USERNAME)
+            pre_create_date_elems = self.find_elements(self.ARTICLE_PREVIEW_DATE)
+            pre_favor_elems = self.find_elements(self.ARTICLE_PREVIEW_FAVOR_BTN)
             pre_title_elems = self.find_elements(self.ARTICLE_PREVIEW_TITLE_H1)
             pre_body_elems = self.find_elements(self.ARTICLE_PREVIEW_BODY_P)
-            pre_tag_elems = self.find_elements(self.ARTICLE_PREVIEW_TAGS_UL)
+            pre_tag_elems = self.find_elements(self.TAGS_UL)
+
+            # 게시글 작성자 텍스트 값 추출
+            for author in pre_author_elems:
+                author_text = author.text
+                pre_authors.append(author_text)
+
+            # 게시글 작성일 텍스트 값 추출
+            for date in pre_create_date_elems:
+                date_text = date.text
+                pre_create_dates.append(date_text)
+
+            # 게시글 좋아요 텍스트 값 추출
+            for favor in pre_favor_elems:
+                favor_text = favor.text
+                pre_favors.append(favor_text)
 
             # 게시글 제목 텍스트 값 추출
             for title in pre_title_elems:
@@ -65,9 +112,7 @@ class ArticlePage(BasePage):
 
             # 태그 텍스트 추출
             for tag_ul in pre_tag_elems:
-                current_article_tags = self.find_child_elements(
-                    tag_ul, self.ARTICLE_PREVIEW_TAGS_LI
-                )
+                current_article_tags = self.find_child_elements(tag_ul, self.TAGS_LI)
                 if len(current_article_tags) == 0:
                     pre_tags.append("")
                 elif len(current_article_tags) == 1:
@@ -79,18 +124,100 @@ class ArticlePage(BasePage):
                     pre_tags.append(tag_group_list)
 
         # 디버깅용
-        # print(f"수집된 제목 총{len(pre_titles)}개 - : {pre_titles}\n")
-        # print(f"수집된 본문 내용 총{len(pre_bodies)}개 - : {pre_bodies}\n")
-        # print(f"수집된 태그 총{len(pre_tags)}개 - : {pre_tags}\n")
+        # print(f"수집된 작성자 총 {len(pre_authors)}개 - : {pre_authors}\n")
+        # print(f"수집된 작성일 총 {len(pre_create_dates)}개 - : {pre_create_dates}\n")
+        # print(f"수집된 좋아요 수 총 {len(pre_favors)}개 - : {pre_favors}\n")
+        # print(f"수집된 제목 총 {len(pre_titles)}개 - : {pre_titles}\n")
+        # print(f"수집된 본문 내용 총 {len(pre_bodies)}개 - : {pre_bodies}\n")
+        # print(f"수집된 태그 총 {len(pre_tags)}개 - : {pre_tags}\n")
 
         for i in range(len(pre_titles)):
             articles[f"article{i+1}"] = {
+                "author": pre_authors[i],
+                "created date": pre_create_dates[i],
+                "favor count": pre_favors[i],
                 "title": pre_titles[i],
                 "body": pre_bodies[i],
                 "tags": pre_tags[i],
             }
-        # print(articles)   # 디버깅용
+        # 디버깅용
+        # print(articles)
         return articles
+
+    def click_article(self, index, selected_page):
+        # 요 내용 내일 BasePage에 추가 논의하기 (웹 페이지가 완전히 로드될때까지 대기)
+        WebDriverWait(self.driver, 10).until(
+            lambda d: d.execute_script("return document.readyState") == "complete"
+        )
+        # 페이지네이션이 없는 경우 (전체 게시글 갯수 10개 이하)
+        if selected_page == 0:
+            article_links = self.find_elements(self.ARTICLE_PREVIEW_READMORE_A)
+            article_links[index - 1].click()
+        else:
+            pages = self.find_elements(self.ARTICLE_PREVIEW_PAGE_A)
+            pages[selected_page - 1].click()
+            WebDriverWait(self.driver, 10).until(
+                lambda d: d.execute_script("return document.readyState") == "complete"
+            )
+            article_links = self.find_elements(self.ARTICLE_PREVIEW_READMORE_A)
+            article_links[index - 1].click()
+
+    def click_article_author_profile_img(self):
+        self.click_element(self.ARTICLE_DETAIL_PROFILE_IMG)
+
+    def click_article_author_username(self):
+        self.click_element(self.ARTICLE_DETAIL_AUTHOR)
+
+    def click_favoite_btn(self):
+        self.click_element(self.click_favoite_btn)
+
+    def click_edit_article_btn(self):
+        self.click_element(self.EDIT_ARTICLE_BTN)
+
+    def click_delete_article_btn(self):
+        self.click_element(self.DELETE_ARTICLE_BTN)
+
+    def load_article_details(self):
+        # 게시글 상세 내용을 담을 빈 딕셔너리 생성
+        article_details = {}
+
+        article_details["title"] = self.get_text(self.ARTICLE_DETAIL_TITLE_H1)
+        article_details["author"] = self.get_text(self.ARTICLE_DETAIL_AUTHOR)
+        article_details["created date"] = self.get_text(self.ARTICLE_DETAIL_DATE)
+        article_details["body"] = self.get_text(self.ARTICLE_DETAIL_BODY_P)
+
+        # 현재 게시글에 태그가 존재하는지 확인 후 조건 분기 처리
+        current_article_tag_elems = self.find_child_elements(
+            self.find_element(self.TAGS_UL), self.TAGS_LI
+        )
+
+        if not current_article_tag_elems:
+            article_details["tags"] = ""
+        else:
+            if len(current_article_tag_elems) == 1:
+                article_details["tags"] = current_article_tag_elems[0].text
+            elif len(current_article_tag_elems) >= 2:
+                # 2개 이상일 경우 태그 텍스트를 담을 빈 리스트 생성
+                current_tags = []
+                for tag in current_article_tag_elems:
+                    current_tags.append(tag.text)
+                article_details["tags"] = current_tags
+        # 디버깅용
+        # print(article_details)
+        return article_details
+
+    def send_comment(self, comment):
+        self.send_keys(self.ARTICLE_COMMENT_TEXTAREA, comment)
+
+    def click_post_comment_btn(self):
+        self.click_element(self.ARTICLE_POST_COMMENT_BTN)
+
+    def save_comment(self, comment):
+        self.send_comment(comment)
+        self.click_post_comment_btn()
+
+    def click_delete_comment_btn(self):
+        self.click_element(self.click_delete_comment_btn)
 
     def send_article_title(self, title):
         self.send_keys(self.ARTICLE_TITLE_INPUT, title)
@@ -116,7 +243,6 @@ class ArticlePage(BasePage):
         self.save_article_tags(tags)
         self.click_publish_btn()
 
-    # 아직 정상 동작하는지 확인하지 못 했음. 작업 이어서 필요
     def delete_selected_tags(self, tag_names):
         for tag_name in tag_names:
             # 루프 시마다 태그 요소 리스트 & 태그 삭제 버튼 리스트 불러오기
@@ -126,7 +252,7 @@ class ArticlePage(BasePage):
             # 현재 태그 요소 리스트의 텍스트 값만 추출하여 리스트로 저장
             tag_text_list = []
             for elem in article_tag_element_list:
-                tag_text_list.append(self.get_text(elem))
+                tag_text_list.append(elem.text)
 
             # 태그 요소 텍스트 리스트에서 tag_name과 동일한 값의 index 값 찾기
             del_index = tag_text_list.index(tag_name)
