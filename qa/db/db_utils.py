@@ -19,7 +19,7 @@ def get_connection():
     return conn
 
 def init_db():
-    """User 테이블의 모든 레코드 삭제"""
+    """User 테이블 및 Tag 테이블의 모든 레코드 삭제"""
     conn = get_connection()
     cur = conn.cursor()
     
