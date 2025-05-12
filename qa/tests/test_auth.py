@@ -203,16 +203,18 @@ class TestAuthentication:
             # 테스트 시나리오 시작
             header.click_sign_in_link()
             signInPage.send_email_input(email)
-            signInPage.click_sign_in_btn()
+            assert signInPage.get_email_input_value() == email # 기대 결과 1: {이메일}이 "Email" 입력 필드에 정상 반영됨
 
-            assert signInPage.get_email_validation_message() == expected_result
+            signInPage.click_sign_in_btn()
+            assert signInPage.get_email_validation_message() == expected_result # 기대 결과 2: {경고창}이 표시됨
             self.logger.info("로그인 페이지에서 이메일 유효성 검사 메시지 확인")
 
             header.click_sign_up_link()
             signUpPage.send_email_input(email)
-            signUpPage.click_sign_up_btn()
+            assert signUpPage.get_email_input_value() == email # 기대 결과 3: {이메일}이 "Email" 입력 필드에 정상 반영됨
 
-            assert signUpPage.get_email_validation_message() == expected_result
+            signUpPage.click_sign_up_btn()
+            assert signUpPage.get_email_validation_message() == expected_result # 기대 결과 4: {경고창}이 표시됨
             self.logger.info("회원가입 페이지에서 이메일 유효성 검사 메시지 확인")
             self.logger.info(f"{email}로 이메일 입력 시 {expected_result} 유효성 검사 메시지 확인 완료")
 
