@@ -1,6 +1,5 @@
 from pages.base_page import BasePage
 from selenium.webdriver.common.by import By
-from db.db_utils import *
 
 class SettingsPage(BasePage):
     # 로케이터 정의
@@ -40,6 +39,10 @@ class SettingsPage(BasePage):
         actual = self.get_attribute(locator, "value")
         return actual == expected
     
+    def is_value_length_equal(self, locator, expected):
+        actual = self.get_attribute(locator, "value")
+        return len(actual) == len(expected)
+    
     def is_url_link_equal(self, expected):
         return self.is_value_equal(self.URL_LINK_INPUT, expected)
 
@@ -52,23 +55,22 @@ class SettingsPage(BasePage):
     def is_email_equal(self, expected):
         return self.is_value_equal(self.EMAIL_INPUT, expected)
     
+    def is_password_length_equal(self, expected):
+        return self.is_value_length_equal(self.PASSWORD_INPUT,expected)
+    
     def click_update_btn(self):
         self.click_element(self.UPDATE_BTN)
-
-    def reset_user_info_by_username(username):
-        update("User", {"username":"user1", "email":"1@1.1"}, {"username":username})
 
     def change_user_info(self, **kwargs):
     # 키와 메서드 매핑 테이블
         actions = {
-            "expected_url": self.send_url_link_input,
-            "expected_username": self.send_username_input,
-            "expected_bio": self.send_bio_input,
-            "expected_email": self.send_email_input,
-            "expected_password": self.send_password_input,
+            "url": self.send_url_link_input,
+            "username": self.send_username_input,
+            "bio": self.send_bio_input,
+            "email": self.send_email_input,
+            "password": self.send_password_input,
         }
 
         for key, func in actions.items():
             if key in kwargs and kwargs[key] is not None:
                 func(kwargs[key])
-                
