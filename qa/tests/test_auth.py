@@ -214,6 +214,7 @@ class TestAuthentication:
 
             assert signUpPage.get_email_validation_message() == expected_result
             self.logger.info("회원가입 페이지에서 이메일 유효성 검사 메시지 확인")
+            self.logger.info(f"{email}로 이메일 입력 시 {expected_result} 유효성 검사 메시지 확인 완료")
 
         except Exception as e:
             self.logger.error(f"❌ AUTH_05 테스트 중 오류 발생: {e}")
