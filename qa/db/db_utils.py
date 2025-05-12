@@ -76,5 +76,5 @@ def get_user_info_by_username(username):
 
     cur.close()
     conn.close()
-
-    return result[2], result[4], result[5] # 차례대로 유저명, 프로필사진, 소개 반환
+    
+    return result
