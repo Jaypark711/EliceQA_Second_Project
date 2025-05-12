@@ -187,12 +187,42 @@ class TestAuthentication:
             self.logger.error(f"❌ AUTH_04 테스트 중 오류 발생: {e}")
             assert False
 
+    @pytest.mark.parametrize("email, expected_result", [ # TODO: 데이터 임시 하드코딩 (추후 분리하기)
+        ("user", "이메일 주소에 '@'를 포함해 주세요. 'user'에 '@'가 없습니다."),
+        ("@", "'@' 앞 부분을 입력해 주세요. '@'(이)가 완전하지 않습니다."),
+        ("user@", "'@' 뒷 부분을 입력해 주세요. 'user@'(이)가 완전하지 않습니다.")
+    ])
+    def test_email_validation_message(self, driver, email, expected_result):
+        """AUTH_05: """
+        self.logger.info("")
+        header = Header(driver)
+        signInPage = SignInPage(driver)
+        signUpPage = SignUpPage(driver)
+
+        try:
+            # 테스트 시나리오 시작
+            header.click_sign_in_link()
+            signInPage.send_email_input(email)
+            signInPage.click_sign_in_btn()
+
+            assert signInPage.get_email_validation_message() == expected_result
+
+            header.click_sign_up_link()
+            signUpPage.send_email_input(email)
+            signUpPage.click_sign_up_btn()
+
+            assert signUpPage.get_email_validation_message() == expected_result
+
+        except Exception as e:
+            self.logger.error(f"❌ AUTH_05 테스트 중 오류 발생: {e}")
+            assert False
+
     def test_redirection(self, driver):
-        """AUTH_05: 회원가입 페이지와 로그인 페이지 간의 리다이렉션 기능 확인"""
+        """AUTH_06: 회원가입 페이지와 로그인 페이지 간의 리다이렉션 기능 확인"""
         self.logger.info("리다이렉션 테스트 시작")
         header = Header(driver)
-        signUpPage = SignUpPage(driver)
         signInPage = SignInPage(driver)
+        signUpPage = SignUpPage(driver)
 
         try:
             # 테스트 시나리오 시작
@@ -207,11 +237,11 @@ class TestAuthentication:
             self.logger.info("리다이렉션 테스트 성공")
 
         except Exception as e:
-            self.logger.error(f"❌ AUTH_05 테스트 중 오류 발생: {e}")
+            self.logger.error(f"❌ AUTH_06 테스트 중 오류 발생: {e}")
             assert False
 
     def test_logout(self, driver):
-        """AUTH_06: 로그인 상태에서 로그아웃 성공"""
+        """AUTH_07: 로그인 상태에서 로그아웃 성공"""
         self.logger.info("로그아웃 테스트 시작")
         header = Header(driver)
         homePage = HomePage(driver)
@@ -239,5 +269,5 @@ class TestAuthentication:
             self.logger.info("로그아웃 테스트 성공")
 
         except Exception as e:
-            self.logger.error(f"❌ AUTH_06 테스트 중 오류 발생: {e}")
+            self.logger.error(f"❌ AUTH_07 테스트 중 오류 발생: {e}")
             assert False

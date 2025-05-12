@@ -35,6 +35,9 @@ class SignInPage(BasePage):
 
     def get_error_messages_text(self):
         return self.find_element(self.ERROR_TXT).text
+    
+    def get_email_validation_message(self):
+        return self.driver.execute_script("return document.querySelector(\"input[type='email']\").validationMessage;")
 
     def sign_in(self):
         self.send_keys(self.EMAIL_INPUT, VALID_USER["email"])
