@@ -67,10 +67,10 @@ class ArticlePage(BasePage):
         # 페이지 로드 완료될 때까지 대기
         helpers = Helpers(self.driver)
         helpers.wait_until_page_load_complete()
-
-        article_count = len(self.find_elements(self.ARTICLE_PREVIEW_DIV))
+        article_previews = self.find_elements(self.ARTICLE_PREVIEW_DIV)
+        article_count = len(article_previews)
         articles = {}  # 정제된 articles 데이터를 담을 딕셔너리 변수
-        if article_count < 1:
+        if article_count == 1 and article_previews[0].text == "No articles are here... yet.":
             return None
         else:  # 등록 게시물이 1개 이상 존재하는 경우
             pre_authors = []
