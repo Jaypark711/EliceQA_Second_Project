@@ -10,6 +10,7 @@ class ProfilePage(BasePage):
     EDIT_PROFILE_SETTINGS_BTN = (By.CSS_SELECTOR, 'a[href="/settings"]')
     MY_ARTICLE_TAB_LINK = (By.XPATH, '//a[text() = "My Articles"]')
     FAVORITED_ARTICLE_TAB_LINK = (By.XPATH, '//a[text() = "Favorited Articles"]')
+    EMPTY_TEXT_DIV = (By.XPATH, '//div[text() = "No articles are here... yet."]')
 
     def __init__(self, driver):
         super().__init__(driver)
@@ -19,6 +20,9 @@ class ProfilePage(BasePage):
 
     def is_favorited_article_tab_active(self):
         return self.is_element_active(self.FAVORITED_ARTICLE_TAB_LINK)
+    
+    def is_empty_text_div_show(self):
+        return self.is_element_appear(self.EMPTY_TEXT_DIV)
 
     def click_edit_profile_settings_btn(self):
         self.click_element(self.EDIT_PROFILE_SETTINGS_BTN)
