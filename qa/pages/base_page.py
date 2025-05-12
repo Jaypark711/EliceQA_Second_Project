@@ -4,6 +4,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from config.config import TIMEOUT
 
+
 class BasePage:
     def __init__(self, driver: WebDriver):
         self.driver = driver
@@ -48,3 +49,8 @@ class BasePage:
     def wait_until_url_and_get(self, expected_url):
         self.wait.until(EC.url_to_be(expected_url))
         return self.driver.current_url
+
+    def wait_until_page_load_complete(self):
+        self.wait.until(
+            lambda d: d.execute_script("return document.readyState") == "complete"
+        )
