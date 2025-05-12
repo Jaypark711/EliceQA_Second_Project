@@ -1,6 +1,6 @@
 from pages.base_page import BasePage
 from selenium.webdriver.common.by import By
-from db.execute_query import *
+from db.db_utils import *
 
 class SettingsPage(BasePage):
     # 로케이터 정의
@@ -61,15 +61,14 @@ class SettingsPage(BasePage):
     def change_user_info(self, **kwargs):
     # 키와 메서드 매핑 테이블
         actions = {
-            "url": self.send_url_link_input,
-            "username": self.send_username_input,
-            "bio": self.send_bio_input,
-            "email": self.send_email_input,
-            "password": self.send_password_input,
+            "expected_url": self.send_url_link_input,
+            "expected_username": self.send_username_input,
+            "expected_bio": self.send_bio_input,
+            "expected_email": self.send_email_input,
+            "expected_password": self.send_password_input,
         }
 
         for key, func in actions.items():
             if key in kwargs and kwargs[key] is not None:
                 func(kwargs[key])
-
-        self.click_update_btn()
+                
