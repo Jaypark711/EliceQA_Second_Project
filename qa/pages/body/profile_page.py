@@ -11,6 +11,8 @@ class ProfilePage(BasePage):
     MY_ARTICLE_TAB_LINK = (By.XPATH, '//a[text() = "My Articles"]')
     FAVORITED_ARTICLE_TAB_LINK = (By.XPATH, '//a[text() = "Favorited Articles"]')
     EMPTY_TEXT_DIV = (By.XPATH, '//div[text() = "No articles are here... yet."]')
+    FOLLOW_BTN = (By.XPATH, "//button[contains(@class,'action-btn') and contains(., 'Follow')]")
+    UNFOLLOW_BTN = (By.XPATH, "//button[contains(@class,'action-btn') and contains(., 'Unfollow')]")
 
     def __init__(self, driver):
         super().__init__(driver)
@@ -33,6 +35,13 @@ class ProfilePage(BasePage):
     def click_favorited_article_tab_link(self):
         self.click_element(self.FAVORITED_ARTICLE_TAB_LINK)
 
+    def click_follow_btn(self):
+        self.click_element(self.FOLLOW_BTN)
+
+    
+    def click_unfollow_btn(self):
+        self.click_element(self.UNFOLLOW_BTN)    
+
     def get_profile_img_src(self):
         return self.get_attribute(self.PROFILE_IMG, "src")
     
@@ -41,3 +50,8 @@ class ProfilePage(BasePage):
     
     def get_bio_p_text(self):
         return self.get_text(self.BIO_P)
+    
+    def get_name_from_follow_btn(self):
+        full_text = self.find_element(self.FOLLOW_BTN).text
+        return full_text.removeprefix(" Follow ").strip()
+    

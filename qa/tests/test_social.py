@@ -25,7 +25,7 @@ class TestSocial:
         driver.get(BASE_URL)
         yield
         self.logger.info("============================")
-        
+    
     def test_article_favorite_function(self,driver):
         """SOCIAL_01: 유효한 정보로 비밀번호 업데이트 성공"""
         header = Header(driver)
@@ -49,9 +49,31 @@ class TestSocial:
             self.logger.error(f"❌ SOCIAL_01 테스트 중 오류 발생: {e}")
             assert False, "❌ SOCIAL_01 테스트 중 오류 발생"
 
-    def test_sample(self,driver):
+    def test_author_follow_function(self,driver):
         try:
-            pass
+            header = Header(driver)
+            signupPage = SignUpPage(driver)
+            homePage = HomePage(driver)
+            articlePage = ArticlePage(driver)
+            profilePage = ProfilePage(driver)
+            header.click_sign_up_link()
+            signupPage.sign_up()
+            homePage.click_global_feed_tab_link()
+            articlePage.click_preview_author()
+            followed_user = profilePage.get_name_from_follow_btn()
+            profilePage.click_follow_btn()
+            header.click_home_link()
+            article_list = [ info['author'] for info in articlePage.load_article_preview_lists().values() ]
+            
+            assert set(article_list) == {followed_user} # 기대 결과 1 : article 리스트의 author이 follow한 author과 전부 일치
+            self.logger.info("기대 결과 1 : article 리스트의 author이 follow한 author과 전부 일치")
+
+            articlePage.click_preview_author()
+            profilePage.click_unfollow_btn()
+            header.click_home_link()
+            assert profilePage.is_empty_text_div_show() # 기대 결과 2 : 팔로우한 author이 없을 때 No articles here이 노출됨
+            self.logger.info("기대 결과 2 : 팔로우한 author이 없을 때 No articles here이 노출됨")
+
         except Exception as e:
             self.logger.error(f"❌ SOCIAL_02 테스트 중 오류 발생: {e}")
             assert False, "❌ SOCIAL_02 테스트 중 오류 발생"
