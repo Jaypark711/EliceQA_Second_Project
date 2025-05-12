@@ -71,7 +71,7 @@ class ArticlePage(BasePage):
         article_count = len(article_previews)
         articles = {}  # 정제된 articles 데이터를 담을 딕셔너리 변수
         if article_count == 1 and article_previews[0].text == "No articles are here... yet.":
-            return None
+            return article_previews[0]
         else:  # 등록 게시물이 1개 이상 존재하는 경우
             pre_authors = []
             pre_create_dates = []
@@ -150,22 +150,36 @@ class ArticlePage(BasePage):
         # print(articles)
         return articles
 
-    def click_article(self, index, selected_page):
+    def click_article(self, selected_page, index):
         # 페이지 로드가 완료될 때 까지 대기
         helpers = Helpers(self.driver)
         helpers.wait_until_page_load_complete()
 
-        # 페이지네이션이 없는 경우 (전체 게시글 갯수 10개 이하)
+        # 페이지네이션이 없는 경우 (전체 게시글 갯수 10개 이하) - 0으로 파라미터 보낼 것
         if selected_page == 0:
             article_links = self.find_elements(self.ARTICLE_PREVIEW_READMORE_A)
             article_links[index - 1].click()
         else:
             pages = self.find_elements(self.ARTICLE_PREVIEW_PAGE_A)
             pages[selected_page - 1].click()
-            WebDriverWait(self.driver, 10).until(
-                lambda d: d.execute_script("return document.readyState") == "complete"
-            )
+            helpers.wait_until_page_load_complete()
             article_links = self.find_elements(self.ARTICLE_PREVIEW_READMORE_A)
+            article_links[index - 1].click()
+
+    def click_preview_favorite(self, selected_page, index):
+        # 페이지 로드가 완료될 때 까지 대기
+        helpers = Helpers(self.driver)
+        helpers.wait_until_page_load_complete()
+
+        # 페이지네이션이 없는 경우 (전체 게시글 갯수 10개 이하) - 0으로 파라미터 보낼 것
+        if selected_page == 0:
+            article_links = self.find_elements(self.ARTICLE_PREVIEW_FAVOR_BTN)
+            article_links[index - 1].click()
+        else:
+            pages = self.find_elements(self.ARTICLE_PREVIEW_FAVOR_BTN)
+            pages[selected_page - 1].click()
+            helpers.wait_until_page_load_complete()
+            article_links = self.find_elements(self.ARTICLE_PREVIEW_FAVOR_BTN)
             article_links[index - 1].click()
 
     def click_article_author_profile_img(self):
@@ -173,9 +187,6 @@ class ArticlePage(BasePage):
 
     def click_article_author_username(self):
         self.click_element(self.ARTICLE_DETAIL_AUTHOR)
-
-    def click_favoite_btn(self):
-        self.click_element(self.click_favoite_btn)
 
     def click_edit_article_btn(self):
         self.click_element(self.EDIT_ARTICLE_BTN)
