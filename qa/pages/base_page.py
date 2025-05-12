@@ -17,9 +17,10 @@ class BasePage:
         return self.wait.until(EC.presence_of_all_elements_located(locator))
 
     def click_element(self, locator):
-        element = self.wait.until(EC.element_to_be_clickable(locator))
-        element.click()
-        return element
+        for _ in range(2):  # 최대 2번 시도
+            element = self.wait.until(EC.element_to_be_clickable(locator))
+            element.click()
+            return element
 
     def send_keys(self, locator, text):
         element = self.click_element(locator)

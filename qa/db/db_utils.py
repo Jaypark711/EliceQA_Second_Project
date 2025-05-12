@@ -18,22 +18,12 @@ def get_connection():
 
     return conn
 
-def delete_all_user():
+def init_db():
     """User 테이블의 모든 레코드 삭제"""
     conn = get_connection()
     cur = conn.cursor()
     
     cur.execute(db_queries.SQL_DELETE_ALL_USER)
-    conn.commit()
-
-    cur.close()
-    conn.close()
-
-def delete_all_tag():
-    """Tag 테이블의 모든 레코드 삭제"""
-    conn = get_connection()
-    cur = conn.cursor()
-    
     cur.execute(db_queries.SQL_DELETE_ALL_TAG)
     conn.commit()
 

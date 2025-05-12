@@ -12,8 +12,6 @@ class SettingsPage(BasePage):
     UPDATE_BTN = (By.CSS_SELECTOR, 'button[type="submit"]')
     LOGOUT_BTN = (By.XPATH, '//button[text()="Or click here to logout."]')
 
-
-
     def __init__(self, driver):
         super().__init__(driver)
     
@@ -34,32 +32,31 @@ class SettingsPage(BasePage):
     
     def click_logout_btn(self):
         self.click_element(self.LOGOUT_BTN)
-
-    def is_value_equal(self, locator, expected):
-        actual = self.get_attribute(locator, "value")
-        return actual == expected
     
     def is_value_length_equal(self, locator, expected):
         actual = self.get_attribute(locator, "value")
         return len(actual) == len(expected)
-    
-    def is_url_link_equal(self, expected):
-        return self.is_value_equal(self.URL_LINK_INPUT, expected)
-
-    def is_username_equal(self, expected):
-        return self.is_value_equal(self.USERNAME_INPUT, expected)
-
-    def is_bio_equal(self, expected):
-        return self.is_value_equal(self.BIO_INPUT, expected)
-
-    def is_email_equal(self, expected):
-        return self.is_value_equal(self.EMAIL_INPUT, expected)
     
     def is_password_length_equal(self, expected):
         return self.is_value_length_equal(self.PASSWORD_INPUT,expected)
     
     def click_update_btn(self):
         self.click_element(self.UPDATE_BTN)
+
+    def get_url_link_input_value(self):
+        return self.get_attribute(self.URL_LINK_INPUT, "value")
+    
+    def get_username_input_value(self):
+        return self.get_attribute(self.USERNAME_INPUT, "value")
+    
+    def get_bio_input_value(self):
+        return self.get_attribute(self.BIO_INPUT, "value")
+    
+    def get_email_input_value(self):
+        return self.get_attribute(self.EMAIL_INPUT, "value")
+    
+    def get_password_input_value(self):
+        return self.get_attribute(self.PASSWORD_INPUT, "value")
 
     def change_user_info(self, **kwargs):
     # 키와 메서드 매핑 테이블
