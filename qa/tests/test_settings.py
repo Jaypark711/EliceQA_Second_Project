@@ -21,11 +21,11 @@ class TestSettings:
 
     @pytest.fixture(autouse=True)
     def setup_and_teardown(self, driver:WebDriver):
-        driver.get(BASE_URL)
         delete_all_user()
+        driver.get(BASE_URL)
         yield
         self.logger.info("============================")
-    @pytest.mark.skip()
+
     @pytest.mark.parametrize("user_data", [SETTING_USER_1, SETTING_USER_2, SETTING_USER_3], ids=["1", "2", "3"])
     def test_successful_update_settings(self, driver, user_data):
         """SETTING_01: 유효한 정보로 회원 정보 업데이트 성공"""
@@ -34,7 +34,6 @@ class TestSettings:
         settingsPage = SettingsPage(driver)
         signUpPage = SignUpPage(driver)
         try:
-            
             header.click_sign_up_link()
             signUpPage.sign_up()
             header.click_sign_in_link()
@@ -63,7 +62,6 @@ class TestSettings:
             self.logger.error(f"❌ 회원 정보 업데이트 테스트 중 오류 발생: {e}")
             assert False, "❌ 회원 정보 업데이트 테스트 중 오류 발생"
 
-    #@pytest.mark.skip(reason="미구현")
     @pytest.mark.parametrize("user_data", [SETTING_USER_1, SETTING_USER_2, SETTING_USER_3], ids=["1", "2", "3"])
     def test_successful_update_password(self,driver,user_data):
         """SETTING_02: 유효한 정보로 비밀번호 업데이트 성공"""
