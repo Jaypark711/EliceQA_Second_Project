@@ -1,3 +1,4 @@
+import re
 from pages.base_page import BasePage
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -17,7 +18,7 @@ class ArticlePage(BasePage):
     ARTICLE_PREVIEW_USERNAME = (By.CSS_SELECTOR, "a.author")
     ARTICLE_PREVIEW_FAVOR_BTN = (By.CSS_SELECTOR, "button:has(> i.ion-heart)")
     ARTICLE_PREVIEW_TITLE_H1 = (By.CSS_SELECTOR, "a.preview-link > h1")
-    ARTICLE_PREVIEW_BODY_P = (By.CSS_SELECTOR, "div.article-preview")
+    ARTICLE_PREVIEW_DESCRIPTION_P = (By.CSS_SELECTOR, "div.article-preview")
     ARTICLE_PREVIEW_READMORE_A = (By.CSS_SELECTOR, "a.preview-link")
     ARTICLE_PREVIEW_PAGE_A = (By.CSS_SELECTOR, "a.page-link")
 
@@ -60,10 +61,11 @@ class ArticlePage(BasePage):
     # 특정 요소의 자식 요소 찾기
     def find_child_elements(self, parents_elem: WebElement, child_locator):
         return parents_elem.find_elements(*child_locator)
-    
-    def load_article_lists(self):
-        # 작성된 게시글이 있는지 여부 판단 (하나라도 있으면 1로 count)
-        # 페이지 로드상태 확인하는 함수 추가 후 코드 수정 필요
+
+    def load_article_preview_lists(self):
+        # 페이지 로드 완료될 때까지 대기
+        self.wait_until_page_load_complete()
+
         article_count = len(self.find_elements(self.ARTICLE_PREVIEW_DIV))
         articles = {}  # 정제된 articles 데이터를 담을 딕셔너리 변수
         if article_count < 1:
@@ -73,14 +75,14 @@ class ArticlePage(BasePage):
             pre_create_dates = []
             pre_favors = []
             pre_titles = []
-            pre_bodies = []
+            pre_descriptions = []
             pre_tags = []
 
             pre_author_elems = self.find_elements(self.ARTICLE_PREVIEW_USERNAME)
             pre_create_date_elems = self.find_elements(self.ARTICLE_PREVIEW_DATE)
             pre_favor_elems = self.find_elements(self.ARTICLE_PREVIEW_FAVOR_BTN)
             pre_title_elems = self.find_elements(self.ARTICLE_PREVIEW_TITLE_H1)
-            pre_body_elems = self.find_elements(self.ARTICLE_PREVIEW_BODY_P)
+            pre_description_elems = self.find_elements(self.ARTICLE_PREVIEW_DESCRIPTION_P)
             pre_tag_elems = self.find_elements(self.TAGS_UL)
 
             # 게시글 작성자 텍스트 값 추출
@@ -103,12 +105,12 @@ class ArticlePage(BasePage):
                 title_text = title.text
                 pre_titles.append(title_text)
 
-            # 게시글 본문 텍스트 값 추출
-            for body in pre_body_elems:
-                # 본문 내용에 글 작성자, 날짜 정보와 read more 부분도 포함되어 필요 내용 외 삭제
-                lines = body.text.split("\n")
-                body_text = lines[4]
-                pre_bodies.append(body_text)
+            # 게시글 주제 텍스트 값 추출
+            for description in pre_description_elems:
+                # 주제 내용에 글 작성자, 날짜 정보와 read more 부분도 포함되어 필요 내용 외 삭제
+                lines = description.text.split("\n")
+                desc_text = lines[4]
+                pre_descriptions.append(desc_text)
 
             # 태그 텍스트 추출
             for tag_ul in pre_tag_elems:
@@ -137,7 +139,7 @@ class ArticlePage(BasePage):
                 "created date": pre_create_dates[i],
                 "favor count": pre_favors[i],
                 "title": pre_titles[i],
-                "body": pre_bodies[i],
+                "description": pre_descriptions[i],
                 "tags": pre_tags[i],
             }
         # 디버깅용
@@ -145,10 +147,9 @@ class ArticlePage(BasePage):
         return articles
 
     def click_article(self, index, selected_page):
-        # 요 내용 내일 BasePage에 추가 논의하기 (웹 페이지가 완전히 로드될때까지 대기)
-        WebDriverWait(self.driver, 10).until(
-            lambda d: d.execute_script("return document.readyState") == "complete"
-        )
+        # 페이지 로드가 완료될 때 까지 대기
+        self.wait_until_page_load_complete()
+
         # 페이지네이션이 없는 경우 (전체 게시글 갯수 10개 이하)
         if selected_page == 0:
             article_links = self.find_elements(self.ARTICLE_PREVIEW_READMORE_A)
@@ -242,6 +243,14 @@ class ArticlePage(BasePage):
         self.send_article_body(body)
         self.save_article_tags(tags)
         self.click_publish_btn()
+
+    def get_article_url(self, title, userkey):
+        """ article 주소 방식
+        - 한글은 모두 삭제
+        - 공백의 경우 '-'로 대치 """
+        # 한글 삭제
+        re.sub(r"[가-힣]+", "", title)
+        re.sub(" ","-",title)
 
     def delete_selected_tags(self, tag_names):
         for tag_name in tag_names:
