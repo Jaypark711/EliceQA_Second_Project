@@ -78,3 +78,28 @@ def get_title_where_favorite(username):
     cur.close()
     conn.close()
     return result
+
+def get_user_id_by_username(username):
+    """특정 사용자명(username)에 해당하는 유저의 id 번호 값을 튜플로 받아 정수로 형변환"""
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute(db_queries.SQL_GET_USER_ID_BY_USERNAME, (username,))
+
+    result = cur.fetchone()[0]
+
+    return result
+
+def get_articles_by_title(title):
+    """ 타이틀명(title)으로 article을 찾아 실제로 게시글이 DB에 존재하는지 확인하기"""
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute(db_queries.SQL_GET_ARTICLES_BY_TITLE, (title,))
+
+    result = cur.fetchone()
+
+    cur.close()
+    conn.close()
+    
+    return result

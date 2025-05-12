@@ -16,6 +16,7 @@ class ArticlePage(BasePage):
     # Article 목록 관련 로케이터
     ARTICLE_PREVIEW_DIV = (By.CSS_SELECTOR, "div.article-preview")
     ARTICLE_PREVIEW_DATE = (By.CSS_SELECTOR, "span.date")
+    ARTICLE_PREVIEW_PROFILE_IMG = (By.CSS_SELECTOR, "a img")
     ARTICLE_PREVIEW_USERNAME = (By.CSS_SELECTOR, "a.author")
     ARTICLE_PREVIEW_FAVOR_BTN = (By.CSS_SELECTOR, "button:has(> i.ion-heart)")
     ARTICLE_PREVIEW_TITLE_H1 = (By.CSS_SELECTOR, "a.preview-link > h1")
@@ -181,6 +182,12 @@ class ArticlePage(BasePage):
             helpers.wait_until_page_load_complete()
             article_links = self.find_elements(self.ARTICLE_PREVIEW_FAVOR_BTN)
             article_links[index - 1].click()
+
+    def click_preview_author_profile_img(self):
+        self.click_element(self.ARTICLE_PREVIEW_PROFILE_IMG)
+
+    def click_preview_author(self):
+        self.click_element(self.ARTICLE_PREVIEW_USERNAME)
 
     def click_article_author_profile_img(self):
         self.click_element(self.ARTICLE_DETAIL_PROFILE_IMG)
