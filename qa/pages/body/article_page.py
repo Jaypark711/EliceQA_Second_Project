@@ -1,4 +1,5 @@
 import re
+from utils.helpers import Helpers
 from pages.base_page import BasePage
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -64,7 +65,8 @@ class ArticlePage(BasePage):
 
     def load_article_preview_lists(self):
         # 페이지 로드 완료될 때까지 대기
-        self.wait_until_page_load_complete()
+        helpers = Helpers(self.driver)
+        helpers.wait_until_page_load_complete()
 
         article_count = len(self.find_elements(self.ARTICLE_PREVIEW_DIV))
         articles = {}  # 정제된 articles 데이터를 담을 딕셔너리 변수
@@ -82,7 +84,9 @@ class ArticlePage(BasePage):
             pre_create_date_elems = self.find_elements(self.ARTICLE_PREVIEW_DATE)
             pre_favor_elems = self.find_elements(self.ARTICLE_PREVIEW_FAVOR_BTN)
             pre_title_elems = self.find_elements(self.ARTICLE_PREVIEW_TITLE_H1)
-            pre_description_elems = self.find_elements(self.ARTICLE_PREVIEW_DESCRIPTION_P)
+            pre_description_elems = self.find_elements(
+                self.ARTICLE_PREVIEW_DESCRIPTION_P
+            )
             pre_tag_elems = self.find_elements(self.TAGS_UL)
 
             # 게시글 작성자 텍스트 값 추출
@@ -148,7 +152,8 @@ class ArticlePage(BasePage):
 
     def click_article(self, index, selected_page):
         # 페이지 로드가 완료될 때 까지 대기
-        self.wait_until_page_load_complete()
+        helpers = Helpers(self.driver)
+        helpers.wait_until_page_load_complete()
 
         # 페이지네이션이 없는 경우 (전체 게시글 갯수 10개 이하)
         if selected_page == 0:
@@ -244,13 +249,21 @@ class ArticlePage(BasePage):
         self.save_article_tags(tags)
         self.click_publish_btn()
 
-    def get_article_url(self, title, userkey):
-        """ article 주소 방식
+    def get_article_slug(self, title, userkey):
+        """article 주소 방식
         - 한글은 모두 삭제
-        - 공백의 경우 '-'로 대치 """
+        - 공백의 경우 '-'로 대치"""
+        print(title)
         # 한글 삭제
-        re.sub(r"[가-힣]+", "", title)
-        re.sub(" ","-",title)
+        changed_url_path = (
+            "article/"
+            + re.sub(r"[가-힣]+", "", title).replace(" ", "-")
+            + f"-{userkey}"
+        )
+        if "--" in changed_url_path:
+            changed_url_path = changed_url_path.replace("--", "-")
+        print(changed_url_path)
+        return changed_url_path
 
     def delete_selected_tags(self, tag_names):
         for tag_name in tag_names:
