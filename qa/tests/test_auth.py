@@ -193,8 +193,8 @@ class TestAuthentication:
         ("user@", "'@' 뒷 부분을 입력해 주세요. 'user@'(이)가 완전하지 않습니다.")
     ])
     def test_email_validation_message(self, driver, email, expected_result):
-        """AUTH_05: """
-        self.logger.info("")
+        """AUTH_05: 유효하지 않은 이메일 형식 입력 시 브라우저의 유효성 검사 메시지가 제공되는지 확인"""
+        self.logger.info("이메일 유효성 검사 메시지 테스트 시작")
         header = Header(driver)
         signInPage = SignInPage(driver)
         signUpPage = SignUpPage(driver)
@@ -206,12 +206,14 @@ class TestAuthentication:
             signInPage.click_sign_in_btn()
 
             assert signInPage.get_email_validation_message() == expected_result
+            self.logger.info("로그인 페이지에서 이메일 유효성 검사 메시지 확인")
 
             header.click_sign_up_link()
             signUpPage.send_email_input(email)
             signUpPage.click_sign_up_btn()
 
             assert signUpPage.get_email_validation_message() == expected_result
+            self.logger.info("회원가입 페이지에서 이메일 유효성 검사 메시지 확인")
 
         except Exception as e:
             self.logger.error(f"❌ AUTH_05 테스트 중 오류 발생: {e}")
