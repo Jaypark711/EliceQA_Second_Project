@@ -45,6 +45,9 @@ class SignUpPage(BasePage):
     def get_error_messages_text(self):
         elements = self.find_elements(self.ERROR_TXT)
         return [element.text.strip() for element in elements]
+    
+    def get_email_validation_message(self):
+        return self.driver.execute_script("return document.querySelector(\"input[type='email']\").validationMessage;")
 
     def sign_up(self):
         self.send_username_input(VALID_USER["username"])
