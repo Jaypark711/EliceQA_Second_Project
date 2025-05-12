@@ -44,16 +44,16 @@ class TestSettings:
             self.logger.info("기대 결과 1 - Settings 페이지로 진입됨")
 
             settingsPage.change_user_info(url = user_data["url"], username = user_data["username"], bio = user_data["bio"], email = user_data["email"])
-            assert all([ # 기대 결과 2: 입력한 값이 입력 필드에 입력되어야 함
-                settingsPage.get_url_link_input_value() == user_data["url"],
-                settingsPage.get_username_input_value() == user_data["username"],
-                settingsPage.get_bio_input_value() == user_data["bio"],
-                settingsPage.get_email_input_value() == user_data["email"]
+            assert all([ 
+                settingsPage.get_url_link_input_value() == user_data["url"], # 기대 결과 2: {이메일}이 "URL of profile picture" 입력 필드에 정상 반영됨
+                settingsPage.get_username_input_value() == user_data["username"], # 기대 결과 3: {유저명}이 "Username" 입력 필드에 정상 반영됨
+                settingsPage.get_bio_input_value() == user_data["bio"], # 기대 결과 4: {간단설명}이 "Short bio about you" 입력 필드에 정상 반영됨
+                settingsPage.get_email_input_value() == user_data["email"] # 기대 결과 5: {이메일}이 "Email" 입력 필드에 정상 반영됨
             ])
             self.logger.info("기대 결과 2 - 입력한 값이 입력 필드에 입력됨")
             
             settingsPage.click_update_btn()
-            assert all([ # 기대 결과 3: 업데이트 후 Header - [마이프로필] 영역에 {이미지 링크}와 {사용자명}이 노출되어야 함
+            assert all([ # 기대 결과 6: 업데이트 후 Header - [마이프로필] 영역에 {이미지 링크}와 {사용자명}이 노출되어야 함
                 user_data["url"] in header.get_profile_img(),
                 user_data["username"] == header.get_username()
             ])
