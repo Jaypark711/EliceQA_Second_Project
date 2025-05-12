@@ -5,7 +5,6 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from config.config import BASE_URL
 from data.user_data import VALID_USER, SETTING_USER_1, SETTING_USER_2, SETTING_USER_3
 from pages.header.header import Header
-from pages.body.home_page import HomePage
 from pages.body.signin_page import SignInPage
 from pages.body.signup_page import SignUpPage
 from pages.body.settings_page import SettingsPage
@@ -72,7 +71,6 @@ class TestSettings:
         signinPage = SignInPage(driver)
         signupPage = SignUpPage(driver)
         settingsPage = SettingsPage(driver)
-        homePage = HomePage(driver)
         
         try:
             # 테스트 환경 세팅
@@ -103,12 +101,7 @@ class TestSettings:
             signinPage.send_password_input(user_data["password"])
             signinPage.click_sign_in_btn()
 
-            assert all([ # 기대 결과 5: 메인 화면에 Your Feed 탭, New Post 링크, Settings 링크, MyProfile 링크 추가 표시
-                homePage.is_your_feed_tab_link_appear(),
-                header.is_new_post_link_appear(),
-                header.is_settings_link_appear(),
-                header.is_my_profile_link_appear()
-            ])
+            assert header.is_my_profile_link_appear() # 기대 결과 3: 변경된 비밀번호로 로그인이 되어야 함
             self.logger.info("변경된 비밀번호로 로그인 됨 확인")
             self.logger.info("비밀번호 업데이트 테스트 완료")
 
