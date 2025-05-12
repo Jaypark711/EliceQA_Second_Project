@@ -85,7 +85,7 @@ class TestMyProfile:
             ])
             self.logger.info("마이 프로필에서 My Articles 탭 클릭 및 탭 활성화 확인")
 
-            assert profilePage.is_empty_text_div_show() # 기대 결과 2: (등록된 Article X) : "No articles are here... yet." 텍스트가 노출됨
+            assert articlePage.is_empty_text_div_show() # 기대 결과 2: (등록된 Article X) : "No articles are here... yet." 텍스트가 노출됨
             self.logger.info("등록된 Article이 없는 경우 'No articles are here... yet.' 텍스트 노출 확인")
 
             header.click_new_post_link()
@@ -152,7 +152,7 @@ class TestMyProfile:
             profilePage.click_my_article_tab_link()
             profilePage.click_favorited_article_tab_link()
 
-            assert profilePage.is_empty_text_div_show() # 기대 결과 4: (좋아요 누른 Article X) : "No articles are here... yet." 텍스트가 노출됨
+            assert articlePage.is_empty_text_div_show() # 기대 결과 4: (좋아요 누른 Article X) : "No articles are here... yet." 텍스트가 노출됨
 
         except Exception as e:
             self.logger.error(f"❌ MYPROFILE_03 테스트 중 오류 발생: {e}")

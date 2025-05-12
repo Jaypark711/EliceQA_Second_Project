@@ -30,6 +30,7 @@ class ArticlePage(BasePage):
         By.CSS_SELECTOR,
         'input[placeholder*="What\'s this article about?"]',
     )
+    EMPTY_TEXT_DIV = (By.XPATH, '//div[text() = "No articles are here... yet."]')
     ARTICLE_BODY_TEXTAREA = (
         By.CSS_SELECTOR,
         'textarea[placeholder*="Write your article (in markdown)"]',
@@ -299,3 +300,6 @@ class ArticlePage(BasePage):
 
             # 태그 삭제 버튼 리스트에서 삭제할 index 값의 요소 선택하여 클릭
             self.click_element(tag_del_btns[del_index])
+            
+    def is_empty_text_div_show(self):
+        return self.is_element_appear(self.EMPTY_TEXT_DIV)

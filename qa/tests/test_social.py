@@ -71,7 +71,7 @@ class TestSocial:
             articlePage.click_preview_author()
             profilePage.click_unfollow_btn()
             header.click_home_link()
-            assert profilePage.is_empty_text_div_show() # 기대 결과 2 : 팔로우한 author이 없을 때 No articles here이 노출됨
+            assert articlePage.is_empty_text_div_show() # 기대 결과 2 : 팔로우한 author이 없을 때 No articles here이 노출됨
             self.logger.info("기대 결과 2 : 팔로우한 author이 없을 때 No articles here이 노출됨")
 
         except Exception as e:
