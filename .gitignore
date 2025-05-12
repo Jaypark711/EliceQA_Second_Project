@@ -117,7 +117,6 @@ dmypy.json
 # add gitignore
 frontend/
 backend/
-qa/db/
+qa/db/db_queries.py
 qa/data/
-qa/requirements.txt
 qa/reports/logs/
