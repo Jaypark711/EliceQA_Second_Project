@@ -52,7 +52,7 @@ class TestFilter():
 
         except Exception as e:
             self.logger.error(f"❌ FILTER_01 테스트 중 오류 발생: {e}")
-            assert False
+            assert False, "❌ FILTER_01 테스트 중 오류 발생"
 
     def test_popular_tags_update_correctly(self, driver):
         """FILTER_02: Popular Tags가 게시글 태그 등록 상황에 따라 정확히 반영되는지 확인"""
@@ -82,4 +82,4 @@ class TestFilter():
 
         except Exception as e:
             self.logger.error(f"❌ FILTER_02 테스트 중 오류 발생: {e}")
-            assert False
+            assert False, "❌ FILTER_02 테스트 중 오류 발생"

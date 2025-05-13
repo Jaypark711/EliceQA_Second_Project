@@ -57,7 +57,7 @@ class TestAuthentication:
             self.logger.info("유효한 정보로 회원가입 테스트 성공")
         except Exception as e:
             self.logger.error(f"❌ AUTH_01 테스트 중 오류 발생: {e}")
-            assert False
+            assert False, "❌ AUTH_01 테스트 중 오류 발생"
 
     @pytest.mark.parametrize("username, email, password, expected_result, description", [ # TODO: 데이터 임시 하드코딩 (추후 분리하기)
         ("", "", "", "email can't be blank", "사용자명, 이메일, 비밀번호 입력창을 모두 공백"),
@@ -101,8 +101,8 @@ class TestAuthentication:
             self.logger.info(f"{description}로 회원가입 테스트 시 {expected_result} 경고창 출력 확인")
 
         except Exception as e:
-            self.logger.error(f"❌ AUTH_04 테스트 중 오류 발생: {e}")
-            assert False
+            self.logger.error(f"❌ AUTH_02 테스트 중 오류 발생: {e}")
+            assert False, "❌ AUTH_02 테스트 중 오류 발생"
 
     def test_successful_signin(self, driver):
         """AUTH_03: 유효한 정보로 로그인 성공 및 사용자 정보 확인"""
@@ -145,7 +145,7 @@ class TestAuthentication:
 
         except Exception as e:
             self.logger.error(f"❌ AUTH_03 테스트 중 오류 발생: {e}")
-            assert False
+            assert False, "❌ AUTH_03 테스트 중 오류 발생"
 
     @pytest.mark.parametrize("email, password, expected_result, description", [ # TODO: 데이터 임시 하드코딩 (추후 분리하기)
         ("", "", "email can't be blank", "이메일 및 비밀번호 입력창 모두 공백"),
@@ -185,7 +185,7 @@ class TestAuthentication:
 
         except Exception as e:
             self.logger.error(f"❌ AUTH_04 테스트 중 오류 발생: {e}")
-            assert False
+            assert False, "❌ AUTH_04 테스트 중 오류 발생"
 
     @pytest.mark.parametrize("email, expected_result", [ # TODO: 데이터 임시 하드코딩 (추후 분리하기)
         ("user", "이메일 주소에 '@'를 포함해 주세요. 'user'에 '@'가 없습니다."),
@@ -220,7 +220,7 @@ class TestAuthentication:
 
         except Exception as e:
             self.logger.error(f"❌ AUTH_05 테스트 중 오류 발생: {e}")
-            assert False
+            assert False, "❌ AUTH_05 테스트 중 오류 발생"
 
     def test_redirection(self, driver):
         """AUTH_06: 회원가입 페이지와 로그인 페이지 간의 리다이렉션 기능 확인"""
@@ -243,7 +243,7 @@ class TestAuthentication:
 
         except Exception as e:
             self.logger.error(f"❌ AUTH_06 테스트 중 오류 발생: {e}")
-            assert False
+            assert False, "❌ AUTH_06 테스트 중 오류 발생"
 
     def test_logout(self, driver):
         """AUTH_07: 로그인 상태에서 로그아웃 성공"""
@@ -275,4 +275,4 @@ class TestAuthentication:
 
         except Exception as e:
             self.logger.error(f"❌ AUTH_07 테스트 중 오류 발생: {e}")
-            assert False
+            assert False, "❌ AUTH_07 테스트 중 오류 발생"

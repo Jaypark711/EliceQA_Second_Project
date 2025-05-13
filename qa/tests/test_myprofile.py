@@ -59,7 +59,7 @@ class TestMyProfile:
 
         except Exception as e:
             self.logger.error(f"❌ MYPROFILE_01 테스트 중 오류 발생: {e}")
-            assert False
+            assert False, "❌ MYPROFILE_01 테스트 중 오류 발생"
 
     @pytest.mark.parametrize("title, description, body, tags", [ # TODO: 데이터 임시 하드코딩 (추후 분리하기)
         ("제목", "설명", "내용", ["태그"])
@@ -105,7 +105,7 @@ class TestMyProfile:
 
         except Exception as e:
             self.logger.error(f"❌ MYPROFILE_02 테스트 중 오류 발생: {e}")
-            assert False
+            assert False, "❌ MYPROFILE_02 테스트 중 오류 발생"
 
     def test_show_favorited_articles(self, driver):
         """MYPROFILE_03: 마이프로필에서 좋아요 누른 게시글 목록(Favorited Articles) 표시 확인"""
@@ -154,7 +154,7 @@ class TestMyProfile:
 
         except Exception as e:
             self.logger.error(f"❌ MYPROFILE_03 테스트 중 오류 발생: {e}")
-            assert False
+            assert False, "❌ MYPROFILE_03 테스트 중 오류 발생"
 
     def test_go_to_settings_from_profile(self, driver):
         """MYPROFILE_04: 마이프로필에서 '프로필 수정(Edit Profile Settings)' 버튼 클릭 시 설정 페이지로 이동 확인"""
@@ -183,4 +183,4 @@ class TestMyProfile:
 
         except Exception as e:
             self.logger.error(f"❌ MYPROFILE_04 테스트 중 오류 발생: {e}")
-            assert False
+            assert False, "❌ MYPROFILE_04 테스트 중 오류 발생"
