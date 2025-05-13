@@ -107,3 +107,17 @@ def get_articles_by_title(title):
     conn.close()
     
     return result
+
+def get_article_details_by_slug(slug):
+    """ slug로 글 정보 불러오기 """
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute(db_queries.SQL_GET_ARTICLE_DETAILS_BY_SLUG, (slug,))
+
+    result = cur.fetchone()
+
+    cur.close()
+    conn.close()
+    
+    return result
