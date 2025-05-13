@@ -119,4 +119,4 @@ frontend/
 backend/
 qa/db/db_queries.py
 qa/data/
-qa/reports/logs/
+qa/reports/
