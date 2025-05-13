@@ -1,3 +1,4 @@
+import allure
 import time
 import pytest
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -11,6 +12,8 @@ from pages.body.settings_page import SettingsPage
 from utils.logger import setupLogger
 from db.db_utils import init_db
 
+@allure.suite("test_settings.py")
+@allure.sub_suite("SETTING TEST")
 @pytest.mark.usefixtures("driver")
 class TestSettings:
     logger = setupLogger(__qualname__)
@@ -24,9 +27,10 @@ class TestSettings:
 
         self.logger.info("============================")
 
+    @allure.title("[SETTING_01]: 설정 - 정보 업데이트")
+    @allure.description("사용자 정보 업데이트 성공 확인")
     @pytest.mark.parametrize("user_data", [SETTING_USER_1, SETTING_USER_2, SETTING_USER_3])
     def test_update_user_info_successfully(self, driver, user_data):
-        """SETTING_01: 유효한 정보로 회원 정보 업데이트 성공"""
         self.logger.info("회원 정보 업데이트 테스트 시작")
         header = Header(driver)
         settingsPage = SettingsPage(driver)
@@ -63,6 +67,9 @@ class TestSettings:
             self.logger.error(f"❌ SETTING_01 테스트 중 오류 발생: {e}")
             assert False, "❌ SETTING_01 테스트 중 오류 발생"
 
+
+    @allure.title("[SETTING_02]: 설정 - 비밀번호 업데이트")
+    @allure.description("비밀번호 변경 성공 확인 (로그아웃 후 새 비밀번호로 로그인)")
     @pytest.mark.parametrize("user_data", [SETTING_USER_1, SETTING_USER_2, SETTING_USER_3])
     def test_update_user_password_successfully(self,driver,user_data):
         """SETTING_02: 유효한 정보로 비밀번호 업데이트 성공"""
@@ -89,7 +96,7 @@ class TestSettings:
             settingsPage.click_update_btn()
             self.logger.info("비밀번호 업데이트 성공")
 
-            time.sleep(1) # TODO: time.sleep(1) 외에 해결책 찾지 못함
+            time.sleep(1) # 대기 필수
             header.click_settings_link()
             self.logger.info("세팅 링크 클릭")
 

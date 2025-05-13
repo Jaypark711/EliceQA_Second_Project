@@ -1,3 +1,4 @@
+import allure
 import pytest
 from selenium.webdriver.remote.webdriver import WebDriver
 
@@ -11,6 +12,8 @@ from pages.body.profile_page import ProfilePage
 from utils.logger import setupLogger
 from db.db_utils import init_db, run_prisma_seed, get_favorited_article_title_by_username
 
+@allure.suite("test_social.py")
+@allure.sub_suite("SOCIAL TEST")
 @pytest.mark.usefixtures("driver")
 class TestSocial:
     logger = setupLogger(__qualname__)
@@ -24,7 +27,9 @@ class TestSocial:
         yield
 
         self.logger.info("============================")
-    
+
+    @allure.title("[SOCIAL_01]: 소셜 - 즐겨찾기")
+    @allure.description("특정 게시글 즐겨찾기(Favorite) 및 해제 기능 확인")
     def test_article_favorite_function(self,driver):
         """SOCIAL_01: 유효한 정보로 비밀번호 업데이트 성공"""
         self.logger.info("즐겨찾기 기능 테스트 시작")
@@ -53,6 +58,8 @@ class TestSocial:
             self.logger.error(f"❌ SOCIAL_01 테스트 중 오류 발생: {e}")
             assert False, "❌ SOCIAL_01 테스트 중 오류 발생"
 
+    @allure.title("[SOCIAL_02]: 소셜 - 팔로우")
+    @allure.description("다른 사용자 팔로우 및 언팔로우 기능 확인")
     def test_author_follow_function(self,driver):
         """SOCIAL_02: 다른 사용자 팔로우 및 언팔로우 기능 확인"""
         self.logger.info("팔로우 및 언팔로우 기능 테스트 시작")
