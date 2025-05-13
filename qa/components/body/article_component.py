@@ -4,7 +4,7 @@ from selenium.webdriver.common.by import By
 from pages.base_page import BasePage
 from utils.helpers import Helpers
 
-class ArticlePage(BasePage):
+class ArticleComponent(BasePage):
     # 로케이터 정의
     # 공통 로케이터
     TAGS_UL = (By.CSS_SELECTOR, "ul.tag-list")

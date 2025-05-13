@@ -3,12 +3,11 @@ import pytest
 
 from config.config import BASE_URL
 from data.user_data import VALID_USER
-from pages.header.header import Header
-from pages.body.home_page import HomePage
-from pages.body.signup_page import SignUpPage
-from pages.body.profile_page import ProfilePage
-from pages.body.article_page import ArticlePage
-from pages.body.editor_page import EditorPage
+from pages.home_page import HomePage
+from pages.sign_up_page import SignUpPage
+from pages.editor_page import EditorPage
+from pages.profile_page import ProfilePage
+from pages.settings_page import SettingsPage
 from utils.logger import setupLogger
 from db.db_utils import init_db, run_prisma_seed, get_user_info_by_username
 
@@ -32,32 +31,33 @@ class TestMyProfile:
     @allure.severity(allure.severity_level.NORMAL)
     def test_my_profile_shows_user_info_correctly(self, driver):
         self.logger.info("▶️ 마이프로필에서 사용자 정보 반영 테스트 시작")
-        header = Header(driver)
+
+        homePage = HomePage(driver)
         signUpPage = SignUpPage(driver)
         profilePage = ProfilePage(driver)
 
         try:
             # 테스트 환경 세팅
-            header.click_sign_up_link()
-            signUpPage.sign_up()
+            homePage.header.click_sign_up_link()
+            signUpPage.sign_up.sign_up()
 
             # 테스트 시나리오 시작
-            header.click_my_profile_link()
-            assert header.is_go_to_myprofile_page()
+            homePage.header.click_my_profile_link()
+            assert profilePage.header.is_go_to_myprofile_page()
             self.logger.info("✅ 기대 결과 1: 마이프로필로 진입되어야 함")
 
             username, profile_img_src, bio_text = get_user_info_by_username(VALID_USER["username"])
             if not bio_text:
                 assert all([ 
-                    profilePage.get_username_title_text() == username,
-                    profilePage.get_profile_img_src() == profile_img_src
+                    profilePage.profile.get_username_title_text() == username,
+                    profilePage.profile.get_profile_img_src() == profile_img_src
                 ])
                 self.logger.info("✅ 기대 결과 2: 로그인된 사용자의 유저명, 프로필사진이 표시되어야 함")
             else:
                 assert all([
-                    profilePage.get_username_title_text() == username,
-                    profilePage.get_profile_img_src() == profile_img_src,
-                    profilePage.get_bio_p_text() == bio_text
+                    profilePage.profile.get_username_title_text() == username,
+                    profilePage.profile.get_profile_img_src() == profile_img_src,
+                    profilePage.profile.get_bio_p_text() == bio_text
                 ])
                 self.logger.info("✅ 기대 결과 2: 로그인된 사용자의 유저명, 프로필사진, 소개가 표시되어야 함")
             self.logger.info("🎉 마이프로필에서 사용자 정보 반영 테스트 완료")
@@ -74,34 +74,34 @@ class TestMyProfile:
     ])
     def test_show_my_articles(self, driver, title, description, body, tags):
         self.logger.info("▶️ 마이프로필에서 My Articles 탭 테스트 시작")
-        header = Header(driver)
+
+        homePage = HomePage(driver)
         signUpPage = SignUpPage(driver)
         profilePage = ProfilePage(driver)
-        articlePage = ArticlePage(driver)
         editorPage = EditorPage(driver)
 
         try:
             # 테스트 환경 세팅
-            header.click_sign_up_link()
-            signUpPage.sign_up()
+            homePage.header.click_sign_up_link()
+            signUpPage.sign_up.sign_up()
 
             # 테스트 시나리오 시작
-            header.click_my_profile_link()
-            profilePage.click_my_article_tab_link()
+            homePage.header.click_my_profile_link()
+            profilePage.profile.click_my_article_tab_link()
             assert all([ 
-                header.is_go_to_myprofile_page(),
-                profilePage.is_my_article_tab_active()
+                profilePage.header.is_go_to_myprofile_page(),
+                profilePage.profile.is_my_article_tab_active()
             ])
             self.logger.info("✅ 기대 결과 1: 마이프로필로 진입되어야 하며, My Articles 탭이 자동 선택됨")
 
-            assert articlePage.is_empty_text_div_show() 
+            assert profilePage.article.is_empty_text_div_show() 
             self.logger.info("✅ 기대 결과 2: (등록된 Article X) : 'No articles are here... yet.' 텍스트가 노출됨")
 
-            header.click_new_post_link()
-            editorPage.save_article(title, description, body, tags)
+            profilePage.header.click_new_post_link()
+            editorPage.editor.save_article(title, description, body, tags)
 
-            header.click_my_profile_link()
-            first_article = articlePage.load_first_article_data()
+            editorPage.header.click_my_profile_link()
+            first_article = profilePage.article.load_first_article_data()
 
             assert all([
                 first_article["title"] == title, 
@@ -120,33 +120,32 @@ class TestMyProfile:
     @allure.severity(allure.severity_level.NORMAL)
     def test_show_favorited_articles(self, driver):
         self.logger.info("▶️ 마이프로필에서 Favorited Articles 탭 테스트 시작")
+
         run_prisma_seed() # 초기 데이터 생성
-        header = Header(driver)
-        home = HomePage(driver)
+        homePage = HomePage(driver)
         signUpPage = SignUpPage(driver)
-        articlePage = ArticlePage(driver)
         profilePage = ProfilePage(driver)
 
         try:
             # 테스트 환경 세팅
-            header.click_sign_up_link()
-            signUpPage.sign_up()
+            homePage.header.click_sign_up_link()
+            signUpPage.sign_up.sign_up()
 
             # 테스트 시나리오 시작
-            home.click_global_feed_tab_link()
-            global_feed_first_article = articlePage.load_first_article_data()
+            homePage.tabs.click_global_feed_tab_link()
+            global_feed_first_article = homePage.article.load_first_article_data()
 
-            articlePage.click_preview_favorite(0, 1)
+            homePage.article.click_preview_favorite(0, 1)
 
-            header.click_my_profile_link()
-            assert header.is_go_to_myprofile_page() 
+            homePage.header.click_my_profile_link()
+            assert profilePage.header.is_go_to_myprofile_page() 
             self.logger.info("✅ 기대 결과 1: 마이프로필로 진입되어야 함")
 
-            profilePage.click_favorited_article_tab_link()
-            assert profilePage.is_favorited_article_tab_active() 
+            profilePage.profile.click_favorited_article_tab_link()
+            assert profilePage.profile.is_favorited_article_tab_active() 
             self.logger.info("✅ 기대 결과 2: Favorited Articles 탭이 선택되어야 함")
 
-            favorited_article_first_article = articlePage.load_first_article_data()
+            favorited_article_first_article = profilePage.article.load_first_article_data()
             assert all([ 
                 global_feed_first_article["author"] == favorited_article_first_article["author"],
                 global_feed_first_article["created date"] == favorited_article_first_article["created date"],
@@ -156,12 +155,12 @@ class TestMyProfile:
             ])
             self.logger.info("✅ 기대 결과 3: (좋아요 누른 Article 1개 이상) : 좋아요 누른 게시글이 노출됨")
 
-            articlePage.click_preview_favorite(0, 1)
+            profilePage.article.click_preview_favorite(0, 1)
 
-            profilePage.click_my_article_tab_link()
-            profilePage.click_favorited_article_tab_link()
+            profilePage.profile.click_my_article_tab_link()
+            profilePage.profile.click_favorited_article_tab_link()
 
-            assert articlePage.is_empty_text_div_show()
+            assert profilePage.article.is_empty_text_div_show()
             self.logger.info("✅ 기대 결과 4: (좋아요 누른 Article X) : 'No articles are here... yet.' 텍스트가 노출됨")
             self.logger.info("🎉 마이프로필에서 Favorited Articles 탭 테스트 완료")
 
@@ -174,22 +173,24 @@ class TestMyProfile:
     @allure.severity(allure.severity_level.NORMAL)
     def test_go_to_settings_from_profile(self, driver):
         self.logger.info("▶️ 마이 프로필에서 Edit Profile Settings 버튼 테스트 시작")
-        header = Header(driver)
+        
+        homePage = HomePage(driver)
         signUpPage = SignUpPage(driver)
         profilePage = ProfilePage(driver)
+        settingsPage = SettingsPage(driver)
 
         try:
             # 테스트 환경 세팅
-            header.click_sign_up_link()
-            signUpPage.sign_up()
+            homePage.header.click_sign_up_link()
+            signUpPage.sign_up.sign_up()
 
             # 테스트 시나리오 시작
-            header.click_my_profile_link()
-            assert header.is_go_to_myprofile_page()
+            homePage.header.click_my_profile_link()
+            assert profilePage.header.is_go_to_myprofile_page()
             self.logger.info("✅ 기대 결과 1: 마이프로필로 진입되어야 함")
 
-            profilePage.click_edit_profile_settings_btn()
-            assert header.is_go_to_settings_page()
+            profilePage.profile.click_edit_profile_settings_btn()
+            assert settingsPage.header.is_go_to_settings_page()
             self.logger.info("✅ 기대 결과 2: Settings 페이지로 진입되어야 함")
             self.logger.info("🎉 마이 프로필에서 Edit Profile Settings 버튼 테스트 완료")
 
