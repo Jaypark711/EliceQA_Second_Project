@@ -29,6 +29,7 @@ class TestSettings:
 
     @allure.title("[SETTING_01]: 설정 - 정보 업데이트")
     @allure.description("사용자 정보 업데이트 성공 확인")
+    @allure.severity(allure.severity_level.NORMAL)
     @pytest.mark.parametrize("user_data", [SETTING_USER_1, SETTING_USER_2, SETTING_USER_3])
     def test_update_user_info_successfully(self, driver, user_data):
         self.logger.info("회원 정보 업데이트 테스트 시작")
@@ -70,6 +71,7 @@ class TestSettings:
 
     @allure.title("[SETTING_02]: 설정 - 비밀번호 업데이트")
     @allure.description("비밀번호 변경 성공 확인 (로그아웃 후 새 비밀번호로 로그인)")
+    @allure.severity(allure.severity_level.NORMAL)
     @pytest.mark.parametrize("user_data", [SETTING_USER_1, SETTING_USER_2, SETTING_USER_3])
     def test_update_user_password_successfully(self,driver,user_data):
         """SETTING_02: 유효한 정보로 비밀번호 업데이트 성공"""

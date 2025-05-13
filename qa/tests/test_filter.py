@@ -27,6 +27,7 @@ class TestFilter():
 
     @allure.title("[FILTER_01]: 필터")
     @allure.description("태그 선택 시 해당 태그를 포함한 게시글만 필터링되어 표시되는지 확인")
+    @allure.severity(allure.severity_level.NORMAL)
     def test_filter_articles_by_tag(self, driver):
         self.logger.info("태그 선택 및 게시글 필터링 테스트 시작")
         header = Header(driver)
@@ -60,6 +61,7 @@ class TestFilter():
 
     @allure.title("[FILTER_02]: 필터")
     @allure.description("Popular Tags가 게시글 태그 등록 상황에 따라 정확히 반영되는지 확인")
+    @allure.severity(allure.severity_level.MINOR)
     def test_popular_tags_update_correctly(self, driver):
         self.logger.info("태그 등록 상황에 따른 순위 반영 테스트 시작")
         header = Header(driver)

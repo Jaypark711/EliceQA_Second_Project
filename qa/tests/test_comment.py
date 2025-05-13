@@ -29,6 +29,7 @@ class TestCommentPage:
 
     @allure.title("[CMT_01]: 댓글 - 게시 후 삭제")
     @allure.description("특정 게시글에 댓글 작성 및 삭제 확인")
+    @allure.severity(allure.severity_level.NORMAL)
     @pytest.mark.parametrize("comment", [
         "댓글"
     ])

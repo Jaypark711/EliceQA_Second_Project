@@ -30,6 +30,7 @@ class TestSocial:
 
     @allure.title("[SOCIAL_01]: 소셜 - 즐겨찾기")
     @allure.description("특정 게시글 즐겨찾기(Favorite) 및 해제 기능 확인")
+    @allure.severity(allure.severity_level.NORMAL)
     def test_article_favorite_function(self,driver):
         """SOCIAL_01: 유효한 정보로 비밀번호 업데이트 성공"""
         self.logger.info("즐겨찾기 기능 테스트 시작")
@@ -60,6 +61,7 @@ class TestSocial:
 
     @allure.title("[SOCIAL_02]: 소셜 - 팔로우")
     @allure.description("다른 사용자 팔로우 및 언팔로우 기능 확인")
+    @allure.severity(allure.severity_level.MINOR)
     def test_author_follow_function(self,driver):
         """SOCIAL_02: 다른 사용자 팔로우 및 언팔로우 기능 확인"""
         self.logger.info("팔로우 및 언팔로우 기능 테스트 시작")
