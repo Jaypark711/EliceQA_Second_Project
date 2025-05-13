@@ -23,7 +23,7 @@ class TestFilter():
 
         yield
 
-        self.logger.info("==================================")
+        self.logger.info("=================================================================")
 
     @allure.title("[FILTER_01]: 필터")
     @allure.description("태그 선택 시 해당 태그를 포함한 게시글만 필터링되어 표시되는지 확인")

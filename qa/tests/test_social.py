@@ -26,7 +26,7 @@ class TestSocial:
 
         yield
 
-        self.logger.info("============================")
+        self.logger.info("=================================================================")
 
     @allure.title("[SOCIAL_01]: 소셜 - 즐겨찾기")
     @allure.description("특정 게시글 즐겨찾기(Favorite) 및 해제 기능 확인")
@@ -48,10 +48,10 @@ class TestSocial:
             articlePage.click_preview_favorite(0, 1)
 
             first_article = articlePage.load_first_article_data()
-            assert first_article['favor count'] == '1' # 기대 결과 1 : 좋아요가 하나 증가한 채로 노출됨
+            assert first_article['favor count'] == '1'
             self.logger.info("✅ 기대 결과 1 : 좋아요가 하나 증가한 채로 노출됨")
             
-            assert get_favorited_article_title_by_username(VALID_USER["username"]) == first_article['title'] # 기대 결과 2 : db에 좋아요 누른 게시글이 노출됨
+            assert get_favorited_article_title_by_username(VALID_USER["username"]) == first_article['title']
             self.logger.info("✅ 기대 결과 2 : db에 좋아요 누른 게시글이 노출됨")
             
         except Exception as e:
@@ -83,7 +83,7 @@ class TestSocial:
             header.click_home_link()
             homePage.click_your_feed_tab_link()
             article_authors = [ article_info['author'] for article_info in articlePage.load_article_preview_lists().values() ]
-            assert set(article_authors) == {followed_user} # 기대 결과 1 : article 리스트의 author이 follow한 author과 전부 일치
+            assert set(article_authors) == {followed_user}
             self.logger.info("✅ 기대 결과 1 : article 리스트의 author이 follow한 author과 전부 일치")
 
             articlePage.click_preview_author()
@@ -91,7 +91,7 @@ class TestSocial:
 
             header.click_home_link()
             homePage.click_your_feed_tab_link()
-            assert articlePage.is_empty_text_div_show() # 기대 결과 2 : 팔로우한 author이 없을 때 No articles here이 노출됨
+            assert articlePage.is_empty_text_div_show()
             self.logger.info("✅ 기대 결과 2 : 팔로우한 author이 없을 때 No articles here이 노출됨")
 
         except Exception as e:

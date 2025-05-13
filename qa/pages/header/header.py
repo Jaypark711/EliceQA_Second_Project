@@ -20,25 +20,7 @@ class Header(BasePage):
 
     def __init__(self, driver):
         super().__init__(driver)
-
-    def click_home_link(self):
-        self.click_element(self.HOME_LINK)
-
-    def click_sign_in_link(self):
-        self.click_element(self.SIGN_IN_LINK)
-
-    def click_sign_up_link(self):
-        self.click_element(self.SIGN_UP_LINK)
-
-    def click_new_post_link(self):
-        self.click_element(self.NEW_POST_LINK)
-
-    def click_settings_link(self):
-        self.click_element(self.SETTINGS_LINK)
-
-    def click_my_profile_link(self):
-        self.click_element(self.MY_PROFILE_LINK)
-    
+        
     def is_go_to_home_page(self):
         return self.wait_until_url_and_get(BASE_URL) == BASE_URL
     
@@ -71,6 +53,24 @@ class Header(BasePage):
 
     def is_my_profile_link_disappear(self):
         return self.is_element_disappear(self.MY_PROFILE_LINK)
+
+    def click_home_link(self):
+        self.click_element(self.HOME_LINK)
+
+    def click_sign_in_link(self):
+        self.click_element(self.SIGN_IN_LINK)
+
+    def click_sign_up_link(self):
+        self.click_element(self.SIGN_UP_LINK)
+
+    def click_new_post_link(self):
+        self.click_element(self.NEW_POST_LINK)
+
+    def click_settings_link(self):
+        self.click_element(self.SETTINGS_LINK)
+
+    def click_my_profile_link(self):
+        self.click_element(self.MY_PROFILE_LINK)
 
     def get_username_link_text(self):
         return self.get_attribute(self.MY_PROFILE_LINK, "href")
