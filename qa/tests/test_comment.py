@@ -1,6 +1,7 @@
+import allure
 import pytest
 from selenium.webdriver.remote.webdriver import WebDriver
-import allure
+
 from config.config import BASE_URL
 from data.user_data import VALID_USER
 from pages.header.header import Header
@@ -11,8 +12,8 @@ from db.db_utils import init_db, run_prisma_seed
 from utils.logger import setupLogger
 
 @allure.suite("test_comment.py")
-@pytest.mark.usefixtures("driver")
 @allure.sub_suite("COMMENT TEST")
+@pytest.mark.usefixtures("driver")
 class TestCommentPage:
     logger = setupLogger(__qualname__)
 
@@ -26,11 +27,11 @@ class TestCommentPage:
 
         self.logger.info("==================================")
 
+    @allure.title("[CMT_01]: 댓글")
+    @allure.description("특정 게시글에 댓글 작성 및 삭제 확인")
     @pytest.mark.parametrize("comment", [
         "댓글"
     ])
-    @allure.title("[CMT_01]: 댓글")
-    @allure.description("특정 게시글에 댓글 작성 및 삭제 확인")
     def test_successful_comment(self, driver, comment):
         self.logger.info("댓글 등록 후 삭제 테스트 시작")
         header = Header(driver)
