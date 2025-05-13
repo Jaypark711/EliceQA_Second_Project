@@ -1,23 +1,22 @@
-import pytest
 import allure
-from db.db_utils import *
+import pytest
+from selenium.webdriver.remote.webelement import WebElement
+
 from config.config import BASE_URL
 from data.user_data import VALID_USER
-from utils.logger import setupLogger
+
 from utils.helpers import Helpers
 from pages.header.header import Header
 from pages.body.home_page import HomePage
-from pages.body.signin_page import SignInPage
 from pages.body.signup_page import SignUpPage
 from pages.body.article_page import ArticlePage
 from pages.body.editor_page import EditorPage
-from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement
-import time
+from utils.logger import setupLogger
+from db.db_utils import init_db, run_prisma_seed, get_user_id_by_username, get_articles_by_title, get_article_details_by_slug
 
 @allure.suite("test_article.py")
-@pytest.mark.usefixtures("driver")
 @allure.sub_suite("ARTICLE TEST")
+@pytest.mark.usefixtures("driver")
 class TestAriclePage:
     logger = setupLogger(__qualname__)
 
@@ -32,7 +31,7 @@ class TestAriclePage:
     modi_article_tags = ["추가 태그1", "추가 태그2"]
 
     @pytest.fixture(autouse=True)
-    def setup_and_teardown(self, driver: WebDriver):
+    def setup_and_teardown(self, driver):
         init_db()  # 테스트 환경 초기화
         driver.get(BASE_URL)
 
@@ -40,20 +39,21 @@ class TestAriclePage:
 
         self.logger.info("==================================")
 
-    # @pytest.mark.skip(reason="Passed")
     @allure.title("[ARTICLE_01]: 게시글 - 신규 등록")
     @allure.description("로그인 후 새 게시글 작성 및 게시 성공 확인 (제목, 본문, 태그 포함)") 
     @allure.severity(allure.severity_level.CRITICAL)
-    def test_save_new_article(self, driver: WebDriver):
+    def test_save_new_article(self, driver):
         signupPage = SignUpPage(driver)
         header = Header(driver)
         articlePage = ArticlePage(driver)
         editorPage = EditorPage(driver)
 
         try:
+            # 테스트 환경 세팅
             header.click_sign_up_link()
             signupPage.sign_up()
 
+            # 테스트 시나리오 시작
             header.click_new_post_link()
             editorPage.save_article(
                 self.input_article_title,
@@ -99,11 +99,10 @@ class TestAriclePage:
             self.logger.error(f"❌ ARTICLE_01 테스트 중 오류 발생: {e}")
             assert False, "❌ ARTICLE_01 테스트 중 오류 발생"
 
-    # @pytest.mark.skip(reason="Passed")
     @allure.title("[ARTICLE_02]: 게시글 - 조회")
     @allure.description("게시글 목록(Global Feed) 게시글 표시 확인") 
     @allure.severity(allure.severity_level.NORMAL)
-    def test_load_article_previews(self, driver: WebDriver):
+    def test_load_article_previews(self, driver):
         signupPage = SignUpPage(driver)
         header = Header(driver)
         homePage = HomePage(driver)
@@ -112,9 +111,11 @@ class TestAriclePage:
         helpers = Helpers(driver)
 
         try:
+            # 테스트 환경 세팅
             header.click_sign_up_link()
             signupPage.sign_up()
 
+            # 테스트 시나리오 시작
             homePage.click_global_feed_tab_link()
             helpers.wait_until_page_load_complete()
             article_preview_lists = articlePage.load_article_preview_lists()
@@ -159,20 +160,22 @@ class TestAriclePage:
             self.logger.error(f"❌ ARTICLE_02 테스트 중 오류 발생: {e}")
             assert False, "❌ ARTICLE_02 테스트 중 오류 발생"
 
-    # @pytest.mark.skip(reason="Passed")
     @allure.title("[ARTICLE_03]: 게시글 - 상세 페이지")
     @allure.description("특정 게시글 상세 페이지 접근 및 내용(제목, 본문) 확인") 
     @allure.severity(allure.severity_level.NORMAL)
-    def test_confirm_article_detail(self, driver: WebDriver):
+    def test_confirm_article_detail(self, driver):
         signupPage = SignUpPage(driver)
         header = Header(driver)
         homePage = HomePage(driver)
         articlePage = ArticlePage(driver)
         editorPage = EditorPage(driver)
+
         try:
+            # 테스트 환경 세팅
             header.click_sign_up_link()
             signupPage.sign_up()
 
+            # 테스트 시나리오 시작
             header.click_new_post_link()
             editorPage.save_article(
                 self.input_article_title,
@@ -225,7 +228,6 @@ class TestAriclePage:
             self.logger.error(f"❌ ARTICLE_03 테스트 중 오류 발생: {e}")
             assert False, "❌ ARTICLE_03 테스트 중 오류 발생"
 
-    # @pytest.mark.skip(reason="Passed")
     @allure.title("[ARTICLE_04]: 게시글 - 수정")
     @allure.description("자신이 작성한 게시글 수정 성공 확인") 
     @allure.severity(allure.severity_level.NORMAL)
@@ -234,63 +236,68 @@ class TestAriclePage:
         header = Header(driver)
         articlePage = ArticlePage(driver)
         editorPage = EditorPage(driver)
-        header.click_sign_up_link()
-        signupPage.sign_up()
+        try:
+            # 테스트 환경 세팅
+            header.click_sign_up_link()
+            signupPage.sign_up()
 
-        # 신규 글 작성
-        header.click_new_post_link()
-        editorPage.save_article(
-            self.input_article_title,
-            self.input_article_desc,
-            self.input_article_body,
-            self.input_article_tags,
-        )
+            # 테스트 시나리오 시작
+            header.click_new_post_link()
+            editorPage.save_article(
+                self.input_article_title,
+                self.input_article_desc,
+                self.input_article_body,
+                self.input_article_tags,
+            )
 
-        # 글 상세 화면에서 수정 버튼 선택
-        articlePage.click_edit_article_btn()
+            # 글 상세 화면에서 수정 버튼 선택
+            articlePage.click_edit_article_btn()
 
-        # 수정 화면에서 글 내용 변경 후 저장
-        editorPage.delete_selected_tags((self.input_article_tags[0],))
-        editorPage.save_article(
-            self.modi_article_title,
-            self.modi_article_desc,
-            self.modi_article_body,
-            self.modi_article_tags,
-        )
+            # 수정 화면에서 글 내용 변경 후 저장
+            editorPage.delete_selected_tags((self.input_article_tags[0],))
+            editorPage.save_article(
+                self.modi_article_title,
+                self.modi_article_desc,
+                self.modi_article_body,
+                self.modi_article_tags,
+            )
 
-        # *글 상세 화면에서 변경 내용 확인
-        modified_article = articlePage.load_article_details()
+            # *글 상세 화면에서 변경 내용 확인
+            modified_article = articlePage.load_article_details()
 
-        # 변경될 slug 확인을 위해 user_id 추출
-        user_id = get_user_id_by_username(VALID_USER["username"])
-        new_slug = articlePage.get_article_slug(self.modi_article_title, user_id)
+            # 변경될 slug 확인을 위해 user_id 추출
+            user_id = get_user_id_by_username(VALID_USER["username"])
+            new_slug = articlePage.get_article_slug(self.modi_article_title, user_id)
 
-        # 현재 url과 제목 값 기반으로 만들어진 url과 비교
-        assert driver.current_url == BASE_URL + new_slug
-        self.logger.info("✅ 현재 URL이 수정된 제목 값에 따라 정상 변경 되었습니다. ")
+            # 현재 url과 제목 값 기반으로 만들어진 url과 비교
+            assert driver.current_url == BASE_URL + new_slug
+            self.logger.info("✅ 현재 URL이 수정된 제목 값에 따라 정상 변경 되었습니다. ")
 
-        # 저장된 제목과 실제 입력한 제목 비교
-        assert modified_article["title"] == self.modi_article_title
-        self.logger.info("✅ 게시글 제목이 수정한 입력한 값으로 정상 저장되었습니다. ")
+            # 저장된 제목과 실제 입력한 제목 비교
+            assert modified_article["title"] == self.modi_article_title
+            self.logger.info("✅ 게시글 제목이 수정한 입력한 값으로 정상 저장되었습니다. ")
 
-        # 저장된 본문 내용과 실제 입력한 본문 내용 비교
-        assert modified_article["body"] == self.modi_article_body
-        self.logger.info("✅ 게시글 본문 내용이 수정한 값으로 정상 저장되었습니다. ")
+            # 저장된 본문 내용과 실제 입력한 본문 내용 비교
+            assert modified_article["body"] == self.modi_article_body
+            self.logger.info("✅ 게시글 본문 내용이 수정한 값으로 정상 저장되었습니다. ")
 
-        # 저장된 태그들 값과 실제 입력한 태그들 값 비교
-        self.modi_article_tags.insert(
-            0, self.input_article_tags[1]
-        )  # 삭제하지 않은 태그 값 비교를 위해 리스트에 추가
-        assert modified_article["tags"] == self.modi_article_tags
-        self.logger.info("✅ 게시글 태그가 수정한 값으로 정상 저장되었습니다. ")
+            # 저장된 태그들 값과 실제 입력한 태그들 값 비교
+            self.modi_article_tags.insert(
+                0, self.input_article_tags[1]
+            )  # 삭제하지 않은 태그 값 비교를 위해 리스트에 추가
+            assert modified_article["tags"] == self.modi_article_tags
+            self.logger.info("✅ 게시글 태그가 수정한 값으로 정상 저장되었습니다. ")
 
-        # 게시글이 DB에 정말로 저장되었는지 확인 (By. title)
-        assert get_articles_by_title(modified_article["title"]) != None
-        self.logger.info(
-            "✅ 변경된 게시글 제목으로 DB 조회 시 해당 글이 정상적으로 조회되었습니다. "
-        )
+            # 게시글이 DB에 정말로 저장되었는지 확인 (By. title)
+            assert get_articles_by_title(modified_article["title"]) != None
+            self.logger.info(
+                "✅ 변경된 게시글 제목으로 DB 조회 시 해당 글이 정상적으로 조회되었습니다. "
+            )
 
-    # @pytest.mark.skip(reason="Passed")
+        except Exception as e:
+            self.logger.error(f"❌ ARTICLE_04 테스트 중 오류 발생: {e}")
+            assert False, "❌ ARTICLE_04 테스트 중 오류 발생"
+
     @allure.title("[ARTICLE_05]: 게시글 - 삭제")
     @allure.description("자신이 작성한 게시글 삭제 성공 확인") 
     @allure.severity(allure.severity_level.NORMAL)
@@ -300,22 +307,29 @@ class TestAriclePage:
         articlePage = ArticlePage(driver)
         editorPage = EditorPage(driver)
 
-        header.click_sign_up_link()
-        signupPage.sign_up()
+        try:
+            # 테스트 환경 세팅
+            header.click_sign_up_link()
+            signupPage.sign_up()
 
-        header.click_new_post_link()
-        editorPage.save_article(
-            self.input_article_title,
-            self.input_article_desc,
-            self.input_article_body,
-            self.input_article_tags,
-        )
-        saved_article = articlePage.load_article_details()
+            # 테스트 시나리오 시작
+            header.click_new_post_link()
+            editorPage.save_article(
+                self.input_article_title,
+                self.input_article_desc,
+                self.input_article_body,
+                self.input_article_tags,
+            )
+            saved_article = articlePage.load_article_details()
 
-        articlePage.click_delete_article_btn()
+            articlePage.click_delete_article_btn()
 
-        # DB에서 글 삭제 되었는지 확인하기
-        assert get_articles_by_title(saved_article["title"]) == None
-        self.logger.info(
-            "✅ 삭제한 게시글 제목으로 DB 조회 시 해당 글이 정상적으로 삭제되었습니다. "
-        )
+            # DB에서 글 삭제 되었는지 확인하기
+            assert get_articles_by_title(saved_article["title"]) == None
+            self.logger.info(
+                "✅ 삭제한 게시글 제목으로 DB 조회 시 해당 글이 정상적으로 삭제되었습니다. "
+            )
+
+        except Exception as e:
+            self.logger.error(f"❌ ARTICLE_05 테스트 중 오류 발생: {e}")
+            assert False, "❌ ARTICLE_05 테스트 중 오류 발생"
