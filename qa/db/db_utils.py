@@ -84,7 +84,7 @@ def get_title_where_favorite(username):
     return result
 
 def get_user_id_by_username(username):
-    """특정 사용자명(username)에 해당하는 유저의 id 번호 값을 튜플로 받아 정수로 형변환"""
+    """특정 사용자명(username)에 해당하는 유저의 id 번호 값을 튜플로 받아 가져오기"""
     conn = get_connection()
     cur = conn.cursor()
 
