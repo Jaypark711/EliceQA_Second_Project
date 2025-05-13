@@ -41,7 +41,7 @@ class TestAriclePage:
         self.logger.info("==================================")
 
     # @pytest.mark.skip(reason="Passed")
-    @allure.title("[ARTICLE_01]: 게시글 - 조회")
+    @allure.title("[ARTICLE_01]: 게시글 - 신규 등록")
     @allure.description("게시글 목록(Global Feed) 게시글 표시 확인") 
     def test_save_new_article(self, driver: WebDriver):
         signupPage = SignUpPage(driver)
@@ -99,7 +99,7 @@ class TestAriclePage:
             assert False, "❌ ARTICLE_01 테스트 중 오류 발생"
 
     # @pytest.mark.skip(reason="Passed")
-    @allure.title("[ARTICLE_02]: 게시글 - 상세페이지")
+    @allure.title("[ARTICLE_02]: 게시글 - 조회")
     @allure.description("특정 게시글 상세 페이지 접근 및 내용(제목, 본문) 확인") 
 
     def test_load_article_previews(self, driver: WebDriver):
@@ -161,7 +161,6 @@ class TestAriclePage:
     # @pytest.mark.skip(reason="Passed")
     @allure.title("[ARTICLE_03]: 게시글 - 상세 페이지")
     @allure.description("특정 게시글 상세 페이지 접근 및 내용(제목, 본문) 확인") 
-
     def test_confirm_article_detail(self, driver: WebDriver):
         signupPage = SignUpPage(driver)
         header = Header(driver)
@@ -290,7 +289,7 @@ class TestAriclePage:
         )
 
     # @pytest.mark.skip(reason="Passed")
-    @allure.title("[ARTICLE_01]: 게시글 - 수정")
+    @allure.title("[ARTICLE_05]: 게시글 - 삭제")
     @allure.description("자신이 작성한 게시글 삭제 성공 확인") 
 
     def test_del_my_article(self, driver):
