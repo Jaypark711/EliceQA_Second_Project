@@ -24,22 +24,6 @@ class ArticlePage(BasePage):
     ARTICLE_PREVIEW_READMORE_A = (By.CSS_SELECTOR, "a.preview-link")
     ARTICLE_PREVIEW_PAGE_A = (By.CSS_SELECTOR, "a.page-link")
 
-    # New Post 페이지 관련 로케이터
-    ARTICLE_TITLE_INPUT = (By.CSS_SELECTOR, 'input[placeholder*="Article Title"]')
-    ARTICLE_DESCRIPTION_INPUT = (
-        By.CSS_SELECTOR,
-        'input[placeholder*="What\'s this article about?"]',
-    )
-    EMPTY_TEXT_DIV = (By.XPATH, '//div[text() = "No articles are here... yet."]')
-    ARTICLE_BODY_TEXTAREA = (
-        By.CSS_SELECTOR,
-        'textarea[placeholder*="Write your article (in markdown)"]',
-    )
-    ARTICLE_TAG_INPUT = (By.CSS_SELECTOR, 'input[placeholder*="Enter tags"]')
-    ARTICLE_TAG_LIST_SPAN = (By.CSS_SELECTOR, 'div span[class*="tag-default"]')
-    TAG_DEL_I = (By.CSS_SELECTOR, "i.ion-close-round")
-    PUBLISH_BTN = (By.CSS_SELECTOR, "button")
-
     # 글 상세 페이지 관련 로케이터
     ARTICLE_DETAIL_TITLE_H1 = (By.TAG_NAME, "h1")
     ARTICLE_DETAIL_PROFILE_IMG = (By.CSS_SELECTOR, "div a img")
@@ -243,30 +227,6 @@ class ArticlePage(BasePage):
 
     def click_delete_comment_btn(self):
         self.click_element(self.click_delete_comment_btn)
-
-    def send_article_title(self, title):
-        self.send_keys(self.ARTICLE_TITLE_INPUT, title)
-
-    def send_article_description(self, description):
-        self.send_keys(self.ARTICLE_DESCRIPTION_INPUT, description)
-
-    def send_article_body(self, body):
-        self.send_keys(self.ARTICLE_BODY_TEXTAREA, body)
-
-    def save_article_tags(self, tags):
-        for tag in tags:
-            self.send_keys(self.ARTICLE_TAG_INPUT, tag)
-            self.send_keys(self.ARTICLE_TAG_INPUT, Keys.ENTER)
-
-    def click_publish_btn(self):
-        self.click_element(self.PUBLISH_BTN)
-
-    def save_article(self, title, description, body, tags):
-        self.send_article_title(title)
-        self.send_article_description(description)
-        self.send_article_body(body)
-        self.save_article_tags(tags)
-        self.click_publish_btn()
 
     def get_article_slug(self, title, userkey):
         """article 주소 방식
