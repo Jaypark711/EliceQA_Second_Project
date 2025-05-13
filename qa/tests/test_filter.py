@@ -6,7 +6,7 @@ from pages.body.signup_page import SignUpPage
 from pages.body.home_page import HomePage
 from pages.body.article_page import ArticlePage
 from utils.logger import setupLogger
-from db.db_utils import delete_all_user, run_prisma_seed, get_article_count_by_tag_name
+from db.db_utils import init_db, run_prisma_seed, get_article_count_by_tag_name
 
 @pytest.mark.usefixtures("driver")
 class TestFilter():
@@ -14,7 +14,7 @@ class TestFilter():
 
     @pytest.fixture(autouse=True)
     def setup_and_teardown(self, driver):
-        delete_all_user() # 테스트 환경 초기화: 상태 의존성을 제거하고 동일한 초기 조건 보장
+        init_db() # 테스트 환경 초기화: 상태 의존성을 제거하고 동일한 초기 조건 보장
         run_prisma_seed() # 초기 데이터 생성
         driver.get(BASE_URL)
 
