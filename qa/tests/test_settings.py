@@ -25,7 +25,7 @@ class TestSettings:
 
         yield
 
-        self.logger.info("============================")
+        self.logger.info("=================================================================")
 
     @allure.title("[SETTING_01]: 설정 - 정보 수정")
     @allure.description("사용자 정보 업데이트 성공 확인")
