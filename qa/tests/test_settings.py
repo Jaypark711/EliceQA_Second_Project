@@ -25,7 +25,7 @@ class TestSettings:
         self.logger.info("============================")
 
     @pytest.mark.parametrize("user_data", [SETTING_USER_1, SETTING_USER_2, SETTING_USER_3])
-    def test_successful_update_settings(self, driver, user_data):
+    def test_update_user_info_successfully(self, driver, user_data):
         """SETTING_01: 유효한 정보로 회원 정보 업데이트 성공"""
         self.logger.info("회원 정보 업데이트 테스트 시작")
         header = Header(driver)
@@ -61,10 +61,10 @@ class TestSettings:
 
         except Exception as e:
             self.logger.error(f"❌ SETTING_01 테스트 중 오류 발생: {e}")
-            assert False
+            assert False, "❌ SETTING_01 테스트 중 오류 발생"
 
     @pytest.mark.parametrize("user_data", [SETTING_USER_1, SETTING_USER_2, SETTING_USER_3])
-    def test_successful_update_password(self,driver,user_data):
+    def test_update_user_password_successfully(self,driver,user_data):
         """SETTING_02: 유효한 정보로 비밀번호 업데이트 성공"""
         self.logger.info("비밀번호 업데이트 테스트 시작")
         header = Header(driver)
@@ -107,4 +107,4 @@ class TestSettings:
 
         except Exception as e:
             self.logger.error(f"❌ SETTING_02 테스트 중 오류 발생: {e}")
-            assert False
+            assert False, "❌ SETTING_02 테스트 중 오류 발생"
