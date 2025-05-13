@@ -15,6 +15,13 @@ class SettingsPage(BasePage):
     def __init__(self, driver):
         super().__init__(driver)
     
+    def is_value_length_equal(self, locator, expected):
+        actual = self.get_attribute(locator, "value")
+        return len(actual) == len(expected)
+    
+    def is_password_length_equal(self, expected):
+        return self.is_value_length_equal(self.PASSWORD_INPUT,expected)
+
     def send_url_link_input(self, url):
         self.send_keys(self.URL_LINK_INPUT, url)
 
@@ -32,13 +39,6 @@ class SettingsPage(BasePage):
     
     def click_logout_btn(self):
         self.click_element(self.LOGOUT_BTN)
-    
-    def is_value_length_equal(self, locator, expected):
-        actual = self.get_attribute(locator, "value")
-        return len(actual) == len(expected)
-    
-    def is_password_length_equal(self, expected):
-        return self.is_value_length_equal(self.PASSWORD_INPUT,expected)
     
     def click_update_btn(self):
         self.click_element(self.UPDATE_BTN)
