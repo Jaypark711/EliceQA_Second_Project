@@ -3,8 +3,6 @@ from selenium.webdriver.common.by import By
 
 from pages.base_page import BasePage
 from utils.helpers import Helpers
-from db.db_utils import *
-
 
 class ArticlePage(BasePage):
     # 로케이터 정의
@@ -117,9 +115,6 @@ class ArticlePage(BasePage):
         self.click_element(self.ARTICLE_POST_COMMENT_BTN)
 
     def click_delete_comment_btn(self):
-        self.click_element(self.click_delete_comment_btn)
-
-    def click_comment_del_btn(self):
         self.click_element(self.ARTICLE_COMMENT_DEL_BTN)
 
     def get_text_from_comment_textarea(self):

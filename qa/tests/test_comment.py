@@ -68,7 +68,7 @@ class TestCommentPage:
             ])
             self.logger.info("기대 결과 3 : 입력한 값이 댓글로 정상 등록됨")
 
-            articlePage.click_comment_del_btn()
+            articlePage.click_delete_comment_btn()
             assert all([ # 기대 결과 4 : 댓글 삭제 확인
                 articlePage.is_comment_disappear(),
                 articlePage.is_author_link_disappear()
