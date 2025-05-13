@@ -25,7 +25,7 @@ class TestMyProfile:
 
         yield
 
-        self.logger.info("==================================")
+        self.logger.info("=================================================================")
 
     @allure.title("[MYPROFILE_01]: 마이프로필 - 사용자 정보")
     @allure.description("마이프로필에서 사용자 정보가 정확히 반영되는지 확인")

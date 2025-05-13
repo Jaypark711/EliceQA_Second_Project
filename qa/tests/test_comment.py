@@ -25,7 +25,7 @@ class TestCommentPage:
 
         yield
 
-        self.logger.info("==================================")
+        self.logger.info("=================================================================")
 
     @allure.title("[CMT_01]: 댓글 - 게시 및 삭제")
     @allure.description("특정 게시글에 댓글 작성 및 삭제 확인")
