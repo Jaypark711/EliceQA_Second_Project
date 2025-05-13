@@ -14,6 +14,7 @@ class ArticlePage(BasePage):
     TAGS_LI = (By.TAG_NAME, "li")
 
     # Article 목록 관련 로케이터
+    EMPTY_TEXT_DIV = (By.XPATH, "//*[contains(@class, 'article-preview') and normalize-space(text())='No articles are here... yet.']")
     ARTICLE_PREVIEW_DIV = (By.CSS_SELECTOR, "div.article-preview")
     ARTICLE_PREVIEW_DATE = (By.CSS_SELECTOR, "span.date")
     ARTICLE_PREVIEW_PROFILE_IMG = (By.CSS_SELECTOR, "a img")
@@ -135,6 +136,12 @@ class ArticlePage(BasePage):
         # 디버깅용
         # print(articles)
         return articles
+
+    def load_first_article_data(self):
+        all_articles = self.load_article_preview_lists()
+        first_article = list(all_articles.values())[0]
+        print(first_article)
+
 
     def click_article(self, selected_page, index):
         # 페이지 로드가 완료될 때 까지 대기
