@@ -4,7 +4,7 @@ from config.config import BASE_URL, SIGNIN_URL, SIGNUP_URL, SETTINGS_URL, MY_PRO
 from data.user_data import VALID_USER 
 from pages.base_page import BasePage
 
-class Header(BasePage):
+class HeaderComponent(BasePage):
     # 공통 로케이터
     HOME_LINK = (By.XPATH, '//a[text()="Home"]')
 

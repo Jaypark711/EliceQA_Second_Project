@@ -2,10 +2,8 @@ import allure
 import pytest
 
 from config.config import BASE_URL
-from pages.header.header import Header
-from pages.body.signup_page import SignUpPage
-from pages.body.home_page import HomePage
-from pages.body.article_page import ArticlePage
+from pages.home_page import HomePage
+from pages.sign_up_page import SignUpPage
 from utils.logger import setupLogger
 from db.db_utils import init_db, run_prisma_seed, get_article_count_by_tag_name
 
@@ -29,29 +27,28 @@ class TestFilter():
     @allure.description("태그 선택 시 해당 태그를 포함한 게시글만 필터링되어 표시되는지 확인")
     @allure.severity(allure.severity_level.NORMAL)
     def test_filter_articles_by_tag(self, driver):
-        self.logger.info("▶️태그 선택 및 게시글 필터링 테스트 시작")
-        header = Header(driver)
-        home = HomePage(driver)
+        self.logger.info("▶️ 태그 선택 및 게시글 필터링 테스트 시작")
+
+        homePage = HomePage(driver)
         signUpPage = SignUpPage(driver)
-        articlePage = ArticlePage(driver)
 
         try:
             # 테스트 환경 세팅
-            header.click_sign_up_link()
-            signUpPage.sign_up()
+            homePage.header.click_sign_up_link()
+            signUpPage.sign_up.sign_up()
 
             # 테스트 시나리오 시작
-            clicked_tag_text = home.click_random_popular_tag_link()
-            tag_tab_text = home.get_tag_tab_link_text()
+            clicked_tag_text = homePage.popular_tags.click_random_popular_tag_link()
+            tag_tab_text = homePage.popular_tags.get_tag_tab_link_text()
 
             assert clicked_tag_text == tag_tab_text 
-            self.logger.info("✅기대 결과 1: 클릭한 인기 태그와 화면에 표시된 태그 탭 텍스트가 일치함을 확인")
+            self.logger.info("✅ 기대 결과 1: 클릭한 인기 태그와 화면에 표시된 태그 탭 텍스트가 일치함을 확인")
 
-            articles = articlePage.load_article_preview_lists()
+            articles = homePage.article.load_article_preview_lists()
             for article_id, article_data in articles.items():
                 assert clicked_tag_text in article_data["tags"] 
-            self.logger.info("✅기대 결과 2:클릭한 태그를 포함한 게시글만 필터링되어 표시됨을 확인")
-            self.logger.info("🎉태그 선택 및 게시글 필터링 테스트 완료")
+            self.logger.info("✅ 기대 결과 2:클릭한 태그를 포함한 게시글만 필터링되어 표시됨을 확인")
+            self.logger.info("🎉 태그 선택 및 게시글 필터링 테스트 완료")
 
         except Exception as e:
             self.logger.error(f"❌ FILTER_01 테스트 중 오류 발생: {e}")
@@ -61,18 +58,18 @@ class TestFilter():
     @allure.description("Popular Tags가 게시글 태그 등록 상황에 따라 정확히 반영되는지 확인")
     @allure.severity(allure.severity_level.MINOR)
     def test_popular_tags_update_correctly(self, driver):
-        self.logger.info("▶️태그 등록 상황에 따른 순위 반영 테스트 시작")
-        header = Header(driver)
-        home = HomePage(driver)
+        self.logger.info("▶️ 태그 등록 상황에 따른 순위 반영 테스트 시작")
+        
+        homePage = HomePage(driver)
         signUpPage = SignUpPage(driver)
 
         try:
             # 테스트 환경 세팅
-            header.click_sign_up_link()
-            signUpPage.sign_up()
+            homePage.header.click_sign_up_link()
+            signUpPage.sign_up.sign_up()
             
             # 테스트 시나리오 시작
-            popular_tag_texts = home.get_popular_tag_texts()
+            popular_tag_texts = homePage.popular_tags.get_popular_tag_texts()
 
             prev_count = None
             for tag_text in popular_tag_texts:
@@ -82,8 +79,8 @@ class TestFilter():
                     assert False
                 prev_count = current_count
             assert True
-            self.logger.info("✅기대 결과 1: Popular Tags가 게시글 태그 등록 상황에 따라 정확하게 반영됨")
-            self.logger.info("🎉태그 등록 상황에 따른 순위 반영 테스트 완료")
+            self.logger.info("✅ 기대 결과 1: Popular Tags가 게시글 태그 등록 상황에 따라 정확하게 반영됨")
+            self.logger.info("🎉 태그 등록 상황에 따른 순위 반영 테스트 완료")
 
         except Exception as e:
             self.logger.error(f"❌ FILTER_02 테스트 중 오류 발생: {e}")

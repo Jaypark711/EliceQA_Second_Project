@@ -3,7 +3,7 @@ from selenium.webdriver.common.keys import Keys
 
 from pages.base_page import BasePage
 
-class EditorPage(BasePage):
+class EditorComponent(BasePage):
     # 로케이터 정의
     ARTICLE_TITLE_INPUT = (By.CSS_SELECTOR, 'input[placeholder*="Article Title"]')
     ARTICLE_DESCRIPTION_INPUT = (

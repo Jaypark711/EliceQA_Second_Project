@@ -3,7 +3,7 @@ from selenium.webdriver.common.by import By
 from data.user_data import VALID_USER
 from pages.base_page import BasePage
 
-class SignUpPage(BasePage):
+class SignUpComponent(BasePage):
     PAGE_TITLE = (By.XPATH, '//h1[text()="Sign Up"]')
     SIGN_IN_LINK = (By.XPATH, '//a[@href="/login"]')
     USERNAME_INPUT = (By.CSS_SELECTOR, 'input[type="text"]')

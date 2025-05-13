@@ -3,7 +3,7 @@ from selenium.webdriver.common.by import By
 from data.user_data import VALID_USER
 from pages.base_page import BasePage
 
-class SignInPage(BasePage):
+class SignInComponent(BasePage):
     # 로케이터 정의
     PAGE_TITLE = (By.XPATH, '//h1[text()="Sign In"]')
     SIGN_UP_LINK = (By.CSS_SELECTOR, 'a[href="/register"]')

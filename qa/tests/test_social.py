@@ -4,11 +4,9 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from config.config import BASE_URL
 from data.user_data import  VALID_USER
-from pages.header.header import Header
-from pages.body.home_page import HomePage
-from pages.body.signup_page import SignUpPage
-from pages.body.article_page import ArticlePage
-from pages.body.profile_page import ProfilePage
+from pages.home_page import HomePage
+from pages.sign_up_page import SignUpPage
+from pages.profile_page import ProfilePage
 from utils.logger import setupLogger
 from db.db_utils import init_db, run_prisma_seed, get_favorited_article_title_by_username
 
@@ -33,21 +31,20 @@ class TestSocial:
     @allure.severity(allure.severity_level.NORMAL)
     def test_article_favorite_function(self,driver):
         self.logger.info("▶️ 즐겨찾기 기능 테스트 시작")
-        header = Header(driver)
-        signupPage = SignUpPage(driver)
+
         homePage = HomePage(driver)
-        articlePage = ArticlePage(driver)
+        signupPage = SignUpPage(driver)
         
         try:
             # 테스트 환경 세팅
-            header.click_sign_up_link()
-            signupPage.sign_up()
+            homePage.header.click_sign_up_link()
+            signupPage.sign_up.sign_up()
 
             # 테스트 시나리오 시작
-            homePage.click_global_feed_tab_link()
-            articlePage.click_preview_favorite(0, 1)
+            homePage.tabs.click_global_feed_tab_link()
+            homePage.article.click_preview_favorite(0, 1)
 
-            first_article = articlePage.load_first_article_data()
+            first_article = homePage.article.load_first_article_data()
             assert first_article['favor count'] == '1'
             self.logger.info("✅ 기대 결과 1 : 좋아요가 하나 증가한 채로 노출됨")
             
@@ -63,35 +60,34 @@ class TestSocial:
     @allure.severity(allure.severity_level.MINOR)
     def test_author_follow_function(self,driver):
         self.logger.info("▶️ 팔로우 및 언팔로우 기능 테스트 시작")
-        header = Header(driver)
+        
         homePage = HomePage(driver)
         signupPage = SignUpPage(driver)
-        articlePage = ArticlePage(driver)
         profilePage = ProfilePage(driver)
 
         try:
             # 테스트 환경 세팅
-            header.click_sign_up_link()
-            signupPage.sign_up()
+            homePage.header.click_sign_up_link()
+            signupPage.sign_up.sign_up()
 
             # 테스트 시나리오 시작
-            homePage.click_global_feed_tab_link()
-            articlePage.click_preview_author()
-            followed_user = profilePage.get_username_title_text()
-            profilePage.click_follow_btn()
+            homePage.tabs.click_global_feed_tab_link()
+            homePage.article.click_preview_author()
+            followed_user = profilePage.profile.get_username_title_text()
+            profilePage.profile.click_follow_btn()
 
-            header.click_home_link()
-            homePage.click_your_feed_tab_link()
-            article_authors = [ article_info['author'] for article_info in articlePage.load_article_preview_lists().values() ]
+            profilePage.header.click_home_link()
+            homePage.tabs.click_your_feed_tab_link()
+            article_authors = [ article_info['author'] for article_info in homePage.article.load_article_preview_lists().values() ]
             assert set(article_authors) == {followed_user}
             self.logger.info("✅ 기대 결과 1 : article 리스트의 author이 follow한 author과 전부 일치")
 
-            articlePage.click_preview_author()
-            profilePage.click_unfollow_btn()
+            homePage.article.click_preview_author()
+            profilePage.profile.click_unfollow_btn()
 
-            header.click_home_link()
-            homePage.click_your_feed_tab_link()
-            assert articlePage.is_empty_text_div_show()
+            profilePage.header.click_home_link()
+            homePage.tabs.click_your_feed_tab_link()
+            assert homePage.article.is_empty_text_div_show()
             self.logger.info("✅ 기대 결과 2 : 팔로우한 author이 없을 때 No articles here이 노출됨")
 
         except Exception as e:

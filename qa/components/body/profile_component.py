@@ -2,7 +2,7 @@ from selenium.webdriver.common.by import By
 
 from pages.base_page import BasePage
 
-class ProfilePage(BasePage):
+class ProfileComponent(BasePage):
     # 로케이터 정의
     PROFILE_IMG = (By.CLASS_NAME, 'user-img')
     USERNAME_TITLE = (By.TAG_NAME, 'h4')

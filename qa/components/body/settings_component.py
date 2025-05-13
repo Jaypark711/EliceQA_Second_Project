@@ -2,7 +2,7 @@ from selenium.webdriver.common.by import By
 
 from pages.base_page import BasePage
 
-class SettingsPage(BasePage):
+class SettingsComponent(BasePage):
     # 로케이터 정의
     PAGE_TITLE = (By.XPATH, '//h1[text()="Your Settings"]')
     URL_LINK_INPUT = (By.CSS_SELECTOR,'input[placeholder="URL of profile picture"]')
