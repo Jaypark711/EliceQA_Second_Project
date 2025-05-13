@@ -1,3 +1,4 @@
+import allure
 import pytest
 
 from config.config import BASE_URL
@@ -8,6 +9,8 @@ from pages.body.article_page import ArticlePage
 from utils.logger import setupLogger
 from db.db_utils import init_db, run_prisma_seed, get_article_count_by_tag_name
 
+@allure.suite("test_filter.py")
+@allure.sub_suite("FILTER TEST")
 @pytest.mark.usefixtures("driver")
 class TestFilter():
     logger = setupLogger(__qualname__)
@@ -22,8 +25,9 @@ class TestFilter():
 
         self.logger.info("==================================")
 
+    @allure.title("[FILTER_01]: 필터")
+    @allure.description("태그 선택 시 해당 태그를 포함한 게시글만 필터링되어 표시되는지 확인")
     def test_filter_articles_by_tag(self, driver):
-        """FILTER_01: 태그 선택 시 해당 태그를 포함한 게시글만 필터링되어 표시되는지 확인"""
         self.logger.info("태그 선택 및 게시글 필터링 테스트 시작")
         header = Header(driver)
         home = HomePage(driver)
@@ -54,8 +58,9 @@ class TestFilter():
             self.logger.error(f"❌ FILTER_01 테스트 중 오류 발생: {e}")
             assert False, "❌ FILTER_01 테스트 중 오류 발생"
 
+    @allure.title("[FILTER_02]: 필터")
+    @allure.description("Popular Tags가 게시글 태그 등록 상황에 따라 정확히 반영되는지 확인")
     def test_popular_tags_update_correctly(self, driver):
-        """FILTER_02: Popular Tags가 게시글 태그 등록 상황에 따라 정확히 반영되는지 확인"""
         self.logger.info("태그 등록 상황에 따른 순위 반영 테스트 시작")
         header = Header(driver)
         home = HomePage(driver)
