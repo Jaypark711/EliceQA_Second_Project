@@ -69,12 +69,12 @@ def get_user_info_by_username(username):
     
     return result
 
-def get_title_where_favorite(username):
+def get_favorited_article_title_by_username(username):
     """username을 기준으로 좋아요 누른 가장 최근 게시글의 title 반환 """
     conn = get_connection()
     cur = conn.cursor()
 
-    cur.execute(db_queries.SQL_GET_TITLE_WHERE_FAVORITE, (username,))
+    cur.execute(db_queries.SQL_GET_FAVORITED_ARTICLE_TITLE_BY_USERNAME, (username,))
 
     result = cur.fetchone()[0]
 
