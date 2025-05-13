@@ -25,7 +25,7 @@ class TestMyProfile:
 
         yield
 
-        self.logger.info("==================================")
+        self.logger.info("=================================================================")
 
     @allure.title("[MYPROFILE_01]: 마이프로필 - 사용자 정보")
     @allure.description("마이프로필에서 사용자 정보가 정확히 반영되는지 확인")
@@ -43,17 +43,17 @@ class TestMyProfile:
 
             # 테스트 시나리오 시작
             header.click_my_profile_link()
-            assert header.is_go_to_myprofile_page() # 기대 결과 1: 마이프로필로 진입되어야 함
+            assert header.is_go_to_myprofile_page()
             self.logger.info("✅ 기대 결과 1: 마이프로필로 진입되어야 함")
 
             username, profile_img_src, bio_text = get_user_info_by_username(VALID_USER["username"])
             if not bio_text:
-                assert all([ # 기대 결과 2: 로그인된 사용자의 유저명, 프로필사진이 표시되어야 함
+                assert all([ 
                     profilePage.get_username_title_text() == username,
                     profilePage.get_profile_img_src() == profile_img_src
                 ])
                 self.logger.info("✅ 기대 결과 2: 로그인된 사용자의 유저명, 프로필사진이 표시되어야 함")
-            else: # 기대 결과 2: 로그인된 사용자의 유저명, 프로필사진, 소개가 표시되어야 함
+            else:
                 assert all([
                     profilePage.get_username_title_text() == username,
                     profilePage.get_profile_img_src() == profile_img_src,
