@@ -3,4 +3,4 @@ selenium
 webdriver-manager
 python-dotenv
 psycopg2-binary
-Faker
+allure-pytest
