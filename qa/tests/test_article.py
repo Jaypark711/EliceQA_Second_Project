@@ -20,16 +20,6 @@ from db.db_utils import init_db, run_prisma_seed, get_user_id_by_username, get_a
 class TestAriclePage:
     logger = setupLogger(__qualname__)
 
-    input_article_title = f"{VALID_USER["username"]}_작성 테스트"
-    input_article_desc = "테스트 주제"
-    input_article_body = "테스트 게시글 본문입니다."
-    input_article_tags = ["태그1", "태그2"]
-
-    modi_article_title = f"{VALID_USER["username"]}_수정 테스트"
-    modi_article_desc = "테스트 수정"
-    modi_article_body = "테스트 게시글 수정한 본문입니다."
-    modi_article_tags = ["추가 태그1", "추가 태그2"]
-
     @pytest.fixture(autouse=True)
     def setup_and_teardown(self, driver):
         init_db()  # 테스트 환경 초기화
@@ -42,7 +32,10 @@ class TestAriclePage:
     @allure.title("[ARTICLE_01]: 게시글 - 신규 등록")
     @allure.description("로그인 후 새 게시글 작성 및 게시 성공 확인 (제목, 본문, 태그 포함)") 
     @allure.severity(allure.severity_level.CRITICAL)
-    def test_save_new_article(self, driver):
+    @pytest.mark.parametrize("input_title, input_desc, input_body, input_tags", [
+         (f"{VALID_USER['username']}_작성 테스트", "테스트 주제", "테스트 게시글 본문입니다.", ["태그1", "태그2"])
+    ])
+    def test_save_new_article(self, driver, input_title, input_desc, input_body, input_tags):
         signupPage = SignUpPage(driver)
         header = Header(driver)
         articlePage = ArticlePage(driver)
@@ -55,36 +48,31 @@ class TestAriclePage:
 
             # 테스트 시나리오 시작
             header.click_new_post_link()
-            editorPage.save_article(
-                self.input_article_title,
-                self.input_article_desc,
-                self.input_article_body,
-                self.input_article_tags,
-            )
+            editorPage.save_article(input_title, input_desc, input_body, input_tags)
             saved_article = articlePage.load_article_details()
 
             # 비교용 slug 생성을 위해 DB에서 유저 키 값 받아오기
             user_id = get_user_id_by_username(VALID_USER["username"])
-            new_slug = articlePage.get_article_slug(self.input_article_title, user_id)
+            new_slug = articlePage.get_article_slug(input_title, user_id)
 
             # 현재 url과 제목 값 기반으로 만들어진 url과 비교
             assert driver.current_url == BASE_URL + new_slug
             self.logger.info("✅ 현재 URL이 제목 값에 따라 정상 생성되었습니다. ")
 
             # 저장된 제목과 실제 입력한 제목 비교
-            assert saved_article["title"] == self.input_article_title
+            assert saved_article["title"] == input_title
             self.logger.info(
                 "✅ 신규 게시글 제목이 입력한 값으로 정상 저장되었습니다. "
             )
 
             # 저장된 본문 내용과 실제 입력한 본문 내용 비교
-            assert saved_article["body"] == self.input_article_body
+            assert saved_article["body"] == input_body
             self.logger.info(
                 "✅ 신규 게시글 본문 내용이 입력한 값으로 정상 저장되었습니다. "
             )
 
             # 저장된 태그들 값과 실제 입력한 태그들 값 비교
-            assert saved_article["tags"] == self.input_article_tags
+            assert saved_article["tags"] == input_tags
             self.logger.info(
                 "✅ 신규 게시글 태그가 입력한 값으로 정상 저장되었습니다. "
             )
@@ -102,7 +90,10 @@ class TestAriclePage:
     @allure.title("[ARTICLE_02]: 게시글 - 조회")
     @allure.description("게시글 목록(Global Feed) 게시글 표시 확인") 
     @allure.severity(allure.severity_level.NORMAL)
-    def test_load_article_previews(self, driver):
+    @pytest.mark.parametrize("input_title, input_desc, input_body, input_tags", [
+         (f"{VALID_USER['username']}_작성 테스트", "테스트 주제", "테스트 게시글 본문입니다.", ["태그1", "태그2"])
+    ])
+    def test_load_article_previews(self, driver, input_title, input_desc, input_body, input_tags):
         signupPage = SignUpPage(driver)
         header = Header(driver)
         homePage = HomePage(driver)
@@ -128,12 +119,7 @@ class TestAriclePage:
             # Empty 문구 확인 후 신규 글 작성
             header.click_new_post_link()
 
-            editorPage.save_article(
-                self.input_article_title,
-                self.input_article_desc,
-                self.input_article_body,
-                self.input_article_tags,
-            )
+            editorPage.save_article(input_title, input_desc, input_body, input_tags)
 
             header.click_home_link()
             homePage.click_global_feed_tab_link()
@@ -147,7 +133,6 @@ class TestAriclePage:
                 for preview in article_preview_lists.values():
                     if isinstance(preview, dict) and "title" in preview:
                         preview_titles.append(preview["title"])
-                # print(preview_titles)
 
             # 게시글 목록이 있을 경우 - 실제 DB에 등록된 게시글인지 확인
             for title in preview_titles:
@@ -163,7 +148,10 @@ class TestAriclePage:
     @allure.title("[ARTICLE_03]: 게시글 - 상세 페이지")
     @allure.description("특정 게시글 상세 페이지 접근 및 내용(제목, 본문) 확인") 
     @allure.severity(allure.severity_level.NORMAL)
-    def test_confirm_article_detail(self, driver):
+    @pytest.mark.parametrize("input_title, input_desc, input_body, input_tags", [
+         (f"{VALID_USER['username']}_작성 테스트", "테스트 주제", "테스트 게시글 본문입니다.", ["태그1", "태그2"])
+    ])
+    def test_confirm_article_detail(self, driver, input_title, input_desc, input_body, input_tags):
         signupPage = SignUpPage(driver)
         header = Header(driver)
         homePage = HomePage(driver)
@@ -177,12 +165,7 @@ class TestAriclePage:
 
             # 테스트 시나리오 시작
             header.click_new_post_link()
-            editorPage.save_article(
-                self.input_article_title,
-                self.input_article_desc,
-                self.input_article_body,
-                self.input_article_tags,
-            )
+            editorPage.save_article(input_title, input_desc, input_body, input_tags)
 
             header.click_home_link()
 
@@ -231,7 +214,11 @@ class TestAriclePage:
     @allure.title("[ARTICLE_04]: 게시글 - 수정")
     @allure.description("자신이 작성한 게시글 수정 성공 확인") 
     @allure.severity(allure.severity_level.NORMAL)
-    def test_modi_my_article(self, driver):
+    @pytest.mark.parametrize("input_title, input_desc, input_body, input_tags, modi_title, modi_desc, modi_body, modi_tags", [
+         (f"{VALID_USER['username']}_작성 테스트", "테스트 주제", "테스트 게시글 본문입니다.", ["태그1", "태그2"],
+          f"{VALID_USER['username']}_수정 테스트", "테스트 수정", "테스트 게시글 수정한 본문입니다.", ["추가 태그1", "추가 태그2"],)
+    ])
+    def test_modi_my_article(self, driver, input_title, input_desc, input_body, input_tags, modi_title, modi_desc, modi_body, modi_tags):
         signupPage = SignUpPage(driver)
         header = Header(driver)
         articlePage = ArticlePage(driver)
@@ -243,49 +230,39 @@ class TestAriclePage:
 
             # 테스트 시나리오 시작
             header.click_new_post_link()
-            editorPage.save_article(
-                self.input_article_title,
-                self.input_article_desc,
-                self.input_article_body,
-                self.input_article_tags,
-            )
+            editorPage.save_article(input_title, input_desc, input_body, input_tags)
 
             # 글 상세 화면에서 수정 버튼 선택
             articlePage.click_edit_article_btn()
 
             # 수정 화면에서 글 내용 변경 후 저장
-            editorPage.delete_selected_tags((self.input_article_tags[0],))
-            editorPage.save_article(
-                self.modi_article_title,
-                self.modi_article_desc,
-                self.modi_article_body,
-                self.modi_article_tags,
-            )
+            editorPage.delete_selected_tags((input_tags[0],))
+            editorPage.save_article(modi_title, modi_desc, modi_body, modi_tags)
 
             # *글 상세 화면에서 변경 내용 확인
             modified_article = articlePage.load_article_details()
 
             # 변경될 slug 확인을 위해 user_id 추출
             user_id = get_user_id_by_username(VALID_USER["username"])
-            new_slug = articlePage.get_article_slug(self.modi_article_title, user_id)
+            new_slug = articlePage.get_article_slug(modi_title, user_id)
 
             # 현재 url과 제목 값 기반으로 만들어진 url과 비교
             assert driver.current_url == BASE_URL + new_slug
             self.logger.info("✅ 현재 URL이 수정된 제목 값에 따라 정상 변경 되었습니다. ")
 
             # 저장된 제목과 실제 입력한 제목 비교
-            assert modified_article["title"] == self.modi_article_title
+            assert modified_article["title"] == modi_title
             self.logger.info("✅ 게시글 제목이 수정한 입력한 값으로 정상 저장되었습니다. ")
 
             # 저장된 본문 내용과 실제 입력한 본문 내용 비교
-            assert modified_article["body"] == self.modi_article_body
+            assert modified_article["body"] == modi_body
             self.logger.info("✅ 게시글 본문 내용이 수정한 값으로 정상 저장되었습니다. ")
 
             # 저장된 태그들 값과 실제 입력한 태그들 값 비교
-            self.modi_article_tags.insert(
-                0, self.input_article_tags[1]
+            modi_tags.insert(
+                0, input_tags[1]
             )  # 삭제하지 않은 태그 값 비교를 위해 리스트에 추가
-            assert modified_article["tags"] == self.modi_article_tags
+            assert modified_article["tags"] == modi_tags
             self.logger.info("✅ 게시글 태그가 수정한 값으로 정상 저장되었습니다. ")
 
             # 게시글이 DB에 정말로 저장되었는지 확인 (By. title)
@@ -301,7 +278,10 @@ class TestAriclePage:
     @allure.title("[ARTICLE_05]: 게시글 - 삭제")
     @allure.description("자신이 작성한 게시글 삭제 성공 확인") 
     @allure.severity(allure.severity_level.NORMAL)
-    def test_del_my_article(self, driver):
+    @pytest.mark.parametrize("input_title, input_desc, input_body, input_tags", [
+         (f"{VALID_USER['username']}_작성 테스트", "테스트 주제", "테스트 게시글 본문입니다.", ["태그1", "태그2"])
+    ])
+    def test_del_my_article(self, driver, input_title, input_desc, input_body, input_tags):
         signupPage = SignUpPage(driver)
         header = Header(driver)
         articlePage = ArticlePage(driver)
@@ -314,12 +294,7 @@ class TestAriclePage:
 
             # 테스트 시나리오 시작
             header.click_new_post_link()
-            editorPage.save_article(
-                self.input_article_title,
-                self.input_article_desc,
-                self.input_article_body,
-                self.input_article_tags,
-            )
+            editorPage.save_article(input_title, input_desc, input_body, input_tags)
             saved_article = articlePage.load_article_details()
 
             articlePage.click_delete_article_btn()
