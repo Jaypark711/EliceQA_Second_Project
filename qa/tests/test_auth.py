@@ -71,7 +71,7 @@ class TestAuthentication:
         ("", "", "", "email can't be blank", "사용자명, 이메일, 비밀번호 입력창을 모두 공백"),
         (VALID_USER["username"], "", "", "email can't be blank", "이메일, 비밀번호 입력창을 공백"),
         (VALID_USER["username"], VALID_USER["email"], "", "password can't be blank", "비밀번호 입력창을 공백"),
-        (VALID_USER["username"], VALID_USER["email"], VALID_USER["password"], ["email has already been taken", "username has already been taken"], "유효한 정보로")
+        (VALID_USER["username"], VALID_USER["email"], VALID_USER["password"], ["email has already been taken", "username has already been taken"], "유효한 입력값")
     ])
     def test_fail_signup(self, driver, username, email, password, expected_result, description):
         self.logger.info(f"{description}(으)로 회원가입 테스트 시작")
@@ -105,7 +105,7 @@ class TestAuthentication:
                 assert expected_result in signUpPage.get_error_message_text() # 기대 결과 5: {경고창}이 표시됨
             else:
                 assert set(signUpPage.get_error_messages_text()) == set(expected_result) # 기대 결과 5: {경고창}이 표시됨
-            self.logger.info(f"{description}로 회원가입 테스트 시 {expected_result} 경고창 출력 확인")
+            self.logger.info(f"{description}(으)로 회원가입 테스트 시 {expected_result} 경고창 출력 확인")
 
         except Exception as e:
             self.logger.error(f"❌ AUTH_02 테스트 중 오류 발생: {e}")
@@ -192,7 +192,7 @@ class TestAuthentication:
 
             signInPage.click_sign_in_btn()
             assert signInPage.get_error_messages_text() == expected_result # 기대 결과 4: {경고창}이 표시됨
-            self.logger.info(f"{description}로 로그인 테스트 시 {expected_result} 경고창 출력 확인")
+            self.logger.info(f"{description}(으)로 로그인 테스트 시 {expected_result} 경고창 출력 확인")
 
         except Exception as e:
             self.logger.error(f"❌ AUTH_04 테스트 중 오류 발생: {e}")
