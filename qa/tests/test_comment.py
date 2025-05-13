@@ -50,7 +50,7 @@ class TestCommentPage:
             first_article = articlePage.load_first_article_data()
             articlePage.click_article(0,1)
             detail_article = articlePage.load_article_details()
-            assert all([ # 기대 결과 1 : 누른 게시글로 이동되어 노출됨
+            assert all([ 
                 first_article["title"] == detail_article["title"], 
                 first_article["author"] == detail_article["author"],
                 first_article["created date"] == detail_article["created date"]
@@ -58,18 +58,18 @@ class TestCommentPage:
             self.logger.info("✅ 기대 결과 1 : 누른 게시글로 이동되어 노출됨")
 
             articlePage.send_comment(comment)
-            assert articlePage.get_text_from_comment_textarea() == comment # 기대 결과 2 : 입력한 값이 댓글 입력 필드에 반영됨
+            assert articlePage.get_text_from_comment_textarea() == comment
             self.logger.info("✅ 기대 결과 2 : 입력한 값이 댓글 입력 필드에 반영됨")
 
             articlePage.click_post_comment_btn()
-            assert all([ # 기대 결과 3 : 입력한 값이 댓글로 정상 등록됨
+            assert all([
                 articlePage.get_text_from_comment() == comment, 
                 articlePage.get_text_from_author() == VALID_USER["username"] 
             ])
             self.logger.info("✅ 기대 결과 3 : 입력한 값이 댓글로 정상 등록됨")
 
             articlePage.click_delete_comment_btn()
-            assert all([ # 기대 결과 4 : 댓글 삭제 확인
+            assert all([
                 articlePage.is_comment_disappear(),
                 articlePage.is_author_link_disappear()
             ])
