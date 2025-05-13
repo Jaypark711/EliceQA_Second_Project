@@ -32,8 +32,7 @@ class TestSocial:
     @allure.description("특정 게시글 즐겨찾기(Favorite) 및 해제 기능 확인")
     @allure.severity(allure.severity_level.NORMAL)
     def test_article_favorite_function(self,driver):
-        """SOCIAL_01: 유효한 정보로 비밀번호 업데이트 성공"""
-        self.logger.info("즐겨찾기 기능 테스트 시작")
+        self.logger.info("▶️ 즐겨찾기 기능 테스트 시작")
         header = Header(driver)
         signupPage = SignUpPage(driver)
         homePage = HomePage(driver)
@@ -50,10 +49,10 @@ class TestSocial:
 
             first_article = articlePage.load_first_article_data()
             assert first_article['favor count'] == '1' # 기대 결과 1 : 좋아요가 하나 증가한 채로 노출됨
-            self.logger.info("기대 결과 1 : 좋아요가 하나 증가한 채로 노출됨")
+            self.logger.info("✅ 기대 결과 1 : 좋아요가 하나 증가한 채로 노출됨")
             
             assert get_favorited_article_title_by_username(VALID_USER["username"]) == first_article['title'] # 기대 결과 2 : db에 좋아요 누른 게시글이 노출됨
-            self.logger.info("기대 결과 2 : db에 좋아요 누른 게시글이 노출됨")
+            self.logger.info("✅ 기대 결과 2 : db에 좋아요 누른 게시글이 노출됨")
             
         except Exception as e:
             self.logger.error(f"❌ SOCIAL_01 테스트 중 오류 발생: {e}")
@@ -63,8 +62,7 @@ class TestSocial:
     @allure.description("다른 사용자 팔로우 및 언팔로우 기능 확인")
     @allure.severity(allure.severity_level.MINOR)
     def test_author_follow_function(self,driver):
-        """SOCIAL_02: 다른 사용자 팔로우 및 언팔로우 기능 확인"""
-        self.logger.info("팔로우 및 언팔로우 기능 테스트 시작")
+        self.logger.info("▶️ 팔로우 및 언팔로우 기능 테스트 시작")
         header = Header(driver)
         homePage = HomePage(driver)
         signupPage = SignUpPage(driver)
@@ -86,7 +84,7 @@ class TestSocial:
             homePage.click_your_feed_tab_link()
             article_authors = [ article_info['author'] for article_info in articlePage.load_article_preview_lists().values() ]
             assert set(article_authors) == {followed_user} # 기대 결과 1 : article 리스트의 author이 follow한 author과 전부 일치
-            self.logger.info("기대 결과 1 : article 리스트의 author이 follow한 author과 전부 일치")
+            self.logger.info("✅ 기대 결과 1 : article 리스트의 author이 follow한 author과 전부 일치")
 
             articlePage.click_preview_author()
             profilePage.click_unfollow_btn()
@@ -94,7 +92,7 @@ class TestSocial:
             header.click_home_link()
             homePage.click_your_feed_tab_link()
             assert articlePage.is_empty_text_div_show() # 기대 결과 2 : 팔로우한 author이 없을 때 No articles here이 노출됨
-            self.logger.info("기대 결과 2 : 팔로우한 author이 없을 때 No articles here이 노출됨")
+            self.logger.info("✅ 기대 결과 2 : 팔로우한 author이 없을 때 No articles here이 노출됨")
 
         except Exception as e:
             self.logger.error(f"❌ SOCIAL_02 테스트 중 오류 발생: {e}")
