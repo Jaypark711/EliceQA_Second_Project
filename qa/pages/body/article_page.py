@@ -5,7 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.ui import WebDriverWait
-
+from data.user_data import VALID_USER
 
 class ArticlePage(BasePage):
     # 로케이터 정의
@@ -39,9 +39,8 @@ class ArticlePage(BasePage):
     )
     ARTICLE_POST_COMMENT_BTN = (By.CSS_SELECTOR, 'button[type*="submit"]')
     ARTICLE_COMMENT_P = (By.CSS_SELECTOR, "p.card-text")
-    ARTICLE_COMMENT_AUTHOR = (By.CSS_SELECTOR, "a.comment-author")
     ARTICLE_COMMENT_AUTHOR_PROFILE_IMG = (By.CSS_SELECTOR, "a.comment-author > img")
-    ARTICLE_COMMENT_AUTHOR_LINK = (By.CSS_SELECTOR, "a.comment-author:empty")
+    ARTICLE_COMMENT_AUTHOR_LINK = (By.CSS_SELECTOR, "a.comment-author:not(:has(*))")
     ARTICLE_COMMENT_DEL_BTN = (By.CSS_SELECTOR, "i.ion-trash-a")
 
     def __init__(self, driver):
@@ -236,6 +235,18 @@ class ArticlePage(BasePage):
     def click_delete_comment_btn(self):
         self.click_element(self.click_delete_comment_btn)
 
+    def get_text_from_comment_textarea(self):
+        return self.get_text(self.ARTICLE_COMMENT_TEXTAREA)
+
+    def get_text_from_comment(self):
+        return self.get_text(self.ARTICLE_COMMENT_P)
+    
+    def get_text_from_author(self):
+        return self.get_text(self.ARTICLE_COMMENT_AUTHOR_LINK)
+    
+    def click_comment_del_btn(self):
+        self.click_element(self.ARTICLE_COMMENT_DEL_BTN)
+
     def get_article_slug(self, title, userkey):
         """article 주소 방식
         - 한글은 모두 삭제
@@ -271,3 +282,9 @@ class ArticlePage(BasePage):
             
     def is_empty_text_div_show(self):
         return self.is_element_appear(self.EMPTY_TEXT_DIV)
+
+    def is_comment_disappear(self):
+        return self.is_element_disappear(self.ARTICLE_COMMENT_P)
+    
+    def is_author_link_disappear(self):
+        return self.is_element_disappear(self.ARTICLE_COMMENT_AUTHOR_LINK)
