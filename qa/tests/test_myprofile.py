@@ -7,6 +7,7 @@ from pages.body.home_page import HomePage
 from pages.body.signup_page import SignUpPage
 from pages.body.profile_page import ProfilePage
 from pages.body.article_page import ArticlePage
+from pages.body.editor_page import EditorPage
 from utils.logger import setupLogger
 from db.db_utils import init_db, run_prisma_seed, get_user_info_by_username
 
@@ -70,6 +71,7 @@ class TestMyProfile:
         signUpPage = SignUpPage(driver)
         profilePage = ProfilePage(driver)
         articlePage = ArticlePage(driver)
+        editorPage = EditorPage(driver)
 
         try:
             # 테스트 환경 세팅
@@ -89,15 +91,15 @@ class TestMyProfile:
             self.logger.info("등록된 Article이 없는 경우 'No articles are here... yet.' 텍스트 노출 확인")
 
             header.click_new_post_link()
-            articlePage.save_article(title, description, body, tags)
+            editorPage.save_article(title, description, body, tags)
 
             header.click_my_profile_link()
-            articles = articlePage.load_article_preview_lists() # TODO: 첫번째 Article을 get하는 함수가 article_page에 있으면 좋겠음
+            first_article = articlePage.load_first_article_data()
 
             assert all([ # 기대 결과 3: (등록 Article 1개 이상) : 내가 작성한 게시글 목록이 표시되어야 함
-                articles["article1"]["title"] == title, 
-                articles["article1"]["description"] == description,
-                articles["article1"]["tags"] == tags[0],
+                first_article["title"] == title, 
+                first_article["description"] == description,
+                first_article["tags"] == tags[0],
             ])
             self.logger.info("등록된 Article이 있는 경우 내가 작성한 게시글 목록 표시 확인")
 
@@ -122,9 +124,7 @@ class TestMyProfile:
 
             # 테스트 시나리오 시작
             home.click_global_feed_tab_link()
-
-            articles = articlePage.load_article_preview_lists() # TODO: 첫번째 Article을 get하는 함수가 article_page에 있으면 좋겠음
-            global_feed_first_article = articles["article1"]
+            global_feed_first_article = articlePage.load_first_article_data()
 
             articlePage.click_preview_favorite(0, 1)
 
@@ -135,9 +135,7 @@ class TestMyProfile:
             self.logger.info("마이프로필 페이지 이동 확인 완료")
 
             profilePage.click_favorited_article_tab_link()
-
-            articles = articlePage.load_article_preview_lists() # TODO: 첫번째 Article을 get하는 함수가 article_page에 있으면 좋겠음
-            favorited_article_first_article = articles["article1"] 
+            favorited_article_first_article = articlePage.load_first_article_data()
 
             assert all([ # 기대 결과 3: (좋아요 누른 Article 1개 이상) : 좋아요 누른 게시글이 노출됨
                 global_feed_first_article["author"] == favorited_article_first_article["author"],

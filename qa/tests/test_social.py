@@ -42,8 +42,7 @@ class TestSocial:
             homePage.click_global_feed_tab_link()
             articlePage.click_preview_favorite(0, 1)
 
-            articles = articlePage.load_article_preview_lists()
-            first_article = list(articles.values())[0] # TODO: 첫번째 Article을 get하는 함수가 article_page에 있으면 좋겠음
+            first_article = articlePage.load_first_article_data()
             assert first_article['favor count'] == '1' # 기대 결과 1 : 좋아요가 하나 증가한 채로 노출됨
             self.logger.info("기대 결과 1 : 좋아요가 하나 증가한 채로 노출됨")
             
