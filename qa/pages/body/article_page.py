@@ -39,6 +39,7 @@ class ArticlePage(BasePage):
     )
     ARTICLE_POST_COMMENT_BTN = (By.CSS_SELECTOR, 'button[type*="submit"]')
     ARTICLE_COMMENT_P = (By.CSS_SELECTOR, "p.card-text")
+    ARTICLE_COMMENT_AUTHOR = (By.CSS_SELECTOR, "a.comment-author")
     ARTICLE_COMMENT_AUTHOR_PROFILE_IMG = (By.CSS_SELECTOR, "a.comment-author > img")
     ARTICLE_COMMENT_AUTHOR_LINK = (By.CSS_SELECTOR, "a.comment-author:empty")
     ARTICLE_COMMENT_DEL_BTN = (By.CSS_SELECTOR, "i.ion-trash-a")
