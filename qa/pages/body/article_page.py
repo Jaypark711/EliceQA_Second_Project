@@ -140,7 +140,7 @@ class ArticlePage(BasePage):
     def load_first_article_data(self):
         all_articles = self.load_article_preview_lists()
         first_article = list(all_articles.values())[0]
-        print(first_article)
+        return first_article
 
 
     def click_article(self, selected_page, index):
