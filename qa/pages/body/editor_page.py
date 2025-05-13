@@ -1,14 +1,10 @@
-import re
-from utils.helpers import Helpers
-from pages.base_page import BasePage
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.remote.webelement import WebElement
-from selenium.webdriver.support.ui import WebDriverWait
 
+from pages.base_page import BasePage
 
 class EditorPage(BasePage):
-    # 로케이터 정의의
+    # 로케이터 정의
     ARTICLE_TITLE_INPUT = (By.CSS_SELECTOR, 'input[placeholder*="Article Title"]')
     ARTICLE_DESCRIPTION_INPUT = (
         By.CSS_SELECTOR,
@@ -36,10 +32,20 @@ class EditorPage(BasePage):
     def send_article_body(self, body):
         self.send_keys(self.ARTICLE_BODY_TEXTAREA, body)
 
+    def click_publish_btn(self):
+        self.click_element(self.PUBLISH_BTN)
+
     def save_article_tags(self, tags):
         for tag in tags:
             self.send_keys(self.ARTICLE_TAG_INPUT, tag)
             self.send_keys(self.ARTICLE_TAG_INPUT, Keys.ENTER)
+
+    def save_article(self, title, description, body, tags):
+        self.send_article_title(title)
+        self.send_article_description(description)
+        self.send_article_body(body)
+        self.save_article_tags(tags)
+        self.click_publish_btn()
 
     def delete_selected_tags(self, tag_names):
         for tag_name in tag_names:
@@ -57,13 +63,3 @@ class EditorPage(BasePage):
 
             # 태그 삭제 버튼 리스트에서 삭제할 index 값의 요소 선택하여 클릭
             self.click_element(tag_del_btns[del_index])
-
-    def click_publish_btn(self):
-        self.click_element(self.PUBLISH_BTN)
-
-    def save_article(self, title, description, body, tags):
-        self.send_article_title(title)
-        self.send_article_description(description)
-        self.send_article_body(body)
-        self.save_article_tags(tags)
-        self.click_publish_btn()
