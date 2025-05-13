@@ -1,12 +1,10 @@
 import re
-from db.db_utils import *
-from utils.helpers import Helpers
-from pages.base_page import BasePage
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.remote.webelement import WebElement
-from selenium.webdriver.support.ui import WebDriverWait
-from data.user_data import VALID_USER
+
+from pages.base_page import BasePage
+from utils.helpers import Helpers
+from db.db_utils import *
+
 
 class ArticlePage(BasePage):
     # 로케이터 정의
@@ -47,9 +45,107 @@ class ArticlePage(BasePage):
     def __init__(self, driver):
         super().__init__(driver)
 
-    # 특정 요소의 자식 요소 찾기
-    def find_child_elements(self, parents_elem: WebElement, child_locator):
-        return parents_elem.find_elements(*child_locator)
+    def is_empty_text_div_show(self):
+        return self.is_element_appear(self.EMPTY_TEXT_DIV)
+
+    def is_comment_disappear(self):
+        return self.is_element_disappear(self.ARTICLE_COMMENT_P)
+    
+    def is_author_link_disappear(self):
+        return self.is_element_disappear(self.ARTICLE_COMMENT_AUTHOR_LINK)
+    
+    def is_my_article(self):
+        return (self.is_element_appear(self.EDIT_ARTICLE_BTN) and self.is_element_appear(self.DELETE_ARTICLE_BTN))
+    
+    def is_not_my_article(self):
+        return (self.is_element_disappear(self.EDIT_ARTICLE_BTN) and self.is_element_disappear(self.DELETE_ARTICLE_BTN))
+    
+    def send_comment(self, comment):
+        self.send_keys(self.ARTICLE_COMMENT_TEXTAREA, comment)
+
+    def click_article(self, selected_page, index):
+        # 페이지 로드가 완료될 때 까지 대기
+        helpers = Helpers(self.driver)
+        helpers.wait_until_page_load_complete()
+
+        # 페이지네이션이 없는 경우 (전체 게시글 갯수 10개 이하) - 0으로 파라미터 보낼 것
+        if selected_page == 0:
+            article_links = self.find_elements(self.ARTICLE_PREVIEW_READMORE_A)
+            article_links[index - 1].click()
+        else:
+            pages = self.find_elements(self.ARTICLE_PREVIEW_PAGE_A)
+            pages[selected_page - 1].click()
+            helpers.wait_until_page_load_complete()
+            article_links = self.find_elements(self.ARTICLE_PREVIEW_READMORE_A)
+            article_links[index - 1].click()
+
+    def click_preview_favorite(self, selected_page, index):
+        # 페이지 로드가 완료될 때 까지 대기
+        helpers = Helpers(self.driver)
+        helpers.wait_until_page_load_complete()
+
+        # 페이지네이션이 없는 경우 (전체 게시글 갯수 10개 이하) - 0으로 파라미터 보낼 것
+        if selected_page == 0:
+            article_links = self.find_elements(self.ARTICLE_PREVIEW_FAVOR_BTN)
+            article_links[index - 1].click()
+        else:
+            pages = self.find_elements(self.ARTICLE_PREVIEW_FAVOR_BTN)
+            pages[selected_page - 1].click()
+            helpers.wait_until_page_load_complete()
+            article_links = self.find_elements(self.ARTICLE_PREVIEW_FAVOR_BTN)
+            article_links[index - 1].click()
+
+    def click_preview_author_profile_img(self):
+        self.click_element(self.ARTICLE_PREVIEW_PROFILE_IMG)
+
+    def click_preview_author(self):
+        self.click_element(self.ARTICLE_PREVIEW_USERNAME)
+
+    def click_article_author_profile_img(self):
+        self.click_element(self.ARTICLE_DETAIL_PROFILE_IMG)
+
+    def click_article_author_username(self):
+        self.click_element(self.ARTICLE_DETAIL_AUTHOR)
+
+    def click_edit_article_btn(self):
+        self.click_element(self.EDIT_ARTICLE_BTN)
+
+    def click_delete_article_btn(self):
+        self.click_element(self.DELETE_ARTICLE_BTN)
+
+    def click_post_comment_btn(self):
+        self.click_element(self.ARTICLE_POST_COMMENT_BTN)
+
+    def click_delete_comment_btn(self):
+        self.click_element(self.click_delete_comment_btn)
+
+    def click_comment_del_btn(self):
+        self.click_element(self.ARTICLE_COMMENT_DEL_BTN)
+
+    def get_text_from_comment_textarea(self):
+        return self.get_text(self.ARTICLE_COMMENT_TEXTAREA)
+
+    def get_text_from_comment(self):
+        return self.get_text(self.ARTICLE_COMMENT_P)
+    
+    def get_text_from_author(self):
+        return self.get_text(self.ARTICLE_COMMENT_AUTHOR_LINK)
+
+    def get_article_slug(self, title, userkey):
+        """article 주소 방식
+        - 한글은 모두 삭제
+        - 공백의 경우 '-'로 대치"""
+        print(title)
+        # 한글 삭제
+        changed_url_path = (
+            "article/"
+            + re.sub(r"[가-힣]+", "", title).replace(" ", "-")
+            + f"-{userkey}"
+        )
+        if "--" in changed_url_path:
+            changed_url_path = changed_url_path.replace("--", "-")
+        print(changed_url_path)
+        return changed_url_path         
 
     def load_article_preview_lists(self):
         # 페이지 로드 완료될 때까지 대기
@@ -117,14 +213,6 @@ class ArticlePage(BasePage):
                         tag_group_list.append(tag_li.text)
                     pre_tags.append(tag_group_list)
 
-        # 디버깅용
-        # print(f"수집된 작성자 총 {len(pre_authors)}개 - : {pre_authors}\n")
-        # print(f"수집된 작성일 총 {len(pre_create_dates)}개 - : {pre_create_dates}\n")
-        # print(f"수집된 좋아요 수 총 {len(pre_favors)}개 - : {pre_favors}\n")
-        # print(f"수집된 제목 총 {len(pre_titles)}개 - : {pre_titles}\n")
-        # print(f"수집된 본문 내용 총 {len(pre_bodies)}개 - : {pre_bodies}\n")
-        # print(f"수집된 태그 총 {len(pre_tags)}개 - : {pre_tags}\n")
-
         for i in range(len(pre_titles)):
             articles[f"article{i+1}"] = {
                 "author": pre_authors[i],
@@ -134,66 +222,13 @@ class ArticlePage(BasePage):
                 "description": pre_descriptions[i],
                 "tags": pre_tags[i],
             }
-        # 디버깅용
-        # print(articles)
+
         return articles
 
     def load_first_article_data(self):
         all_articles = self.load_article_preview_lists()
         first_article = list(all_articles.values())[0]
         return first_article
-
-
-    def click_article(self, selected_page, index):
-        # 페이지 로드가 완료될 때 까지 대기
-        helpers = Helpers(self.driver)
-        helpers.wait_until_page_load_complete()
-
-        # 페이지네이션이 없는 경우 (전체 게시글 갯수 10개 이하) - 0으로 파라미터 보낼 것
-        if selected_page == 0:
-            article_links = self.find_elements(self.ARTICLE_PREVIEW_READMORE_A)
-            article_links[index - 1].click()
-        else:
-            pages = self.find_elements(self.ARTICLE_PREVIEW_PAGE_A)
-            pages[selected_page - 1].click()
-            helpers.wait_until_page_load_complete()
-            article_links = self.find_elements(self.ARTICLE_PREVIEW_READMORE_A)
-            article_links[index - 1].click()
-
-
-    def click_preview_favorite(self, selected_page, index):
-        # 페이지 로드가 완료될 때 까지 대기
-        helpers = Helpers(self.driver)
-        helpers.wait_until_page_load_complete()
-
-        # 페이지네이션이 없는 경우 (전체 게시글 갯수 10개 이하) - 0으로 파라미터 보낼 것
-        if selected_page == 0:
-            article_links = self.find_elements(self.ARTICLE_PREVIEW_FAVOR_BTN)
-            article_links[index - 1].click()
-        else:
-            pages = self.find_elements(self.ARTICLE_PREVIEW_FAVOR_BTN)
-            pages[selected_page - 1].click()
-            helpers.wait_until_page_load_complete()
-            article_links = self.find_elements(self.ARTICLE_PREVIEW_FAVOR_BTN)
-            article_links[index - 1].click()
-
-    def click_preview_author_profile_img(self):
-        self.click_element(self.ARTICLE_PREVIEW_PROFILE_IMG)
-
-    def click_preview_author(self):
-        self.click_element(self.ARTICLE_PREVIEW_USERNAME)
-
-    def click_article_author_profile_img(self):
-        self.click_element(self.ARTICLE_DETAIL_PROFILE_IMG)
-
-    def click_article_author_username(self):
-        self.click_element(self.ARTICLE_DETAIL_AUTHOR)
-
-    def click_edit_article_btn(self):
-        self.click_element(self.EDIT_ARTICLE_BTN)
-
-    def click_delete_article_btn(self):
-        self.click_element(self.DELETE_ARTICLE_BTN)
 
     def load_article_details(self):
         # 게시글 상세 내용을 담을 빈 딕셔너리 생성
@@ -224,58 +259,10 @@ class ArticlePage(BasePage):
         # print(article_details)
         return article_details
 
-    def send_comment(self, comment):
-        self.send_keys(self.ARTICLE_COMMENT_TEXTAREA, comment)
-
-    def click_post_comment_btn(self):
-        self.click_element(self.ARTICLE_POST_COMMENT_BTN)
+    # 특정 요소의 자식 요소 찾기
+    def find_child_elements(self, parents_elem, child_locator):
+        return parents_elem.find_elements(*child_locator)
 
     def save_comment(self, comment):
         self.send_comment(comment)
         self.click_post_comment_btn()
-
-    def click_delete_comment_btn(self):
-        self.click_element(self.click_delete_comment_btn)
-
-    def get_text_from_comment_textarea(self):
-        return self.get_text(self.ARTICLE_COMMENT_TEXTAREA)
-
-    def get_text_from_comment(self):
-        return self.get_text(self.ARTICLE_COMMENT_P)
-    
-    def get_text_from_author(self):
-        return self.get_text(self.ARTICLE_COMMENT_AUTHOR_LINK)
-    
-    def click_comment_del_btn(self):
-        self.click_element(self.ARTICLE_COMMENT_DEL_BTN)
-
-    def get_article_slug(self, title, userkey):
-        """article 주소 방식
-        - 한글은 모두 삭제
-        - 공백의 경우 '-'로 대치"""
-        print(title)
-        # 한글 삭제
-        changed_url_path = (
-            "article/"
-            + re.sub(r"[가-힣]+", "", title).replace(" ", "-")
-            + f"-{userkey}"
-        )
-        if "--" in changed_url_path:
-            changed_url_path = changed_url_path.replace("--", "-")
-        print(changed_url_path)
-        return changed_url_path
-            
-    def is_empty_text_div_show(self):
-        return self.is_element_appear(self.EMPTY_TEXT_DIV)
-
-    def is_comment_disappear(self):
-        return self.is_element_disappear(self.ARTICLE_COMMENT_P)
-    
-    def is_author_link_disappear(self):
-        return self.is_element_disappear(self.ARTICLE_COMMENT_AUTHOR_LINK)
-    
-    def is_my_article(self):
-        return (self.is_element_appear(self.EDIT_ARTICLE_BTN) and self.is_element_appear(self.DELETE_ARTICLE_BTN))
-    
-    def is_not_my_article(self):
-        return (self.is_element_disappear(self.EDIT_ARTICLE_BTN) and self.is_element_disappear(self.DELETE_ARTICLE_BTN))
