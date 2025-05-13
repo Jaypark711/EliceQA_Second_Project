@@ -41,6 +41,23 @@ class EditorPage(BasePage):
             self.send_keys(self.ARTICLE_TAG_INPUT, tag)
             self.send_keys(self.ARTICLE_TAG_INPUT, Keys.ENTER)
 
+    def delete_selected_tags(self, tag_names):
+        for tag_name in tag_names:
+            # 루프 시마다 태그 요소 리스트 & 태그 삭제 버튼 리스트 불러오기
+            article_tag_element_list = self.find_elements(self.ARTICLE_TAG_LIST_SPAN)
+            tag_del_btns = self.find_elements(self.TAG_DEL_I)
+
+            # 현재 태그 요소 리스트의 텍스트 값만 추출하여 리스트로 저장
+            tag_text_list = []
+            for elem in article_tag_element_list:
+                tag_text_list.append(elem.text)
+
+            # 태그 요소 텍스트 리스트에서 tag_name과 동일한 값의 index 값 찾기
+            del_index = tag_text_list.index(tag_name)
+
+            # 태그 삭제 버튼 리스트에서 삭제할 index 값의 요소 선택하여 클릭
+            self.click_element(tag_del_btns[del_index])
+
     def click_publish_btn(self):
         self.click_element(self.PUBLISH_BTN)
 
