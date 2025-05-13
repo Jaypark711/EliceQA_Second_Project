@@ -42,7 +42,7 @@ class TestAriclePage:
 
     # @pytest.mark.skip(reason="Passed")
     @allure.title("[ARTICLE_01]: 게시글 - 신규 등록")
-    @allure.description("게시글 목록(Global Feed) 게시글 표시 확인") 
+    @allure.description("로그인 후 새 게시글 작성 및 게시 성공 확인 (제목, 본문, 태그 포함)") 
     @allure.severity(allure.severity_level.CRITICAL)
     def test_save_new_article(self, driver: WebDriver):
         signupPage = SignUpPage(driver)
@@ -101,7 +101,7 @@ class TestAriclePage:
 
     # @pytest.mark.skip(reason="Passed")
     @allure.title("[ARTICLE_02]: 게시글 - 조회")
-    @allure.description("특정 게시글 상세 페이지 접근 및 내용(제목, 본문) 확인") 
+    @allure.description("게시글 목록(Global Feed) 게시글 표시 확인") 
     @allure.severity(allure.severity_level.NORMAL)
     def test_load_article_previews(self, driver: WebDriver):
         signupPage = SignUpPage(driver)
