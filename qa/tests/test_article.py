@@ -1,4 +1,5 @@
 import pytest
+import allure
 from db.db_utils import *
 from config.config import BASE_URL
 from data.user_data import VALID_USER
@@ -14,8 +15,9 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 import time
 
-
+@allure.suite("test_article.py")
 @pytest.mark.usefixtures("driver")
+@allure.sub_suite("ARTICLE TEST")
 class TestAriclePage:
     logger = setupLogger(__qualname__)
 
@@ -39,8 +41,9 @@ class TestAriclePage:
         self.logger.info("==================================")
 
     # @pytest.mark.skip(reason="Passed")
+    @allure.title("[ARTICLE_01]: 게시글 - 조회")
+    @allure.description("게시글 목록(Global Feed) 게시글 표시 확인") 
     def test_save_new_article(self, driver: WebDriver):
-        """Precondition 및 테스트 수행 세팅"""
         signupPage = SignUpPage(driver)
         header = Header(driver)
         articlePage = ArticlePage(driver)
@@ -50,7 +53,6 @@ class TestAriclePage:
             header.click_sign_up_link()
             signupPage.sign_up()
 
-            """ Steps """
             header.click_new_post_link()
             editorPage.save_article(
                 self.input_article_title,
@@ -64,7 +66,6 @@ class TestAriclePage:
             user_id = get_user_id_by_username(VALID_USER["username"])
             new_slug = articlePage.get_article_slug(self.input_article_title, user_id)
 
-            """ Expected Results """
             # 현재 url과 제목 값 기반으로 만들어진 url과 비교
             assert driver.current_url == BASE_URL + new_slug
             self.logger.info("✅ 현재 URL이 제목 값에 따라 정상 생성되었습니다. ")
@@ -98,8 +99,10 @@ class TestAriclePage:
             assert False, "❌ ARTICLE_01 테스트 중 오류 발생"
 
     # @pytest.mark.skip(reason="Passed")
+    @allure.title("[ARTICLE_02]: 게시글 - 상세페이지")
+    @allure.description("특정 게시글 상세 페이지 접근 및 내용(제목, 본문) 확인") 
+
     def test_load_article_previews(self, driver: WebDriver):
-        """Precondition 및 테스트 수행 세팅"""
         signupPage = SignUpPage(driver)
         header = Header(driver)
         homePage = HomePage(driver)
@@ -111,18 +114,15 @@ class TestAriclePage:
             header.click_sign_up_link()
             signupPage.sign_up()
 
-            """ Steps 1 """
             homePage.click_global_feed_tab_link()
             helpers.wait_until_page_load_complete()
             article_preview_lists = articlePage.load_article_preview_lists()
 
-            """ Expected Results 1 """
             # 게시글 목록이 없을 경우
             if type(article_preview_lists) == WebElement:
                 assert articlePage.is_empty_text_div_show()
                 self.logger.info("✅ 게시글 없을 시 Empty 문구 정상 제공 확인")
 
-            """ Steps 2 """
             # Empty 문구 확인 후 신규 글 작성
             header.click_new_post_link()
 
@@ -147,7 +147,6 @@ class TestAriclePage:
                         preview_titles.append(preview["title"])
                 # print(preview_titles)
 
-            """ Expected Results 2 """
             # 게시글 목록이 있을 경우 - 실제 DB에 등록된 게시글인지 확인
             for title in preview_titles:
                 assert get_articles_by_title(title) != None
@@ -160,8 +159,10 @@ class TestAriclePage:
             assert False, "❌ ARTICLE_02 테스트 중 오류 발생"
 
     # @pytest.mark.skip(reason="Passed")
+    @allure.title("[ARTICLE_03]: 게시글 - 상세 페이지")
+    @allure.description("특정 게시글 상세 페이지 접근 및 내용(제목, 본문) 확인") 
+
     def test_confirm_article_detail(self, driver: WebDriver):
-        """Precondition 및 테스트 수행 세팅"""
         signupPage = SignUpPage(driver)
         header = Header(driver)
         homePage = HomePage(driver)
@@ -184,14 +185,12 @@ class TestAriclePage:
             # 다른 계정 글 확인용 dummy 데이터 삽입하기
             run_prisma_seed()
 
-            """ Steps 1 """
             # 다른 계정이 쓴 글 진입 (dummy)
             homePage.click_global_feed_tab_link()
             articlePage.click_article(0, 1)
             others_slug = driver.current_url.replace(f"{BASE_URL}article/", "")
             others_article = articlePage.load_article_details()
 
-            """ Expected Results 1 """
             others_db_article_datas = get_article_details_by_slug(others_slug)
             assert others_db_article_datas[2] == others_article["title"]
             self.logger.info("✅ 글 제목 내용 확인")
@@ -202,7 +201,6 @@ class TestAriclePage:
             assert articlePage.is_not_my_article() == True
             self.logger.info("✅ 다른 계정이 쓴 글 수정 및 삭제 불가함을 확인했습니다.")
 
-            """ Steps 2 """
             # 현재 유저가 쓴 글 진입
             header.click_home_link()
             homePage.click_global_feed_tab_link()
@@ -211,13 +209,12 @@ class TestAriclePage:
             my_slug = driver.current_url.replace(f"{BASE_URL}article/", "")
             my_article = articlePage.load_article_details()
 
-            my_db_article_datas = get_article_details_by_slug(others_slug)
+            my_db_article_datas = get_article_details_by_slug(my_slug)
 
-            """ Expected Results 2 """
-            assert my_db_article_datas[2] == others_article["title"]
+            assert my_db_article_datas[2] == my_article["title"]
             self.logger.info("✅ 글 제목 내용 확인")
 
-            assert my_db_article_datas[4] == others_article["body"]
+            assert my_db_article_datas[4] == my_article["body"]
             self.logger.info("✅ 글 본문 내용 확인")
 
             assert articlePage.is_my_article() == True
@@ -228,8 +225,10 @@ class TestAriclePage:
             assert False, "❌ ARTICLE_03 테스트 중 오류 발생"
 
     # @pytest.mark.skip(reason="Passed")
+    @allure.title("[ARTICLE_04]: 게시글 - 수정")
+    @allure.description("자신이 작성한 게시글 수정 성공 확인") 
+
     def test_modi_my_article(self, driver):
-        """Precondition 및 테스트 수행 세팅"""
         signupPage = SignUpPage(driver)
         header = Header(driver)
         articlePage = ArticlePage(driver)
@@ -246,7 +245,6 @@ class TestAriclePage:
             self.input_article_tags,
         )
 
-        """ Steps """
         # 글 상세 화면에서 수정 버튼 선택
         articlePage.click_edit_article_btn()
 
@@ -266,7 +264,6 @@ class TestAriclePage:
         user_id = get_user_id_by_username(VALID_USER["username"])
         new_slug = articlePage.get_article_slug(self.modi_article_title, user_id)
 
-        """ Expected Results """
         # 현재 url과 제목 값 기반으로 만들어진 url과 비교
         assert driver.current_url == BASE_URL + new_slug
         self.logger.info("✅ 현재 URL이 수정된 제목 값에 따라 정상 변경 되었습니다. ")
@@ -293,8 +290,10 @@ class TestAriclePage:
         )
 
     # @pytest.mark.skip(reason="Passed")
+    @allure.title("[ARTICLE_01]: 게시글 - 수정")
+    @allure.description("자신이 작성한 게시글 삭제 성공 확인") 
+
     def test_del_my_article(self, driver):
-        """Precondition 및 테스트 수행 세팅"""
         signupPage = SignUpPage(driver)
         header = Header(driver)
         articlePage = ArticlePage(driver)
@@ -312,10 +311,8 @@ class TestAriclePage:
         )
         saved_article = articlePage.load_article_details()
 
-        """ Steps """
         articlePage.click_delete_article_btn()
 
-        """ Expected Results """
         # DB에서 글 삭제 되었는지 확인하기
         assert get_articles_by_title(saved_article["title"]) == None
         self.logger.info(
