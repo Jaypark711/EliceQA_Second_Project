@@ -1,3 +1,4 @@
+import allure
 import pytest
 
 from config.config import BASE_URL
@@ -11,6 +12,8 @@ from pages.body.editor_page import EditorPage
 from utils.logger import setupLogger
 from db.db_utils import init_db, run_prisma_seed, get_user_info_by_username
 
+@allure.suite("test_myprofile.py")
+@allure.sub_suite("MYPROFILE TEST")
 @pytest.mark.usefixtures("driver")
 class TestMyProfile:
     logger = setupLogger(__qualname__)
@@ -24,8 +27,9 @@ class TestMyProfile:
 
         self.logger.info("==================================")
 
+    @allure.title("[MYPROFILE_01]: 마이프로필 - 사용자 정보")
+    @allure.description("마이프로필에서 사용자 정보가 정확히 반영되는지 확인")
     def test_my_profile_shows_user_info_correctly(self, driver):
-        """MYPROFILE_01: 마이프로필에서 사용자 정보가 정확히 반영되는지 확인"""
         self.logger.info("마이프로필에서 사용자 정보 반영 테스트 시작")
         header = Header(driver)
         signUpPage = SignUpPage(driver)
@@ -61,11 +65,12 @@ class TestMyProfile:
             self.logger.error(f"❌ MYPROFILE_01 테스트 중 오류 발생: {e}")
             assert False, "❌ MYPROFILE_01 테스트 중 오류 발생"
 
+    @allure.title("[MYPROFILE_02]: 마이프로필 - 내가 작성한 게시글")
+    @allure.description("마이프로필에서 내가 작성한 게시글 목록(My Articles) 표시 확인")
     @pytest.mark.parametrize("title, description, body, tags", [ # TODO: 데이터 임시 하드코딩 (추후 분리하기)
         ("제목", "설명", "내용", ["태그"])
     ])
     def test_show_my_articles(self, driver, title, description, body, tags):
-        """MYPROFILE_02: 마이프로필에서 내가 작성한 게시글 목록(My Articles) 표시 확인"""
         self.logger.info("마이프로필에서 My Articles 탭 테스트 시작")
         header = Header(driver)
         signUpPage = SignUpPage(driver)
@@ -107,8 +112,9 @@ class TestMyProfile:
             self.logger.error(f"❌ MYPROFILE_02 테스트 중 오류 발생: {e}")
             assert False, "❌ MYPROFILE_02 테스트 중 오류 발생"
 
+    @allure.title("[MYPROFILE_03]: 마이프로필 - 좋아요 누른 게시글")
+    @allure.description("마이프로필에서 좋아요 누른 게시글 목록(Favorited Articles) 표시 확인")
     def test_show_favorited_articles(self, driver):
-        """MYPROFILE_03: 마이프로필에서 좋아요 누른 게시글 목록(Favorited Articles) 표시 확인"""
         self.logger.info("마이프로필에서 Favorited Articles 탭 테스트 시작")
         run_prisma_seed() # 초기 데이터 생성
         header = Header(driver)
@@ -156,8 +162,9 @@ class TestMyProfile:
             self.logger.error(f"❌ MYPROFILE_03 테스트 중 오류 발생: {e}")
             assert False, "❌ MYPROFILE_03 테스트 중 오류 발생"
 
+    @allure.title("[MYPROFILE_04]: 마이프로필 - 프로필 수정")
+    @allure.description("마이프로필에서 '프로필 수정(Edit Profile Settings)' 버튼 클릭 시 설정 페이지로 이동 확인")
     def test_go_to_settings_from_profile(self, driver):
-        """MYPROFILE_04: 마이프로필에서 '프로필 수정(Edit Profile Settings)' 버튼 클릭 시 설정 페이지로 이동 확인"""
         self.logger.info("마이 프로필에서 Edit Profile Settings 버튼 테스트 시작")
         header = Header(driver)
         signUpPage = SignUpPage(driver)
