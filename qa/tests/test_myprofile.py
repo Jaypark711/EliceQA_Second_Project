@@ -60,7 +60,7 @@ class TestMyProfile:
                     profilePage.get_bio_p_text() == bio_text
                 ])
                 self.logger.info("✅ 기대 결과 2: 로그인된 사용자의 유저명, 프로필사진, 소개가 표시되어야 함")
-            self.logger.info("마이프로필에서 사용자 정보 반영 테스트 완료")
+            self.logger.info("🎉 마이프로필에서 사용자 정보 반영 테스트 완료")
 
         except Exception as e:
             self.logger.error(f"❌ MYPROFILE_01 테스트 중 오류 발생: {e}")

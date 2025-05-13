@@ -34,7 +34,7 @@ class TestCommentPage:
         "댓글"
     ])
     def test_successful_comment(self, driver, comment):
-        self.logger.info("댓글 등록 후 삭제 테스트 시작")
+        self.logger.info("▶️댓글 등록 후 삭제 테스트 시작")
         header = Header(driver)
         signupPage = SignUpPage(driver)
         homePage = HomePage(driver)
@@ -51,30 +51,30 @@ class TestCommentPage:
             articlePage.click_article(0,1)
             detail_article = articlePage.load_article_details()
             assert all([ # 기대 결과 1 : 누른 게시글로 이동되어 노출됨
-                first_article["title"] == detail_article["title"],
+                first_article["title"] == detail_article["title"], 
                 first_article["author"] == detail_article["author"],
                 first_article["created date"] == detail_article["created date"]
             ])
-            self.logger.info("기대 결과 1 : 누른 게시글로 이동되어 노출됨")
+            self.logger.info("✅ 기대 결과 1 : 누른 게시글로 이동되어 노출됨")
 
             articlePage.send_comment(comment)
             assert articlePage.get_text_from_comment_textarea() == comment # 기대 결과 2 : 입력한 값이 댓글 입력 필드에 반영됨
-            self.logger.info("기대 결과 2 : 입력한 값이 댓글 입력 필드에 반영됨")
+            self.logger.info("✅ 기대 결과 2 : 입력한 값이 댓글 입력 필드에 반영됨")
 
             articlePage.click_post_comment_btn()
             assert all([ # 기대 결과 3 : 입력한 값이 댓글로 정상 등록됨
                 articlePage.get_text_from_comment() == comment, 
                 articlePage.get_text_from_author() == VALID_USER["username"] 
             ])
-            self.logger.info("기대 결과 3 : 입력한 값이 댓글로 정상 등록됨")
+            self.logger.info("✅ 기대 결과 3 : 입력한 값이 댓글로 정상 등록됨")
 
             articlePage.click_delete_comment_btn()
             assert all([ # 기대 결과 4 : 댓글 삭제 확인
                 articlePage.is_comment_disappear(),
                 articlePage.is_author_link_disappear()
             ])
-            self.logger.info("기대 결과 4 : 댓글 삭제 확인")
-            self.logger.info("댓글 등록 후 삭제 테스트 완료")
+            self.logger.info("✅ 기대 결과 4 : 댓글 삭제 확인")
+            self.logger.info("🎉 댓글 등록 후 삭제 테스트 완료")
         except Exception as e:
             self.logger.error(f"❌ CMT_01 테스트 중 오류 발생: {e}")
             assert False, "❌ CMT_01 테스트 중 오류 발생"
