@@ -1,7 +1,7 @@
 import pytest
 
-import time
-from config.config import BASE_URL, VALID_USER
+from config.config import BASE_URL
+from data.user_data import VALID_USER
 from pages.header.header import Header
 from pages.body.home_page import HomePage
 from pages.body.signup_page import SignUpPage
@@ -92,10 +92,10 @@ class TestMyProfile:
             articlePage.save_article(title, description, body, tags)
 
             header.click_my_profile_link()
-            articles = articlePage.load_article_preview_lists()
+            articles = articlePage.load_article_preview_lists() # TODO: 첫번째 Article을 get하는 함수가 article_page에 있으면 좋겠음
 
             assert all([ # 기대 결과 3: (등록 Article 1개 이상) : 내가 작성한 게시글 목록이 표시되어야 함
-                articles["article1"]["title"] == title,
+                articles["article1"]["title"] == title, 
                 articles["article1"]["description"] == description,
                 articles["article1"]["tags"] == tags[0],
             ])
@@ -123,7 +123,7 @@ class TestMyProfile:
             # 테스트 시나리오 시작
             home.click_global_feed_tab_link()
 
-            articles = articlePage.load_article_preview_lists()
+            articles = articlePage.load_article_preview_lists() # TODO: 첫번째 Article을 get하는 함수가 article_page에 있으면 좋겠음
             global_feed_first_article = articles["article1"]
 
             articlePage.click_preview_favorite(0, 1)
@@ -136,8 +136,8 @@ class TestMyProfile:
 
             profilePage.click_favorited_article_tab_link()
 
-            articles = articlePage.load_article_preview_lists()
-            favorited_article_first_article = articles["article1"]
+            articles = articlePage.load_article_preview_lists() # TODO: 첫번째 Article을 get하는 함수가 article_page에 있으면 좋겠음
+            favorited_article_first_article = articles["article1"] 
 
             assert all([ # 기대 결과 3: (좋아요 누른 Article 1개 이상) : 좋아요 누른 게시글이 노출됨
                 global_feed_first_article["author"] == favorited_article_first_article["author"],

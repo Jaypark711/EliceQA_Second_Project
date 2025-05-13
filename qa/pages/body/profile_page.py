@@ -22,7 +22,6 @@ class ProfilePage(BasePage):
     def is_favorited_article_tab_active(self):
         return self.is_element_active(self.FAVORITED_ARTICLE_TAB_LINK)
 
-
     def click_edit_profile_settings_btn(self):
         self.click_element(self.EDIT_PROFILE_SETTINGS_BTN)
 
@@ -34,7 +33,6 @@ class ProfilePage(BasePage):
 
     def click_follow_btn(self):
         self.click_element(self.FOLLOW_BTN)
-
     
     def click_unfollow_btn(self):
         self.click_element(self.UNFOLLOW_BTN)    
@@ -47,8 +45,3 @@ class ProfilePage(BasePage):
     
     def get_bio_p_text(self):
         return self.get_text(self.BIO_P)
-    
-    def get_name_from_follow_btn(self):
-        full_text = self.find_element(self.FOLLOW_BTN).text
-        return full_text.removeprefix(" Follow ").strip()
-    
