@@ -69,7 +69,7 @@ class TestMyProfile:
     @allure.title("[MYPROFILE_02]: 마이프로필 - 내가 작성한 게시글")
     @allure.description("마이프로필에서 내가 작성한 게시글 목록(My Articles) 표시 확인")
     @allure.severity(allure.severity_level.NORMAL)
-    @pytest.mark.parametrize("title, description, body, tags", [ # TODO: 데이터 임시 하드코딩 (추후 분리하기)
+    @pytest.mark.parametrize("title, description, body, tags", [
         ("제목", "설명", "내용", ["태그"])
     ])
     def test_show_my_articles(self, driver, title, description, body, tags):
