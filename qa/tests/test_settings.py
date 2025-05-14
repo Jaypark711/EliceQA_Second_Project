@@ -65,7 +65,7 @@ class TestSettings:
                 user_data["url"] in homePage.header.get_profile_img(),
                 user_data["username"] == homePage.header.get_username()
             ])
-            self.logger.info(f"✅ 기대 결과 6: 업데이트 후 Header - [마이프로필] 영역에 {user_data["url"]} 와 {user_data["username"]}이 노출됨")
+            self.logger.info(f"✅ 기대 결과 6: 업데이트 후 Header - [마이프로필] 영역에 {user_data['url']} 와 {user_data['username']}이 노출됨")
             self.logger.info("🎉 회원 정보 입력 및 제출 완료")
 
         except Exception as e:
