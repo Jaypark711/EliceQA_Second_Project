@@ -27,11 +27,12 @@ pipeline {
                     cp "$DB_QUERIES_FILE" qa/db/db_queries.py
 
                     # 가상환경 설정 및 테스트 실행
-                    cd qa
-                    python3 -m venv venv
-                    . venv/bin/activate
-                    pip install -r requirements.txt
-                    python3 -m pytest
+                    python3 -m venv qa/venv
+                    . qa/venv/bin/activate
+                    pip install -r qa/requirements.txt
+
+                    # 루트에서 qa 디렉토리 테스트 실행
+                    python3 -m pytest qa
                 '''
             }
         }
