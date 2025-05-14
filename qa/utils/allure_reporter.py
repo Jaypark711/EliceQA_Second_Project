@@ -21,7 +21,6 @@ def generate_allure_report():
     allure_report_dir = os.path.join(project_root, 'reports', 'allure-report')
 
     subprocess.run(
-        ["allure", "generate", allure_results_dir, "-o", allure_report_dir, "--clean"],
-        check=True,
-        shell=True,
+    ["/opt/allure/bin/allure", "generate", allure_results_dir, "-o", allure_report_dir, "--clean"],
+        check=True
     )
