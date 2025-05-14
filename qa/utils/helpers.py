@@ -1,7 +1,6 @@
 from config.config import TIMEOUT
 from selenium.webdriver.support.ui import WebDriverWait
 
-
 class Helpers:
     def __init__(self, driver):
         self.driver = driver
