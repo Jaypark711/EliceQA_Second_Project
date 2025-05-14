@@ -70,7 +70,7 @@ class TestAuthentication:
     @allure.title("[AUTH_02]: 인증 - 회원가입")
     @allure.description("잘못된 정보로 회원가입 시 오류 메시지 제공 확인")
     @allure.severity(allure.severity_level.NORMAL)
-    @pytest.mark.parametrize("username, email, password, expected_result, description", [ # TODO: 데이터 임시 하드코딩 (추후 분리하기)
+    @pytest.mark.parametrize("username, email, password, expected_result, description", [ 
         ("", "", "", "email can't be blank", "사용자명, 이메일, 비밀번호 입력창을 모두 공백"),
         (VALID_USER["username"], "", "", "email can't be blank", "이메일, 비밀번호 입력창을 공백"),
         (VALID_USER["username"], VALID_USER["email"], "", "password can't be blank", "비밀번호 입력창을 공백"),
@@ -170,7 +170,7 @@ class TestAuthentication:
     @allure.title("[AUTH_04]: 인증 - 로그인")
     @allure.description("잘못된 정보로 로그인 시 오류 메시지 제공 확인")
     @allure.severity(allure.severity_level.NORMAL)
-    @pytest.mark.parametrize("email, password, expected_result, description", [ # TODO: 데이터 임시 하드코딩 (추후 분리하기)
+    @pytest.mark.parametrize("email, password, expected_result, description", [ 
         ("", "", "email can't be blank", "이메일 및 비밀번호 입력창 모두 공백"),
         ("", VALID_USER["password"], "email can't be blank", "이메일 입력창을 공백"),
         (VALID_USER["email"], "", "password can't be blank", "비밀번호 입력창을 공백"),
@@ -217,7 +217,7 @@ class TestAuthentication:
     @allure.title("[AUTH_05]: 인증 - 이메일 포맷")
     @allure.description("유효하지 않은 이메일 형식 입력 시 브라우저의 유효성 검사 메시지가 제공되는지 확인")
     @allure.severity(allure.severity_level.NORMAL)
-    @pytest.mark.parametrize("email, expected_result", [ # TODO: 데이터 임시 하드코딩 (추후 분리하기)
+    @pytest.mark.parametrize("email, expected_result", [
         ("user", "이메일 주소에 '@'를 포함해 주세요. 'user'에 '@'가 없습니다."),
         ("@", "'@' 앞 부분을 입력해 주세요. '@'(이)가 완전하지 않습니다."),
         ("user@", "'@' 뒷 부분을 입력해 주세요. 'user@'(이)가 완전하지 않습니다.")
