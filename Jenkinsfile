@@ -7,6 +7,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 sh '''
+                    cd qa
                     python3 -m venv venv
                     . venv/bin/activate
                     pip install -r requirements.txt
