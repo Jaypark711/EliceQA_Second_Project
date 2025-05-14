@@ -112,7 +112,7 @@ class TestSettings:
             signInPage.sign_in.click_sign_in_btn()
 
             assert homePage.header.is_my_profile_link_appear()
-            self.logger.info(f"✅ 기대 결과 3: 변경된 비밀번호 {user_data["password"]}로 로그인 됨")
+            self.logger.info(f"✅ 기대 결과 3: 변경된 비밀번호 {user_data[‘password’]}로 로그인 됨")
             self.logger.info("🎉 비밀번호 업데이트 테스트 완료")
 
         except Exception as e:
