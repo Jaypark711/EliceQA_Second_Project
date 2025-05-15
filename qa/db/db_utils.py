@@ -7,7 +7,7 @@ from db import db_queries
 
 def get_connection():
     """.env 파일에서 DB 연결 정보를 로드하고 PostgreSQL 커넥션 객체 반환"""
-    load_dotenv(dotenv_path='qa/config/.env')
+    load_dotenv(dotenv_path='config/.env')
     conn = psycopg2.connect(
         dbname=os.getenv("DB_NAME"),
         user=os.getenv("DB_USER"),

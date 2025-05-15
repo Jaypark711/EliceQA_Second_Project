@@ -3,7 +3,7 @@ import json
 import requests
 from dotenv import load_dotenv
 
-load_dotenv(dotenv_path='qa/config/.env')
+load_dotenv(dotenv_path='config/.env')
 runner_name = os.getenv("RUNNER_NAME")
 slack_webhook_url = os.getenv("SLACK_WEBHOOK_URL")
 
