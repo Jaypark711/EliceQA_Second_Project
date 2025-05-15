@@ -12,6 +12,8 @@ pipeline {
             steps {
                 sh '''
                     # 디렉토리 초기화
+                    Xvfb :99 -screen 0 1280x720x24 &  
+                    export DISPLAY=:99  
                     rm -rf qa/config/.env
                     rm -rf qa/data/user_data.py
                     rm -rf qa/db/db_queries.py
