@@ -11,6 +11,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 sh '''
+                    mkdir -p qa/config qa/data qa/db
                     # 디렉토리 초기화
                     rm -rf qa/config/.env
                     rm -rf qa/data/user_data.py
