@@ -33,8 +33,8 @@ def init_db():
 
 def run_prisma_seed():
     """backend 디렉토리 기준으로 Prisma seed 명령어 실행 (초기 데이터 입력용)"""
-    backend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'backend'))
-
+    workspace = os.environ.get("WORKSPACE", os.getcwd())
+    backend_dir = os.path.join(workspace, "backend")
     subprocess.run(
         ["npx", "prisma", "db", "seed"],
         cwd=backend_dir,

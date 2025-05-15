@@ -6,6 +6,7 @@ pipeline {
         USER_DATA_FILE  = credentials('user-data-file')
         DB_QUERIES_FILE = credentials('db-queries-file')
         DB_HOST         = "realworld-backend"
+        BASE_URL         = 'http://frontend:3000'
     }
 
     stages {
