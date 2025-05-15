@@ -5,6 +5,7 @@ pipeline {
         ENV_FILE        = credentials('env-file')
         USER_DATA_FILE  = credentials('user-data-file')
         DB_QUERIES_FILE = credentials('db-queries-file')
+        DB_HOST         = "127.0.0.1"
     }
 
     stages {
