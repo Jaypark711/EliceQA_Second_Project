@@ -65,6 +65,7 @@ class TestAuthentication:
             self.logger.info("🎉 유효한 정보로 회원가입 테스트 성공")
         except Exception as e:
             self.logger.error(f"❌ AUTH_01 테스트 중 오류 발생: {e}")
+            homePage.save_screenshot("test_successful_signup")
             assert False, "❌ AUTH_01 테스트 중 오류 발생"
 
     @allure.title("[AUTH_02]: 인증 - 회원가입")
@@ -117,6 +118,7 @@ class TestAuthentication:
 
         except Exception as e:
             self.logger.error(f"❌ AUTH_02 테스트 중 오류 발생: {e}")
+            homePage.save_screenshot("test_fail_signup")
             assert False, "❌ AUTH_02 테스트 중 오류 발생"
 
     @allure.title("[AUTH_03]: 인증 - 로그인")
@@ -165,6 +167,7 @@ class TestAuthentication:
 
         except Exception as e:
             self.logger.error(f"❌ AUTH_03 테스트 중 오류 발생: {e}")
+            homePage.save_screenshot("test_successful_signin")
             assert False, "❌ AUTH_03 테스트 중 오류 발생"
 
     @allure.title("[AUTH_04]: 인증 - 로그인")
