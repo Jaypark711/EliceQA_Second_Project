@@ -62,11 +62,18 @@ class BasePage:
 
     def save_screenshot(self, name: str = "screenshot"):
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        dir_path = "screenshots"
-        filename = f"{dir_path}/{name}_{timestamp}.png"
+        base_path = f"screenshots/{name}_{timestamp}"
 
         # 디렉토리 없으면 생성
-        os.makedirs(dir_path, exist_ok=True)
+        os.makedirs(os.path.dirname(base_path), exist_ok=True)
 
-        self.driver.save_screenshot(filename)
-        print(f"📸 스크린샷 저장 완료: {filename}")
+        # 1. 스크린샷 저장
+        screenshot_path = f"{base_path}.png"
+        self.driver.save_screenshot(screenshot_path)
+        print(f"📸 스크린샷 저장 완료: {screenshot_path}")
+
+        # 2. DOM 저장
+        html_path = f"{base_path}.html"
+        with open(html_path, "w", encoding="utf-8") as f:
+            f.write(self.driver.page_source)
+        print(f"📝 DOM 저장 완료: {html_path}")
