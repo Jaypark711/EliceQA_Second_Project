@@ -11,6 +11,13 @@ from utils.allure_reporter import clean_allure_dirs, generate_allure_report
 from utils.slack_notifier import send_test_result_to_slack
 
 def pytest_sessionstart(session):
+    # 디버깅용
+    # 디렉토리 내 모든 파일 삭제
+    for file in os.listdir("screenshots"):
+        file_path = os.path.join("screenshots", file)
+        if os.path.isfile(file_path):
+            os.remove(file_path)
+
     print("\n🚀 pytest_sessionstart: Allure 디렉토리 초기화 중")
     clean_allure_dirs()
 
