@@ -51,7 +51,9 @@ class TestAuthentication:
             assert signUpPage.sign_up.get_password_input_value() == VALID_USER["password"]
             self.logger.info("✅ 기대 결과 4: 비밀번호가 Password 입력 필드에 정상 반영됨")
 
+            print("📢 회원가입 버튼 누르기 전!")
             signUpPage.sign_up.click_sign_up_btn()
+            print("📢 회원가입 버튼 눌렀음!")
             assert homePage.header.is_go_to_home_page()
             self.logger.info("✅ 기대 결과 5: 메인 화면 진입")
 
