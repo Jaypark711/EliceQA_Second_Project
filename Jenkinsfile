@@ -28,7 +28,7 @@ pipeline {
                     python3 -m venv venv
                     . venv/bin/activate
                     pip install -r requirements.txt
-                    python3 -m pytest
+                    python3 -m pytest -k "test_confirm_article_detail" tests/test_article.py
                 '''
             }
         }

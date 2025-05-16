@@ -149,6 +149,9 @@ class TestAriclePage:
         editorPage = EditorPage(driver)
 
         try:
+            # 다른 계정 글 확인용 dummy 데이터 삽입하기
+            run_prisma_seed()
+            
             # 테스트 환경 세팅
             homePage.header.click_sign_up_link()
             signupPage.sign_up.sign_up()
@@ -159,8 +162,7 @@ class TestAriclePage:
 
             editorPage.header.click_home_link()
 
-            # 다른 계정 글 확인용 dummy 데이터 삽입하기
-            run_prisma_seed()
+
 
             # 다른 계정이 쓴 글 진입 (dummy)
             homePage.tabs.click_global_feed_tab_link()
