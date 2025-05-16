@@ -28,7 +28,7 @@ pipeline {
                     python3 -m venv venv
                     . venv/bin/activate
                     pip install -r requirements.txt
-                    python3 -m pytest tests/test_auth.py #TODO : 임시 하드코딩됨, 추후 pytest로 변경 예정
+                    python3 -m pytest
                 '''
             }
         }
