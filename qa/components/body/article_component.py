@@ -250,8 +250,6 @@ class ArticleComponent(BasePage):
                 for tag in current_article_tag_elems:
                     current_tags.append(tag.text)
                 article_details["tags"] = current_tags
-        # 디버깅용
-        # print(article_details)
         return article_details
 
     # 특정 요소의 자식 요소 찾기
