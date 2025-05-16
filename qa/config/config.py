@@ -4,7 +4,7 @@ import os
 load_dotenv(dotenv_path='config/.env')
 FRONT_HOST=os.getenv("FRONT_HOST")
 
-TIMEOUT = 10
+TIMEOUT = 20
 BASE_URL = f"http://{FRONT_HOST}:4100/"
 SIGNIN_URL = f"{BASE_URL}login"
 SIGNUP_URL = f"{BASE_URL}register"
