@@ -62,10 +62,17 @@ class BasePage:
 
     def save_screenshot(self, name: str = "screenshot"):
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"screenshots/{name}_{timestamp}.png"
+        dir_path = "screenshots"
+        filename = f"{dir_path}/{name}_{timestamp}.png"
 
         # 디렉토리 없으면 생성
-        os.makedirs(os.path.dirname(filename), exist_ok=True)
+        os.makedirs(dir_path, exist_ok=True)
+
+        # 디렉토리 내 모든 파일 삭제
+        for file in os.listdir(dir_path):
+            file_path = os.path.join(dir_path, file)
+            if os.path.isfile(file_path):
+                os.remove(file_path)
 
         self.driver.save_screenshot(filename)
         print(f"📸 스크린샷 저장 완료: {filename}")
