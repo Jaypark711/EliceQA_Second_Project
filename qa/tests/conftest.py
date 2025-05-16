@@ -1,5 +1,3 @@
-# conftest.py
-
 import pytest
 import os
 from selenium import webdriver
@@ -9,7 +7,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 from db.db_utils import init_db
 from utils.allure_reporter import clean_allure_dirs, generate_allure_report
-from utils.slack_notifier import send_test_result_to_slack
+from utils.slack_notifier import send_pytest_result_to_slack, send_newman_result_to_slack
 from utils.api_runner import run_newman
 
 def pytest_sessionstart(session):
@@ -27,12 +25,15 @@ def pytest_sessionfinish(session, exitstatus):
     generate_allure_report()
     print("✅ Allure Report 생성 완료")
 
-    send_test_result_to_slack()
+    send_pytest_result_to_slack()
     print("✅ Test Result를 Slack에 전송 완료")
 
     run_newman()
     print("✅ newman 실행 및 Report 생성 완료")
-    
+
+    send_newman_result_to_slack()
+    print("✅ newman 실행 및 Report 생성 완료")
+
 @pytest.fixture(scope='function')
 def driver():
     options = Options()
@@ -40,8 +41,6 @@ def driver():
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--disable-gpu')
-    options.add_argument('--headless')
-    options.add_argument("--lang=ko")
     options.add_experimental_option("excludeSwitches", ['enable-logging'])
 
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
