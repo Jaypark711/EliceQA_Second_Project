@@ -6,6 +6,7 @@ from config.config import TIMEOUT
 
 #디버깅용
 import os
+import time
 from datetime import datetime
 
 
@@ -66,7 +67,7 @@ class BasePage:
 
         # 디렉토리 없으면 생성
         os.makedirs(os.path.dirname(base_path), exist_ok=True)
-
+        time.sleep(5)
         # 1. 스크린샷 저장
         screenshot_path = f"{base_path}.png"
         self.driver.save_screenshot(screenshot_path)
