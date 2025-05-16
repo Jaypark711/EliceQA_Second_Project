@@ -51,9 +51,7 @@ class TestAuthentication:
             assert signUpPage.sign_up.get_password_input_value() == VALID_USER["password"]
             self.logger.info("✅ 기대 결과 4: 비밀번호가 Password 입력 필드에 정상 반영됨")
 
-            print("📢 회원가입 버튼 누르기 전!")
             signUpPage.sign_up.click_sign_up_btn()
-            print("📢 회원가입 버튼 눌렀음!")
             assert homePage.header.is_go_to_home_page()
             self.logger.info("✅ 기대 결과 5: 메인 화면 진입")
 
@@ -67,7 +65,6 @@ class TestAuthentication:
             self.logger.info("🎉 유효한 정보로 회원가입 테스트 성공")
         except Exception as e:
             self.logger.error(f"❌ AUTH_01 테스트 중 오류 발생: {e}")
-            homePage.save_screenshot("test_successful_signup")
             assert False, "❌ AUTH_01 테스트 중 오류 발생"
 
     @allure.title("[AUTH_02]: 인증 - 회원가입")
@@ -120,7 +117,6 @@ class TestAuthentication:
 
         except Exception as e:
             self.logger.error(f"❌ AUTH_02 테스트 중 오류 발생: {e}")
-            homePage.save_screenshot("test_fail_signup")
             assert False, "❌ AUTH_02 테스트 중 오류 발생"
 
     @allure.title("[AUTH_03]: 인증 - 로그인")
@@ -169,7 +165,6 @@ class TestAuthentication:
 
         except Exception as e:
             self.logger.error(f"❌ AUTH_03 테스트 중 오류 발생: {e}")
-            homePage.save_screenshot("test_successful_signin")
             assert False, "❌ AUTH_03 테스트 중 오류 발생"
 
     @allure.title("[AUTH_04]: 인증 - 로그인")
@@ -217,7 +212,6 @@ class TestAuthentication:
 
         except Exception as e:
             self.logger.error(f"❌ AUTH_04 테스트 중 오류 발생: {e}")
-            homePage.save_screenshot("test_fail_signin")
             assert False, "❌ AUTH_04 테스트 중 오류 발생"
 
     @allure.title("[AUTH_05]: 인증 - 이메일 포맷")
@@ -258,7 +252,6 @@ class TestAuthentication:
 
         except Exception as e:
             self.logger.error(f"❌ AUTH_05 테스트 중 오류 발생: {e}")
-            homePage.save_screenshot("test_email_validation_message")
             assert False, "❌ AUTH_05 테스트 중 오류 발생"
 
     @allure.title("[AUTH_06]: 인증 - 리다이렉션")
@@ -287,7 +280,6 @@ class TestAuthentication:
             self.logger.info("🎉 리다이렉션 테스트 완료")
         except Exception as e:
             self.logger.error(f"❌ AUTH_06 테스트 중 오류 발생: {e}")
-            homePage.save_screenshot("test_redirection")
             assert False, "❌ AUTH_06 테스트 중 오류 발생"
 
     @allure.title("[AUTH_07]: 인증 - 로그아웃")
@@ -325,5 +317,4 @@ class TestAuthentication:
 
         except Exception as e:
             self.logger.error(f"❌ AUTH_07 테스트 중 오류 발생: {e}")
-            homePage.save_screenshot("test_logout")
             assert False, "❌ AUTH_07 테스트 중 오류 발생"
