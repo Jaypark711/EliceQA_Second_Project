@@ -35,7 +35,7 @@ class TestAuthentication:
         signUpPage = SignUpPage(driver)
 
         try:
-            print(f"📎 테스트 시작 : {signUpPage.driver.current_url()}") # 디버깅용
+            print(f"📎 테스트 시작 : {signUpPage.driver.current_url}") # 디버깅용
             signUpPage.header.click_sign_up_link()
             assert signUpPage.header.is_go_to_sign_up_page()
             self.logger.info("✅ 기대 결과 1: Sign up 페이지로 진입 됨")
@@ -55,9 +55,9 @@ class TestAuthentication:
             print("📢 회원가입 버튼 누르기 전!")
             signUpPage.sign_up.click_sign_up_btn()
             print("📢 회원가입 버튼 눌렀음!")
-            print(f"📎 버튼 누른 직후 : {signUpPage.driver.current_url()}") # 디버깅용
+            print(f"📎 버튼 누른 직후 : {signUpPage.driver.current_url}") # 디버깅용
             assert homePage.header.is_go_to_home_page()
-            print(f"📎 assert 후 : {signUpPage.driver.current_url()}") # 디버깅용
+            print(f"📎 assert 후 : {signUpPage.driver.current_url}") # 디버깅용
             self.logger.info("✅ 기대 결과 5: 메인 화면 진입")
 
             assert all([
