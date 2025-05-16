@@ -27,7 +27,7 @@ def driver():
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--disable-gpu')
     options.add_argument('--headless')
-    options.add_experimental_option("prefs", {"intl.accept_languages": "ko"})
+    options.add_argument("--lang=ko")
     options.add_experimental_option("excludeSwitches", ['enable-logging'])
 
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)

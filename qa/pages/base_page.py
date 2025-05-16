@@ -4,6 +4,11 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from config.config import TIMEOUT
 
+#디버깅용
+import os
+from datetime import datetime
+
+
 class BasePage:
     def __init__(self, driver: WebDriver):
         self.driver = driver
@@ -48,3 +53,16 @@ class BasePage:
     def wait_until_url_and_get(self, expected_url):
         self.wait.until(EC.url_to_be(expected_url))
         return self.driver.current_url
+    
+    #디버깅용
+
+
+    def save_screenshot(self, name: str = "screenshot"):
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"screenshots/{name}_{timestamp}.png"
+
+        # 디렉토리 없으면 생성
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
+
+        self.driver.save_screenshot(filename)
+        print(f"📸 스크린샷 저장 완료: {filename}")

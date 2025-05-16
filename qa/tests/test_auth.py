@@ -278,6 +278,7 @@ class TestAuthentication:
             assert signInPage.header.is_go_to_sign_in_page()
             self.logger.info("✅ 기대 결과 3: Sign in 페이지로 진입됨")
             self.logger.info("🎉 리다이렉션 테스트 완료")
+            homePage.save_screenshot("auth_settings_link_fail1")
         except Exception as e:
             self.logger.error(f"❌ AUTH_06 테스트 중 오류 발생: {e}")
             assert False, "❌ AUTH_06 테스트 중 오류 발생"
@@ -293,6 +294,7 @@ class TestAuthentication:
 
         try:
             # 테스트 환경 세팅
+            
             homePage.header.click_sign_up_link()
             signUpPage.sign_up.sign_up()
 
@@ -316,4 +318,5 @@ class TestAuthentication:
 
         except Exception as e:
             self.logger.error(f"❌ AUTH_07 테스트 중 오류 발생: {e}")
+            homePage.save_screenshot("auth_settings_link_fail")
             assert False, "❌ AUTH_07 테스트 중 오류 발생"
