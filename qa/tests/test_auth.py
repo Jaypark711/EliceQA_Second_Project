@@ -10,6 +10,8 @@ from pages.settings_page import SettingsPage
 from utils.logger import setupLogger
 from db.db_utils import init_db
 
+import time
+
 @allure.suite("test_auth.py")
 @allure.sub_suite("AUTH TEST")
 @pytest.mark.usefixtures("driver")
@@ -56,6 +58,7 @@ class TestAuthentication:
             signUpPage.sign_up.click_sign_up_btn()
             print("📢 회원가입 버튼 눌렀음!")
             print(f"📎 버튼 누른 직후 : {signUpPage.driver.current_url}") # 디버깅용
+            time.sleep(5)
             assert homePage.header.is_go_to_home_page()
             print(f"📎 assert 후 : {signUpPage.driver.current_url}") # 디버깅용
             self.logger.info("✅ 기대 결과 5: 메인 화면 진입")
