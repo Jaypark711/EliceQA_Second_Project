@@ -5,7 +5,7 @@ pipeline {
         ENV_FILE        = credentials('env-file')
         USER_DATA_FILE  = credentials('user-data-file')
         DB_QUERIES_FILE = credentials('db-queries-file')
-        BASE_URL = 'http://realworld-frontend:4100'
+        BASE_URL = 'http://172.25.0.30:4100'
     }
 
     stages {

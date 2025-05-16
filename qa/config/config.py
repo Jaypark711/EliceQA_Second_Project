@@ -2,10 +2,10 @@ from data.user_data import VALID_USER
 from dotenv import load_dotenv
 import os
 load_dotenv(dotenv_path='config/.env')
-HOST=os.getenv("DB_HOST")
+FRONT_HOST=os.getenv("FRONT_HOST")
 
 TIMEOUT = 10
-BASE_URL = f"http://{HOST}:4100/"
+BASE_URL = f"http://{FRONT_HOST}:4100/"
 SIGNIN_URL = f"{BASE_URL}login"
 SIGNUP_URL = f"{BASE_URL}register"
 SETTINGS_URL = f"{BASE_URL}settings"
