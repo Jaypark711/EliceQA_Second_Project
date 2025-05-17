@@ -6,6 +6,7 @@ from datetime import datetime
 from faker import Faker
 from db import db_queries
 import random
+import time
 faker = Faker()
 
 def get_connection():
@@ -49,6 +50,7 @@ def run_prisma_seed():
             check=True              # 실패 시 예외 발생
         )
         print("✅ Prisma seed 실행 성공!")
+        time.sleep(10000)
     except subprocess.CalledProcessError as e:
         print(f"❌ Prisma seed 실행 실패: {e}")
 
