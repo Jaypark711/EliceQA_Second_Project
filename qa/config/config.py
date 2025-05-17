@@ -1,6 +1,8 @@
+import os
+
 from data.user_data import VALID_USER
 from dotenv import load_dotenv
-import os
+
 load_dotenv(dotenv_path='config/.env')
 FRONT_HOST=os.getenv("FRONT_HOST")
 

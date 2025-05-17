@@ -17,6 +17,5 @@ def run_newman():
             "--reporter-htmlextra-export", html_report_path,
             "--reporter-json-export", json_report_path
         ],
-        check=True,
-        shell=True
+        check=True
     )
