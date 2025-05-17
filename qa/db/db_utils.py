@@ -86,7 +86,7 @@ def run_prisma_seed():
                 now = datetime.now()
 
                 cur.execute("""
-                    INSERT INTO "Article" (slug, title, description, body, createdAt, updatedAt, authorId)
+                    INSERT INTO "Article" ("slug", "title", "description", "body", "createdAt", "updatedAt", "authorId")
                     VALUES (%s, %s, %s, %s, %s, %s, %s)
                     RETURNING id;
                 """, (slug, title, description, body, now, now, user_id))
