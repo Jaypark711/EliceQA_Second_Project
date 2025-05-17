@@ -11,7 +11,7 @@ def run_newman():
 
     subprocess.run(
         [
-            "newman", "run", collection_path,
+            "/usr/local/bin/newman", "run", collection_path,
             "-e", env_path,
             "-r", "htmlextra,json",
             "--reporter-htmlextra-export", html_report_path,
