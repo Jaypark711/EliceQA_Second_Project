@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from datetime import datetime
 from faker import Faker
 from db import db_queries
+import random
 faker = Faker()
 
 def get_connection():
@@ -123,78 +124,100 @@ def get_article_details_by_slug(slug):
     
     return result
 
-def create_comment(user_id, slug):
+def seed_users(count=12):
+    """Faker를 이용해 사용자 더미 데이터를 생성하고 DB에 삽입"""
     conn = get_connection()
     cur = conn.cursor()
     try:
-        cur.execute('SELECT id FROM "Article" WHERE slug = %s', (slug,))
-        article_id = cur.fetchone()[0]
-        body = faker.paragraph()
-        now = datetime.now()
-        cur.execute("""
-            INSERT INTO "Comment" (body, "authorId", "articleId", "createdAt", "updatedAt")
-            VALUES (%s, %s, %s, %s, %s);
-        """, (body, user_id, article_id, now, now))
+        for _ in range(count):
+            email = faker.unique.email()
+            username = faker.unique.user_name()
+            password = faker.password()
+            image = "https://api.realworld.io/images/demo-avatar.png"
+            cur.execute("""
+                INSERT INTO "User" (email, username, password, image)
+                VALUES (%s, %s, %s, %s);
+            """, (email, username, password, image))
         conn.commit()
+        print(f"✅ 사용자 {count}명 삽입 완료")
     except Exception as e:
-        print(f"❌ 댓글 생성 실패: {e}")
         conn.rollback()
+        print(f"❌ 사용자 삽입 실패: {e}")
     finally:
         cur.close()
         conn.close()
 
-def create_user():
+def seed_articles(count=6):
+    """Faker를 이용해 기사 더미 데이터를 생성하고 DB에 삽입"""
     conn = get_connection()
     cur = conn.cursor()
     try:
-        username = faker.user_name()
-        email = faker.email()
-        password = faker.password()
-        image = "https://api.realworld.io/images/demo-avatar.png"
-        demo = True
-        cur.execute("""
-            INSERT INTO "User" (username, email, password, image, demo)
-            VALUES (%s, %s, %s, %s, %s)
-            RETURNING id;
-        """, (username, email, password, image, demo))
-        user_id = cur.fetchone()[0]
+        cur.execute('SELECT id FROM "User";')
+        user_ids = [row[0] for row in cur.fetchall()]
+        for _ in range(count):
+            title = faker.sentence(nb_words=6)
+            slug = "-".join(title.lower().split())
+            description = faker.paragraph()
+            body = faker.text(max_nb_chars=800)
+            now = datetime.now()
+            author_id = random.choice(user_ids)
+            cur.execute("""
+                INSERT INTO "Article" (slug, title, description, body, "createdAt", "updatedAt", "authorId")
+                VALUES (%s, %s, %s, %s, %s, %s, %s);
+            """, (slug, title, description, body, now, now, author_id))
         conn.commit()
-        return user_id
+        print(f"✅ 기사 {count}개 삽입 완료")
     except Exception as e:
-        print(f"❌ 유저 생성 실패: {e}")
         conn.rollback()
+        print(f"❌ 기사 삽입 실패: {e}")
     finally:
         cur.close()
         conn.close()
 
-def create_article(user_id):
+def seed_tags(count=23):
+    """Faker를 이용해 태그 더미 데이터를 생성하고 DB에 삽입"""
     conn = get_connection()
     cur = conn.cursor()
     try:
-        title = faker.sentence()
-        description = faker.paragraph()
-        body = " ".join(faker.sentences(10))
-        slug = "-".join(title.lower().split()) + "-" + faker.lexify(text='?????')
-        now = datetime.now()
-        cur.execute("""
-            INSERT INTO "Article" (title, description, body, slug, "authorId", "createdAt", "updatedAt")
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
-            RETURNING slug;
-        """, (title, description, body, slug, user_id, now, now))
-        slug = cur.fetchone()[0]
+        for _ in range(count):
+            name = faker.unique.word()
+            cur.execute('INSERT INTO "Tag" (name) VALUES (%s);', (name,))
         conn.commit()
-        return slug
+        print(f"✅ 태그 {count}개 삽입 완료")
     except Exception as e:
-        print(f"❌ 아티클 생성 실패: {e}")
         conn.rollback()
+        print(f"❌ 태그 삽입 실패: {e}")
+    finally:
+        cur.close()
+        conn.close()
+
+def seed_article_to_tag(count=23):
+    """기사와 태그를 무작위로 연결하여 관계 테이블에 삽입"""
+    conn = get_connection()
+    cur = conn.cursor()
+    try:
+        cur.execute('SELECT id FROM "Article";')
+        article_ids = [row[0] for row in cur.fetchall()]
+        cur.execute('SELECT id FROM "Tag";')
+        tag_ids = [row[0] for row in cur.fetchall()]
+        used = set()
+        while len(used) < count:
+            a = random.choice(article_ids)
+            t = random.choice(tag_ids)
+            if (a, t) not in used:
+                cur.execute('INSERT INTO "_ArticleToTag" (article_id, tag_id) VALUES (%s, %s);', (a, t))
+                used.add((a, t))
+        conn.commit()
+        print(f"✅ 기사-태그 관계 {count}개 삽입 완료")
+    except Exception as e:
+        conn.rollback()
+        print(f"❌ 관계 삽입 실패: {e}")
     finally:
         cur.close()
         conn.close()
 
 def run_prisma_seed():
-    user_ids = [create_user() for _ in range(12)]
-    for user_id in user_ids:
-        slugs = [create_article(user_id) for _ in range(12)]
-        for slug in slugs:
-            for commenter_id in user_ids:
-                create_comment(commenter_id, slug)
+    seed_users()
+    seed_articles()
+    seed_tags()
+    seed_article_to_tag()
