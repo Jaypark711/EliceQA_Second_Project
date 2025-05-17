@@ -3,6 +3,7 @@ import pytest
 
 from config.config import BASE_URL
 from data.user_data import VALID_USER 
+from data.dummy_data import SIGN_UP_ERROR_TEXT_DATA, SIGN_IN_ERROR_TEXT_DATA, EMAIL_VALIDATION_TEXT_DATA
 from pages.home_page import HomePage
 from pages.sign_in_page import SignInPage
 from pages.sign_up_page import SignUpPage
@@ -70,12 +71,7 @@ class TestAuthentication:
     @allure.title("[AUTH_02]: 인증 - 회원가입")
     @allure.description("잘못된 정보로 회원가입 시 오류 메시지 제공 확인")
     @allure.severity(allure.severity_level.NORMAL)
-    @pytest.mark.parametrize("username, email, password, expected_result, description", [ 
-        ("", "", "", "email can't be blank", "사용자명, 이메일, 비밀번호 입력창을 모두 공백"),
-        (VALID_USER["username"], "", "", "email can't be blank", "이메일, 비밀번호 입력창을 공백"),
-        (VALID_USER["username"], VALID_USER["email"], "", "password can't be blank", "비밀번호 입력창을 공백"),
-        (VALID_USER["username"], VALID_USER["email"], VALID_USER["password"], ["email has already been taken", "username has already been taken"], "가입된 사용자명, 이메일")
-    ])
+    @pytest.mark.parametrize("username, email, password, expected_result, description", SIGN_UP_ERROR_TEXT_DATA)
     def test_fail_signup(self, driver, username, email, password, expected_result, description):
         self.logger.info(f"▶️ {description}(으)로 회원가입 시 {expected_result} 경고창 출력 테스트 시작")  
 
@@ -170,13 +166,7 @@ class TestAuthentication:
     @allure.title("[AUTH_04]: 인증 - 로그인")
     @allure.description("잘못된 정보로 로그인 시 오류 메시지 제공 확인")
     @allure.severity(allure.severity_level.NORMAL)
-    @pytest.mark.parametrize("email, password, expected_result, description", [ 
-        ("", "", "email can't be blank", "이메일 및 비밀번호 입력창 모두 공백"),
-        ("", VALID_USER["password"], "email can't be blank", "이메일 입력창을 공백"),
-        (VALID_USER["email"], "", "password can't be blank", "비밀번호 입력창을 공백"),
-        (VALID_USER["email"], "wrong_password", "email or password is invalid", "맞지 않는 비밀번호"),
-        ("wrong@email.com", VALID_USER["password"], "email or password is invalid", "미가입 이메일")
-    ])
+    @pytest.mark.parametrize("email, password, expected_result, description", SIGN_IN_ERROR_TEXT_DATA)
     def test_fail_signin(self, driver, email, password, expected_result, description):
         self.logger.info(f"▶️ {description}(으)로 로그인 시 {expected_result} 경고창 출력 테스트 시작")
 
@@ -217,11 +207,7 @@ class TestAuthentication:
     @allure.title("[AUTH_05]: 인증 - 이메일 포맷")
     @allure.description("유효하지 않은 이메일 형식 입력 시 브라우저의 유효성 검사 메시지가 제공되는지 확인")
     @allure.severity(allure.severity_level.NORMAL)
-    @pytest.mark.parametrize("email, expected_result", [
-        ("user", "이메일 주소에 '@'를 포함해 주세요. 'user'에 '@'가 없습니다."),
-        ("@", "'@' 앞 부분을 입력해 주세요. '@'(이)가 완전하지 않습니다."),
-        ("user@", "'@' 뒷 부분을 입력해 주세요. 'user@'(이)가 완전하지 않습니다.")
-    ])
+    @pytest.mark.parametrize("email, expected_result", EMAIL_VALIDATION_TEXT_DATA)
     def test_email_validation_message(self, driver, email, expected_result):
         self.logger.info("▶️ 이메일 유효성 검사 메시지 테스트 시작")
 
@@ -293,7 +279,6 @@ class TestAuthentication:
 
         try:
             # 테스트 환경 세팅
-            
             homePage.header.click_sign_up_link()
             signUpPage.sign_up.sign_up()
 

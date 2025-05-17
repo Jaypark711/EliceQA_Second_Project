@@ -4,6 +4,7 @@ from selenium.webdriver.remote.webelement import WebElement
 
 from config.config import BASE_URL
 from data.user_data import VALID_USER
+from data.dummy_data import ARTICLE_DATA_1, ARTICLE_DATA_2
 from pages.home_page import HomePage
 from pages.sign_up_page import SignUpPage
 from pages.editor_page import EditorPage
@@ -29,9 +30,7 @@ class TestAriclePage:
     @allure.title("[ARTICLE_01]: 게시글 - 신규 등록")
     @allure.description("로그인 후 새 게시글 작성 및 게시 성공 확인 (제목, 본문, 태그 포함)") 
     @allure.severity(allure.severity_level.CRITICAL)
-    @pytest.mark.parametrize("input_title, input_desc, input_body, input_tags", [
-         (f"{VALID_USER['username']}_작성 테스트", "테스트 주제", "테스트 게시글 본문입니다.", ["태그1", "태그2"])
-    ])
+    @pytest.mark.parametrize("input_title, input_desc, input_body, input_tags", [ARTICLE_DATA_1])
     def test_save_new_article(self, driver, input_title, input_desc, input_body, input_tags):
         self.logger.info("▶️ 신규 Article 등록 테스트 시작")
 
@@ -81,9 +80,7 @@ class TestAriclePage:
     @allure.title("[ARTICLE_02]: 게시글 - 조회")
     @allure.description("게시글 목록(Global Feed) 게시글 표시 확인") 
     @allure.severity(allure.severity_level.NORMAL)
-    @pytest.mark.parametrize("input_title, input_desc, input_body, input_tags", [
-         (f"{VALID_USER['username']}_작성 테스트", "테스트 주제", "테스트 게시글 본문입니다.", ["태그1", "태그2"])
-    ])
+    @pytest.mark.parametrize("input_title, input_desc, input_body, input_tags", [ARTICLE_DATA_1])
     def test_load_article_previews(self, driver, input_title, input_desc, input_body, input_tags):
         self.logger.info("▶️ Global Feed 게시글 목록 표시 확인 테스트 시작")
 
@@ -138,20 +135,15 @@ class TestAriclePage:
     @allure.title("[ARTICLE_03]: 게시글 - 상세 페이지")
     @allure.description("특정 게시글 상세 페이지 접근 및 내용(제목, 본문) 확인") 
     @allure.severity(allure.severity_level.NORMAL)
-    @pytest.mark.parametrize("input_title, input_desc, input_body, input_tags", [
-         (f"{VALID_USER['username']}_작성 테스트", "테스트 주제", "테스트 게시글 본문입니다.", ["태그1", "태그2"])
-    ])
+    @pytest.mark.parametrize("input_title, input_desc, input_body, input_tags", [ARTICLE_DATA_1])
     def test_confirm_article_detail(self, driver, input_title, input_desc, input_body, input_tags):
         self.logger.info("▶️ 특정 게시글의 상세 페이지 접근 및 내용(제목, 본문) 확인 테스트 시작")
-        run_prisma_seed()
+
         homePage = HomePage(driver)
         signupPage = SignUpPage(driver)
         editorPage = EditorPage(driver)
 
         try:
-            # 다른 계정 글 확인용 dummy 데이터 삽입하기
-            
-            
             # 테스트 환경 세팅
             homePage.header.click_sign_up_link()
             signupPage.sign_up.sign_up()
@@ -162,7 +154,8 @@ class TestAriclePage:
 
             editorPage.header.click_home_link()
 
-
+            # 다른 계정 글 확인용 dummy 데이터 삽입하기
+            run_prisma_seed()
 
             # 다른 계정이 쓴 글 진입 (dummy)
             homePage.tabs.click_global_feed_tab_link()
@@ -207,10 +200,7 @@ class TestAriclePage:
     @allure.title("[ARTICLE_04]: 게시글 - 수정")
     @allure.description("자신이 작성한 게시글 수정 성공 확인") 
     @allure.severity(allure.severity_level.NORMAL)
-    @pytest.mark.parametrize("input_title, input_desc, input_body, input_tags, modi_title, modi_desc, modi_body, modi_tags", [
-         (f"{VALID_USER['username']}_작성 테스트", "테스트 주제", "테스트 게시글 본문입니다.", ["태그1", "태그2"],
-          f"{VALID_USER['username']}_수정 테스트", "테스트 수정", "테스트 게시글 수정한 본문입니다.", ["추가 태그1", "추가 태그2"],)
-    ])
+    @pytest.mark.parametrize("input_title, input_desc, input_body, input_tags, modi_title, modi_desc, modi_body, modi_tags", [(*ARTICLE_DATA_1, *ARTICLE_DATA_2)])
     def test_modi_my_article(self, driver, input_title, input_desc, input_body, input_tags, modi_title, modi_desc, modi_body, modi_tags):
         self.logger.info("▶️ 내가 작성한 게시글 수정 테스트 시작")
 
@@ -272,9 +262,7 @@ class TestAriclePage:
     @allure.title("[ARTICLE_05]: 게시글 - 삭제")
     @allure.description("자신이 작성한 게시글 삭제 성공 확인") 
     @allure.severity(allure.severity_level.NORMAL)
-    @pytest.mark.parametrize("input_title, input_desc, input_body, input_tags", [
-         (f"{VALID_USER['username']}_작성 테스트", "테스트 주제", "테스트 게시글 본문입니다.", ["태그1", "태그2"])
-    ])
+    @pytest.mark.parametrize("input_title, input_desc, input_body, input_tags", [ARTICLE_DATA_1])
     def test_del_my_article(self, driver, input_title, input_desc, input_body, input_tags):
         self.logger.info("▶️ 내가 작성한 게시글 삭제 테스트 시작")
 

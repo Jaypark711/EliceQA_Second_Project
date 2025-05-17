@@ -4,7 +4,8 @@ import pytest
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from config.config import BASE_URL
-from data.user_data import VALID_USER, SETTING_USER_1, SETTING_USER_2, SETTING_USER_3
+from data.user_data import VALID_USER
+from data.dummy_data import SETTING_USER_1, SETTING_USER_2, SETTING_USER_3
 from pages.home_page import HomePage
 from pages.sign_in_page import SignInPage
 from pages.sign_up_page import SignUpPage

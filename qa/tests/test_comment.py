@@ -4,6 +4,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from config.config import BASE_URL
 from data.user_data import VALID_USER
+from data.dummy_data import COMMENT_DATA_1
 from pages.home_page import HomePage
 from pages.sign_up_page import SignUpPage
 from db.db_utils import init_db, run_prisma_seed
@@ -28,9 +29,7 @@ class TestCommentPage:
     @allure.title("[CMT_01]: 댓글 - 게시 및 삭제")
     @allure.description("특정 게시글에 댓글 작성 및 삭제 확인")
     @allure.severity(allure.severity_level.NORMAL)
-    @pytest.mark.parametrize("comment", [
-        "댓글"
-    ])
+    @pytest.mark.parametrize("comment", [COMMENT_DATA_1])
     def test_successful_comment(self, driver, comment):
         self.logger.info("▶️ 댓글 등록 후 삭제 테스트 시작")
         

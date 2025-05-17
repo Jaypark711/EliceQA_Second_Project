@@ -3,6 +3,7 @@ import pytest
 
 from config.config import BASE_URL
 from data.user_data import VALID_USER
+from data.dummy_data import ARTICLE_DATA_1
 from pages.home_page import HomePage
 from pages.sign_up_page import SignUpPage
 from pages.editor_page import EditorPage
@@ -69,9 +70,7 @@ class TestMyProfile:
     @allure.title("[MYPROFILE_02]: 마이프로필 - 내가 작성한 게시글")
     @allure.description("마이프로필에서 내가 작성한 게시글 목록(My Articles) 표시 확인")
     @allure.severity(allure.severity_level.NORMAL)
-    @pytest.mark.parametrize("title, description, body, tags", [
-        ("제목", "설명", "내용", ["태그"])
-    ])
+    @pytest.mark.parametrize("title, description, body, tags", [ARTICLE_DATA_1])
     def test_show_my_articles(self, driver, title, description, body, tags):
         self.logger.info("▶️ 마이프로필에서 My Articles 탭 테스트 시작")
 
@@ -106,7 +105,7 @@ class TestMyProfile:
             assert all([
                 first_article["title"] == title, 
                 first_article["description"] == description,
-                first_article["tags"] == tags[0],
+                first_article["tags"] == tags,
             ])
             self.logger.info("✅ 기대 결과 3: (등록 Article 1개 이상) : 내가 작성한 게시글 목록이 표시되어야 함")
             self.logger.info("🎉 마이프로필에서 My Articles 탭 테스트 완료")
