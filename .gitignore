@@ -117,7 +117,7 @@ dmypy.json
 # add gitignore
 frontend/
 backend/
-qa/data/
 qa/reports/
 qa/swagger-ui
+qa/data/user_data.py
 qa/db/db_queries.py
