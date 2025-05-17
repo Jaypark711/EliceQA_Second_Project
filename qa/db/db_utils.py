@@ -42,10 +42,6 @@ def run_prisma_seed():
     """현재 위치가 qa/ 기준일 때, ../backend 디렉토리에서 시드 명령 실행"""
     load_dotenv(dotenv_path='config/.env')
     backend_dir = os.getenv("BACKEND_DIR")
-    current_dir = os.getcwd()
-    print(backend_dir)
-    print("집중!")
-    print(current_dir)
     try:
         subprocess.run(
             ["npx", "prisma", "db", "seed"],
@@ -54,7 +50,17 @@ def run_prisma_seed():
             check=True,
             env=env
         )
-        print("✅ Prisma seed 실행 성공!")
+        #디버깅용 시작
+        conn = get_connection()
+        cur = conn.cursor()
+        cur.execute('SELECT * FROM public."Article" ')
+        result = cur.fetchone()
+        cur.close()
+        conn.close()
+        print("❌❌❌❌❌")
+        print(result)
+        print("❌❌❌❌❌")
+        #디버깅용끝
     except subprocess.CalledProcessError as e:
         print(f"❌ Prisma seed 실행 실패: {e}")
 
