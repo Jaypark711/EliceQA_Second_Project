@@ -1,0 +1,93 @@
+{
+	"id": "06a7ae72-5a50-43ac-9443-f4b5ee57116a",
+	"name": "QA",
+	"values": [
+		{
+			"key": "SLACK_WEBHOOK_URL",
+			"value": "https://hooks.slack.com/services/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",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "BASE_URL",
+			"value": "http://localhost:3000/api",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "USERNAME",
+			"value": "user01",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "EMAIL",
+			"value": "kys000529@gmail.com",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "PASSWORD",
+			"value": "asdf1234!",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "TOKEN",
+			"value": "로그인 후 발급되는 토큰 값",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "BLANK_ERROR_MSG",
+			"value": "can't be blank",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "TAKEN_ERROR_MSG",
+			"value": "has already been taken",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "INVALID_ERROR_MSG",
+			"value": "is invalid",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "AUTHOR",
+			"value": "신규 작성 글 작성자 username 저장",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "SLUG",
+			"value": "게시글 생성 후 생성되는 slug",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "COMMENT_ID",
+			"value": "댓글 작성 후 생성되는 id",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "UNIQUE_RANDOM_STRING",
+			"value": "게시글 제목 겹치지 않게 설정하기 위한 Random String 값이 저장되는 ",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "TAG_LIST",
+			"value": "게시물 등록 시 태그 값 추출",
+			"type": "default",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2025-05-17T05:45:06.481Z",
+	"_postman_exported_using": "Postman/11.45.6"
+}
