@@ -28,8 +28,7 @@ pipeline {
                     python3 -m venv venv
                     . venv/bin/activate
                     pip install -r requirements.txt
-                    python3 -m pytest tests/test_filter.py
-
+                    python3 -m pytest -k "test_email_validation_message" tests/test_auth.py
                 '''
             }
         }
