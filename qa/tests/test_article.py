@@ -15,7 +15,7 @@ from db.db_utils import init_db, run_prisma_seed, get_user_id_by_username, get_a
 @allure.suite("test_article.py")
 @allure.sub_suite("ARTICLE TEST")
 @pytest.mark.usefixtures("driver")
-class TestArticlePage:
+class TestAriclePage:
     logger = setupLogger(__qualname__)
 
     @pytest.fixture(autouse=True)
@@ -157,27 +157,9 @@ class TestArticlePage:
             # 다른 계정 글 확인용 dummy 데이터 삽입하기
             run_prisma_seed()
 
+            # 다른 계정이 쓴 글 진입 (dummy)
             homePage.tabs.click_global_feed_tab_link()
-
-            # 진입할 글의 index 값 계산
-            all_articles = list(homePage.article.load_article_preview_lists().values())
-            my_article_index = None
-            others_article_index = None
-            for i in range(len(all_articles)):
-                article_title = all_articles[i].get('title')
-
-                if article_title == input_title:
-                    # click_article에서 index 값 -1을 계산한 후 클릭하기 때문에 1 더해주기
-                    my_article_index = i+1
-                else:
-                    if others_article_index is None:
-                        # click_article에서 index 값 -1을 계산한 후 클릭하기 때문에 1 더해주기
-                        others_article_index = i+1
-                if my_article_index is not None and others_article_index is not None:
-                    break   # index 값 모두 할당되면 반복문 종료
-                        
-            # 다른 유저가 쓴 글 중 첫번째 글 진입
-            homePage.article.click_article(0, others_article_index)
+            homePage.article.click_article(0, 1)
             others_slug = driver.current_url.replace(f"{BASE_URL}article/", "")
             others_article = homePage.article.load_article_details()
 
@@ -194,7 +176,7 @@ class TestArticlePage:
             # 현재 유저가 쓴 글 진입
             homePage.header.click_home_link()
             homePage.tabs.click_global_feed_tab_link()
-            homePage.article.click_article(0, my_article_index)
+            homePage.article.click_article(0, len(homePage.article.load_article_preview_lists()))
 
             my_slug = driver.current_url.replace(f"{BASE_URL}article/", "")
             my_article = homePage.article.load_article_details()
