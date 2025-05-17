@@ -1,16 +1,11 @@
 import os
+import random
 import psycopg2
-import subprocess
+from faker import Faker
+from datetime import datetime
 from dotenv import load_dotenv
 
 from db import db_queries
-
-import random
-import string
-from datetime import datetime
-from faker import Faker
-
-fake = Faker()
 
 def get_connection():
     """.env 파일에서 DB 연결 정보를 로드하고 PostgreSQL 커넥션 객체 반환"""
@@ -37,69 +32,48 @@ def init_db():
     cur.close()
     conn.close()
 
-# def run_prisma_seed():
-#     """backend 디렉토리 기준으로 Prisma seed 명령어 실행 (초기 데이터 입력용)"""
-#     backend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'backend'))
-
-#     subprocess.run(
-#         ["npx", "prisma", "db", "seed"],
-#         cwd=backend_dir,
-#         shell=True,
-#         check=True
-#     )
-
 def run_prisma_seed():
     conn = get_connection()
     cur = conn.cursor()
 
+    faker = Faker()
+
     try:
-        # 1. Tag 30개 생성
+        """1. Tag 20 ~ 30개 생성"""
         tag_ids = []
-        for i in range(30):
+        for i in range(random.randint(20, 30)):
             tag_name = f"tag_{i}"
-            cur.execute("INSERT INTO \"Tag\" (name) VALUES (%s) RETURNING id;", (tag_name,))
+            cur.execute(db_queries.SQL_INSERT_TAG, (tag_name,))
             tag_id = cur.fetchone()[0]
             tag_ids.append(tag_id)
 
-        # 2. User 2~3명 생성
+        """2. User 1 ~ 3명 생성"""
         user_ids = []
-        for _ in range(random.randint(2, 3)):
-            email = fake.email()
-            username = fake.user_name()
-            password = "password123"
+        for _ in range(random.randint(1, 3)):
+            email = faker.email()
+            username = faker.user_name()
+            password = faker.password()
             image = "https://api.realworld.io/images/smiley-cyrus.jpeg"
-            bio = fake.sentence()
-            cur.execute("""
-                INSERT INTO "User" (email, username, password, image, bio, demo)
-                VALUES (%s, %s, %s, %s, %s, %s)
-                RETURNING id;
-            """, (email, username, password, image, bio, True))
+            bio = faker.sentence()
+            cur.execute(db_queries.SQL_INSERT_USER, (email, username, password, image, bio, True))
             user_id = cur.fetchone()[0]
             user_ids.append(user_id)
 
-            # 3. User 당 Article 2~3개 생성
-            for _ in range(random.randint(2, 3)):
-                slug = ''.join(random.choices(string.ascii_lowercase + string.digits, k=10))
-                title = fake.sentence()
-                description = fake.text(max_nb_chars=100)
-                body = fake.paragraph()
+            """3.User 당 Article 1~3개 생성"""
+            for _ in range(random.randint(1, 3)):
+                slug = faker.slug()
+                title = faker.sentence()
+                description = faker.sentence()
+                body = faker.paragraph()
                 now = datetime.now()
 
-                cur.execute("""
-                    INSERT INTO "Article" ("slug", "title", "description", "body", "createdAt", "updatedAt", "authorId")
-                    VALUES (%s, %s, %s, %s, %s, %s, %s)
-                    RETURNING id;
-                """, (slug, title, description, body, now, now, user_id))
+                cur.execute(db_queries.SQL_INSERT_ARTICLE, (slug, title, description, body, now, now, user_id))
                 article_id = cur.fetchone()[0]
 
-                # 4. ArticleToTag 연결 2~3개
-                linked_tag_ids = random.sample(tag_ids, k=random.randint(2, 3))
+                """4. ArticleToTag 연결 2 ~ 4개"""
+                linked_tag_ids = random.sample(tag_ids, k=random.randint(2, 4))
                 for tag_id in linked_tag_ids:
-                    cur.execute("""
-                        INSERT INTO "_ArticleToTag" ("A", "B")
-                        VALUES (%s, %s)
-                        ON CONFLICT DO NOTHING;
-                    """, (article_id, tag_id))
+                    cur.execute(db_queries.SQL_INSERT_ARTICLE_TAG, (article_id, tag_id))
 
         conn.commit()
         print("✅ Seed 데이터 삽입 완료")
