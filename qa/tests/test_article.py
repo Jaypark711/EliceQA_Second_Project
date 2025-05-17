@@ -221,7 +221,7 @@ class TestAriclePage:
             homePage.article.click_edit_article_btn()
 
             # 수정 화면에서 글 내용 변경 후 저장
-            editorPage.editor.delete_selected_tags((input_tags[0],))
+            editorPage.editor.delete_selected_tags([input_tags[0]])
             editorPage.editor.save_article(modi_title, modi_desc, modi_body, modi_tags)
 
             # *글 상세 화면에서 변경 내용 확인
