@@ -1,7 +1,6 @@
 import allure
 import pytest
 from selenium.webdriver.remote.webdriver import WebDriver
-import time #디버깅
 from config.config import BASE_URL
 from data.user_data import VALID_USER
 from data.dummy_data import COMMENT_DATA_1
@@ -20,7 +19,6 @@ class TestCommentPage:
     def setup_and_teardown(self, driver: WebDriver):
         init_db() # 테스트 환경 초기화
         run_prisma_seed() # 초기 데이터 생성
-        time.sleep(10000) #디버깅
         driver.get(BASE_URL)
 
         yield
