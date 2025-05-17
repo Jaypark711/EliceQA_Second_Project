@@ -4,3 +4,4 @@ webdriver-manager
 python-dotenv
 psycopg2-binary
 allure-pytest
+faker

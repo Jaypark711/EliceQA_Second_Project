@@ -2,8 +2,10 @@ import os
 import psycopg2
 import subprocess
 from dotenv import load_dotenv
-
+from datetime import datetime
+from faker import Faker
 from db import db_queries
+faker = Faker()
 
 def get_connection():
     """.env 파일에서 DB 연결 정보를 로드하고 PostgreSQL 커넥션 객체 반환"""
@@ -30,15 +32,15 @@ def init_db():
     cur.close()
     conn.close()
 
-def run_prisma_seed():
-    """backend 디렉토리 기준으로 Prisma seed 명령어 실행 (초기 데이터 입력용)"""
-    backend_dir = os.path.join(os.getenv('WORKSPACE'), 'backend')
-    subprocess.run(
-        ["npx", "prisma", "db", "seed"],
-        cwd=backend_dir,
-        shell=True,
-        check=True
-    )
+# def run_prisma_seed():
+#     """backend 디렉토리 기준으로 Prisma seed 명령어 실행 (초기 데이터 입력용)"""
+#     backend_dir = os.path.join(os.getenv('WORKSPACE'), 'backend')
+#     subprocess.run(
+#         ["npx", "prisma", "db", "seed"],
+#         cwd=backend_dir,
+#         shell=True,
+#         check=True
+#     )
 
 def get_article_count_by_tag_name(tag_name):
     """특정 태그 이름(tag_name)을 가진 게시글의 수를 반환 (_ArticleToTag 테이블과 Tag 테이블을 조인하여 카운트)"""
@@ -120,3 +122,79 @@ def get_article_details_by_slug(slug):
     conn.close()
     
     return result
+
+def create_comment(user_id, slug):
+    conn = get_connection()
+    cur = conn.cursor()
+    try:
+        cur.execute('SELECT id FROM "Article" WHERE slug = %s', (slug,))
+        article_id = cur.fetchone()[0]
+        body = faker.paragraph()
+        now = datetime.now()
+        cur.execute("""
+            INSERT INTO "Comment" (body, "authorId", "articleId", "createdAt", "updatedAt")
+            VALUES (%s, %s, %s, %s, %s);
+        """, (body, user_id, article_id, now, now))
+        conn.commit()
+    except Exception as e:
+        print(f"❌ 댓글 생성 실패: {e}")
+        conn.rollback()
+    finally:
+        cur.close()
+        conn.close()
+
+def create_user():
+    conn = get_connection()
+    cur = conn.cursor()
+    try:
+        username = faker.user_name()
+        email = faker.email()
+        password = faker.password()
+        image = "https://api.realworld.io/images/demo-avatar.png"
+        demo = True
+        cur.execute("""
+            INSERT INTO "User" (username, email, password, image, demo)
+            VALUES (%s, %s, %s, %s, %s)
+            RETURNING id;
+        """, (username, email, password, image, demo))
+        user_id = cur.fetchone()[0]
+        conn.commit()
+        return user_id
+    except Exception as e:
+        print(f"❌ 유저 생성 실패: {e}")
+        conn.rollback()
+    finally:
+        cur.close()
+        conn.close()
+
+def create_article(user_id):
+    conn = get_connection()
+    cur = conn.cursor()
+    try:
+        title = faker.sentence()
+        description = faker.paragraph()
+        body = " ".join(faker.sentences(10))
+        slug = "-".join(title.lower().split()) + "-" + faker.lexify(text='?????')
+        now = datetime.now()
+        cur.execute("""
+            INSERT INTO "Article" (title, description, body, slug, "authorId", "createdAt", "updatedAt")
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            RETURNING slug;
+        """, (title, description, body, slug, user_id, now, now))
+        slug = cur.fetchone()[0]
+        conn.commit()
+        return slug
+    except Exception as e:
+        print(f"❌ 아티클 생성 실패: {e}")
+        conn.rollback()
+    finally:
+        cur.close()
+        conn.close()
+
+def run_prisma_seed():
+    user_ids = [create_user() for _ in range(12)]
+    for user_id in user_ids:
+        slugs = [create_article(user_id) for _ in range(12)]
+        for slug in slugs:
+            for commenter_id in user_ids:
+                create_comment(commenter_id, slug)
