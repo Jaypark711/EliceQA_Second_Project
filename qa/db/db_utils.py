@@ -157,3 +157,5 @@ def get_article_details_by_slug(slug):
 
     cur.close()
     conn.close()
+
+    return result
