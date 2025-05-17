@@ -41,7 +41,7 @@ def run_prisma_seed():
     """현재 위치가 qa/ 기준일 때, ../backend 디렉토리에서 시드 명령 실행"""
     current_dir = os.getcwd()  # 예: /workspace/project/qa
     backend_dir = os.path.abspath(os.path.join(current_dir, '..', 'backend'))
-
+    print(current_dir)
     try:
         subprocess.run(
             ["npx", "prisma", "db", "seed"],
@@ -50,7 +50,6 @@ def run_prisma_seed():
             check=True              # 실패 시 예외 발생
         )
         print("✅ Prisma seed 실행 성공!")
-        time.sleep(10000)
     except subprocess.CalledProcessError as e:
         print(f"❌ Prisma seed 실행 실패: {e}")
 
