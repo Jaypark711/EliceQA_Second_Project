@@ -43,17 +43,17 @@ def send_pytest_result_to_slack():
         failed_summary = "없음"
 
     message = {
-    "text": f"""
-    📢 *UI 자동화 테스트 결과 (by {runner_name})*
+"text": f"""
+📢 *UI 자동화 테스트 결과 (by {runner_name})*
 
-    ✅ Passed: {passed}
-    ❌ Failed: {failed}
-    ⏭️ Skipped: {skipped}
-    📊 Total: {total}
+✅ Passed: {passed}
+❌ Failed: {failed}
+⏭️ Skipped: {skipped}
+📊 Total: {total}
 
-    🧪 *실패한 테스트 목록:*
-    {failed_summary}
-    """
+🧪 *실패한 테스트 목록:*
+{failed_summary}
+"""
     }
 
     response = requests.post(slack_webhook_url, json=message)
@@ -96,27 +96,27 @@ def send_newman_result_to_slack():
 
         # Slack 메시지 구성
         message = {
-        "text": f"""
-        📢 *API 자동화 테스트 결과 (by {runner_name})*
+"text": f"""
+📢 *API 자동화 테스트 결과 (by {runner_name})*
 
-        • Requests:
-         ✅ Passed: {requests_total - requests_failed}
-         ❌ Failed: {requests_failed}
-        • Prerequest Scripts:
-         ✅ Passed: {prereq_total - prereq_failed} 
-         ❌ Failed: {prereq_failed}
-        • Test Scripts: 
-         ✅ Passed: {test_scripts_total - test_scripts_failed}  
-         ❌ Failed: {test_scripts_failed}
-        • Assertions: 
-         ✅ Passed: {assertions_total - assertions_failed} 
-         ❌ Failed: {assertions_failed}
-        • Skipped Tests: 
-         ⏭️ Skipped: {skipped_tests}
+• Requests:
+    ✅ Passed: {requests_total - requests_failed}
+    ❌ Failed: {requests_failed}
+• Prerequest Scripts:
+    ✅ Passed: {prereq_total - prereq_failed} 
+    ❌ Failed: {prereq_failed}
+• Test Scripts: 
+    ✅ Passed: {test_scripts_total - test_scripts_failed}  
+    ❌ Failed: {test_scripts_failed}
+• Assertions: 
+    ✅ Passed: {assertions_total - assertions_failed} 
+    ❌ Failed: {assertions_failed}
+• Skipped Tests: 
+    ⏭️ Skipped: {skipped_tests}
 
-        🧪 *실패한 테스트 목록:*
-         {failed_summary}
-        """
+🧪 *실패한 테스트 목록:*
+{failed_summary}
+"""
         }
 
         response = requests.post(slack_webhook_url, json=message)
