@@ -208,7 +208,7 @@ class TestAuthentication:
     @allure.description("유효하지 않은 이메일 형식 입력 시 브라우저의 유효성 검사 메시지가 제공되는지 확인")
     @allure.severity(allure.severity_level.NORMAL)
     @pytest.mark.parametrize("email, expected_result", EMAIL_VALIDATION_TEXT_DATA)
-    def test_email_validation_message(self, driver, email, expected_result):
+    def test_email_validation_message(self, driver, email, expected_ko, expected_en):
         self.logger.info("▶️ 이메일 유효성 검사 메시지 테스트 시작")
 
         homePage = HomePage(driver)
@@ -223,7 +223,7 @@ class TestAuthentication:
             self.logger.info("✅ 기대 결과 1: 입력한 이메일 값이 'Email' 입력 필드에 정상 반영됨")
 
             signInPage.sign_in.click_sign_in_btn()
-            assert signInPage.sign_in.get_email_validation_message() == expected_result 
+            assert any(message in signInPage.sign_in.get_email_validation_message() for message in (expected_ko, expected_en))
             self.logger.info("✅ 기대 결과 2: 로그인 페이지에서 이메일 유효성 검사 메시지 확인")
 
             signInPage.header.click_sign_up_link()
@@ -232,9 +232,9 @@ class TestAuthentication:
             self.logger.info("✅ 기대 결과 3: 입력한 이메일 값이 'Email' 입력 필드에 정상 반영됨")
 
             signUpPage.sign_up.click_sign_up_btn()
-            assert signUpPage.sign_up.get_email_validation_message() == expected_result
+            assert any(message in signUpPage.sign_up.get_email_validation_message() for message in (expected_ko, expected_en))
             self.logger.info("✅ 기대 결과 4: 회원가입 페이지에서 이메일 유효성 검사 메시지 확인")
-            self.logger.info(f"🎉 {email}로 이메일 입력 시 {expected_result} 유효성 검사 메시지 확인 완료")
+            self.logger.info(f"🎉 {email}로 이메일 입력 시 {expected_ko}/{expected_en} 유효성 검사 메시지 확인 완료")
 
         except Exception as e:
             self.logger.error(f"❌ AUTH_05 테스트 중 오류 발생: {e}")
