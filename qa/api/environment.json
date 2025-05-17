@@ -10,7 +10,7 @@
 		},
 		{
 			"key": "BASE_URL",
-			"value": "http://localhost:3000/api",
+			"value": "http://172.25.0.20:3000/api",
 			"type": "default",
 			"enabled": true
 		},
