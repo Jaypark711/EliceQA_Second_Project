@@ -43,24 +43,18 @@ def run_prisma_seed():
     load_dotenv(dotenv_path='config/.env')
     backend_dir = os.getenv("BACKEND_DIR")
     try:
-        subprocess.run(
+        result = subprocess.run(
             ["npx", "prisma", "db", "seed"],
             cwd=backend_dir,  
             shell=True,
             check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
             env=env
         )
-        #디버깅용 시작
-        conn = get_connection()
-        cur = conn.cursor()
-        cur.execute('SELECT * FROM public."Article" ')
-        result = cur.fetchone()
-        cur.close()
-        conn.close()
-        print("❌❌❌❌❌")
-        print(result)
-        print("❌❌❌❌❌")
-        #디버깅용끝
+        print("STDOUT:\n", result.stdout)
+        print("STDERR:\n", result.stderr)
+        print("Return code:", result.returncode)
     except subprocess.CalledProcessError as e:
         print(f"❌ Prisma seed 실행 실패: {e}")
 
