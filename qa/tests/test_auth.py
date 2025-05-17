@@ -222,6 +222,11 @@ class TestAuthentication:
             assert signInPage.sign_in.get_email_input_value() == email
             self.logger.info("✅ 기대 결과 1: 입력한 이메일 값이 'Email' 입력 필드에 정상 반영됨")
 
+            # 디버깅용
+            actual_msg = signInPage.sign_in.get_email_validation_message()
+            print(f"🔍 실제 유효성 메시지: {actual_msg}")
+            # 디벼깅용
+
             signInPage.sign_in.click_sign_in_btn()
             assert any(message in signInPage.sign_in.get_email_validation_message() for message in (expected_ko, expected_en))
             self.logger.info("✅ 기대 결과 2: 로그인 페이지에서 이메일 유효성 검사 메시지 확인")

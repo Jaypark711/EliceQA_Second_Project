@@ -44,6 +44,7 @@ def send_pytest_result_to_slack():
 
     message = {
 "text": f"""
+==========================================================
 📢 *UI 자동화 테스트 결과 (by {runner_name})*
 
 ✅ Passed: {passed}
@@ -97,6 +98,7 @@ def send_newman_result_to_slack():
         # Slack 메시지 구성
         message = {
 "text": f"""
+----------------------------------------------------------
 📢 *API 자동화 테스트 결과 (by {runner_name})*
 
 • Requests:
@@ -116,6 +118,7 @@ def send_newman_result_to_slack():
 
 🧪 *실패한 테스트 목록:*
 {failed_summary}
+==========================================================
 """
         }
 
