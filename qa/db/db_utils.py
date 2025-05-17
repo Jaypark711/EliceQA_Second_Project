@@ -5,6 +5,13 @@ from dotenv import load_dotenv
 
 from db import db_queries
 
+import random
+import string
+from datetime import datetime
+from faker import Faker
+
+fake = Faker()
+
 def get_connection():
     """.env 파일에서 DB 연결 정보를 로드하고 PostgreSQL 커넥션 객체 반환"""
     load_dotenv(dotenv_path='config/.env')
@@ -42,15 +49,68 @@ def init_db():
 #     )
 
 def run_prisma_seed():
-    """Docker backend 컨테이너 안에서 prisma seed 실행"""
+    conn = get_connection()
+    cur = conn.cursor()
+
     try:
-        subprocess.run(
-            ["docker-compose", "exec", "-T", "realworld_backend", "npx", "prisma", "db", "seed"],
-            check=True
-        )
-        print("✅ Prisma seed 실행 완료")
-    except subprocess.CalledProcessError as e:
-        print(f"❌ Prisma seed 실행 실패: {e}")
+        # 1. Tag 30개 생성
+        tag_ids = []
+        for i in range(30):
+            tag_name = f"tag_{i}"
+            cur.execute("INSERT INTO \"Tag\" (name) VALUES (%s) RETURNING id;", (tag_name,))
+            tag_id = cur.fetchone()[0]
+            tag_ids.append(tag_id)
+
+        # 2. User 2~3명 생성
+        user_ids = []
+        for _ in range(random.randint(2, 3)):
+            email = fake.email()
+            username = fake.user_name()
+            password = "password123"
+            image = "https://api.realworld.io/images/smiley-cyrus.jpeg"
+            bio = fake.sentence()
+            cur.execute("""
+                INSERT INTO "User" (email, username, password, image, bio, demo)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                RETURNING id;
+            """, (email, username, password, image, bio, True))
+            user_id = cur.fetchone()[0]
+            user_ids.append(user_id)
+
+            # 3. User 당 Article 2~3개 생성
+            for _ in range(random.randint(2, 3)):
+                slug = ''.join(random.choices(string.ascii_lowercase + string.digits, k=10))
+                title = fake.sentence()
+                description = fake.text(max_nb_chars=100)
+                body = fake.paragraph()
+                now = datetime.now()
+
+                cur.execute("""
+                    INSERT INTO "Article" (slug, title, description, body, createdAt, updatedAt, authorId)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    RETURNING id;
+                """, (slug, title, description, body, now, now, user_id))
+                article_id = cur.fetchone()[0]
+
+                # 4. ArticleToTag 연결 2~3개
+                linked_tag_ids = random.sample(tag_ids, k=random.randint(2, 3))
+                for tag_id in linked_tag_ids:
+                    cur.execute("""
+                        INSERT INTO "_ArticleToTag" ("A", "B")
+                        VALUES (%s, %s)
+                        ON CONFLICT DO NOTHING;
+                    """, (article_id, tag_id))
+
+        conn.commit()
+        print("✅ Seed 데이터 삽입 완료")
+
+    except Exception as e:
+        conn.rollback()
+        print("❌ Seed 데이터 삽입 실패:", e)
+
+    finally:
+        cur.close()
+        conn.close()
 
 def get_article_count_by_tag_name(tag_name):
     """특정 태그 이름(tag_name)을 가진 게시글의 수를 반환 (_ArticleToTag 테이블과 Tag 테이블을 조인하여 카운트)"""
