@@ -26,13 +26,13 @@ def pytest_sessionfinish(session, exitstatus):
     print("✅ Allure Report 생성 완료")
 
     send_pytest_result_to_slack()
-    print("✅ Test Result를 Slack에 전송 완료")
+    print("✅ UI Test Result를 Slack에 전송 완료")
 
     run_newman()
     print("✅ newman 실행 및 Report 생성 완료")
 
     send_newman_result_to_slack()
-    print("✅ newman 실행 및 Report 생성 완료")
+    print("✅ API Test Result를 Slack에 전송 완료")
 
 @pytest.fixture(scope='function')
 def driver():
