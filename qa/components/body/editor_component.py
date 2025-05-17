@@ -62,4 +62,4 @@ class EditorComponent(BasePage):
             del_index = tag_text_list.index(tag_name)
 
             # 태그 삭제 버튼 리스트에서 삭제할 index 값의 요소 선택하여 클릭
-            self.click_element(tag_del_btns[del_index])
+            tag_del_btns[del_index].click()
