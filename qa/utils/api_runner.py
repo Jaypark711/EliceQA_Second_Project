@@ -9,7 +9,7 @@ def run_newman():
     html_report_path = os.path.join(project_root, 'reports', 'postman_report.html')
     json_report_path = os.path.join(project_root, 'reports', 'postman_report.json')
 
-    subprocess.run(
+    result = subprocess.run(
         [
             "/usr/local/bin/newman", "run", collection_path,
             "-e", env_path,
@@ -17,5 +17,13 @@ def run_newman():
             "--reporter-htmlextra-export", html_report_path,
             "--reporter-json-export", json_report_path
         ],
-        check=True
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True
     )
+
+    print("📤 Newman stdout:\n", result.stdout)
+    print("🛑 Newman stderr:\n", result.stderr)
+
+    if result.returncode != 0:
+        raise RuntimeError(f"Newman failed with exit code {result.returncode}")
