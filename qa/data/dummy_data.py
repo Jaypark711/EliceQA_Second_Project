@@ -47,6 +47,6 @@ SIGN_IN_ERROR_TEXT_DATA = [
 
 EMAIL_VALIDATION_TEXT_DATA = [
     ("user", "이메일 주소에 '@'를 포함해 주세요. 'user'에 '@'가 없습니다.", "Please include an '@' in the email address. 'user' is missing an '@'."),
-    ("@", "'@' 앞 부분을 입력해 주세요. '@'(이)가 완전하지 않습니다.", "Please enter a part before '@'. '@' is not a valid email address."),
+    ("@", "'@' 앞 부분을 입력해 주세요. '@'(이)가 완전하지 않습니다.", "Please enter a part followed by '@'. '@' is incomplete."),
     ("user@", "'@' 뒷 부분을 입력해 주세요. 'user@'(이)가 완전하지 않습니다.", "Please enter a part following '@'. 'user@' is incomplete."),
 ]
