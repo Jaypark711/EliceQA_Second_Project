@@ -33,15 +33,24 @@ def init_db():
     cur.close()
     conn.close()
 
-# def run_prisma_seed():
-#     """backend 디렉토리 기준으로 Prisma seed 명령어 실행 (초기 데이터 입력용)"""
-#     backend_dir = os.path.join(os.getenv('WORKSPACE'), 'backend')
-#     subprocess.run(
-#         ["npx", "prisma", "db", "seed"],
-#         cwd=backend_dir,
-#         shell=True,
-#         check=True
-#     )
+import os
+import subprocess
+
+def run_prisma_seed():
+    """현재 위치가 qa/ 기준일 때, ../backend 디렉토리에서 시드 명령 실행"""
+    current_dir = os.getcwd()  # 예: /workspace/project/qa
+    backend_dir = os.path.abspath(os.path.join(current_dir, '..', 'backend'))
+
+    try:
+        subprocess.run(
+            ["npx", "prisma", "db", "seed"],
+            cwd=backend_dir,        # backend로 이동
+            shell=True,
+            check=True              # 실패 시 예외 발생
+        )
+        print("✅ Prisma seed 실행 성공!")
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Prisma seed 실행 실패: {e}")
 
 def get_article_count_by_tag_name(tag_name):
     """특정 태그 이름(tag_name)을 가진 게시글의 수를 반환 (_ArticleToTag 테이블과 Tag 테이블을 조인하여 카운트)"""
@@ -121,103 +130,3 @@ def get_article_details_by_slug(slug):
 
     cur.close()
     conn.close()
-    
-    return result
-
-def seed_users(count=12):
-    """Faker를 이용해 사용자 더미 데이터를 생성하고 DB에 삽입"""
-    conn = get_connection()
-    cur = conn.cursor()
-    try:
-        for _ in range(count):
-            email = faker.unique.email()
-            username = faker.unique.user_name()
-            password = faker.password()
-            image = "https://api.realworld.io/images/demo-avatar.png"
-            cur.execute("""
-                INSERT INTO "User" (email, username, password, image)
-                VALUES (%s, %s, %s, %s);
-            """, (email, username, password, image))
-        conn.commit()
-        print(f"✅ 사용자 {count}명 삽입 완료")
-    except Exception as e:
-        conn.rollback()
-        print(f"❌ 사용자 삽입 실패: {e}")
-    finally:
-        cur.close()
-        conn.close()
-
-def seed_articles(count=6):
-    """Faker를 이용해 기사 더미 데이터를 생성하고 DB에 삽입"""
-    conn = get_connection()
-    cur = conn.cursor()
-    try:
-        cur.execute('SELECT id FROM "User";')
-        user_ids = [row[0] for row in cur.fetchall()]
-        for _ in range(count):
-            title = faker.sentence(nb_words=6)
-            slug = "-".join(title.lower().split())
-            description = faker.paragraph()
-            body = faker.text(max_nb_chars=800)
-            now = datetime.now()
-            author_id = random.choice(user_ids)
-            cur.execute("""
-                INSERT INTO "Article" (slug, title, description, body, "createdAt", "updatedAt", "authorId")
-                VALUES (%s, %s, %s, %s, %s, %s, %s);
-            """, (slug, title, description, body, now, now, author_id))
-        conn.commit()
-        print(f"✅ 기사 {count}개 삽입 완료")
-    except Exception as e:
-        conn.rollback()
-        print(f"❌ 기사 삽입 실패: {e}")
-    finally:
-        cur.close()
-        conn.close()
-
-def seed_tags(count=23):
-    """Faker를 이용해 태그 더미 데이터를 생성하고 DB에 삽입"""
-    conn = get_connection()
-    cur = conn.cursor()
-    try:
-        for _ in range(count):
-            name = faker.unique.word()
-            cur.execute('INSERT INTO "Tag" (name) VALUES (%s);', (name,))
-        conn.commit()
-        print(f"✅ 태그 {count}개 삽입 완료")
-    except Exception as e:
-        conn.rollback()
-        print(f"❌ 태그 삽입 실패: {e}")
-    finally:
-        cur.close()
-        conn.close()
-
-def seed_article_to_tag(count=23):
-    """기사와 태그를 무작위로 연결하여 관계 테이블에 삽입"""
-    conn = get_connection()
-    cur = conn.cursor()
-    try:
-        cur.execute('SELECT id FROM "Article";')
-        article_ids = [row[0] for row in cur.fetchall()]
-        cur.execute('SELECT id FROM "Tag";')
-        tag_ids = [row[0] for row in cur.fetchall()]
-        used = set()
-        while len(used) < count:
-            a = random.choice(article_ids)
-            t = random.choice(tag_ids)
-            if (a, t) not in used:
-                cur.execute('INSERT INTO "_ArticleToTag" (article_id, tag_id) VALUES (%s, %s);', (a, t))
-                used.add((a, t))
-        conn.commit()
-        print(f"✅ 기사-태그 관계 {count}개 삽입 완료")
-    except Exception as e:
-        conn.rollback()
-        print(f"❌ 관계 삽입 실패: {e}")
-    finally:
-        cur.close()
-        conn.close()
-
-def run_prisma_seed():
-    seed_users()
-    seed_articles()
-    seed_tags()
-    seed_article_to_tag()
