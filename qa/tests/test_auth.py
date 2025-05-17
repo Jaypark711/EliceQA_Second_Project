@@ -207,7 +207,7 @@ class TestAuthentication:
     @allure.title("[AUTH_05]: 인증 - 이메일 포맷")
     @allure.description("유효하지 않은 이메일 형식 입력 시 브라우저의 유효성 검사 메시지가 제공되는지 확인")
     @allure.severity(allure.severity_level.NORMAL)
-    @pytest.mark.parametrize("email, expected_result", EMAIL_VALIDATION_TEXT_DATA)
+    @pytest.mark.parametrize("email, expected_ko, expected_en", EMAIL_VALIDATION_TEXT_DATA)
     def test_email_validation_message(self, driver, email, expected_ko, expected_en):
         self.logger.info("▶️ 이메일 유효성 검사 메시지 테스트 시작")
 
