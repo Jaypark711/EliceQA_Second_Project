@@ -38,53 +38,46 @@ def run_prisma_seed():
 
     faker = Faker()
 
-    try:
-        """1. Tag 20 ~ 30개 생성"""
-        tag_ids = []
-        for i in range(random.randint(20, 30)):
-            tag_name = f"tag_{i}"
-            cur.execute(db_queries.SQL_INSERT_TAG, (tag_name,))
-            tag_id = cur.fetchone()[0]
-            tag_ids.append(tag_id)
+    """1. Tag 20 ~ 30개 생성"""
+    tag_ids = []
+    for i in range(random.randint(20, 30)):
+        tag_name = f"tag_{i}"
+        cur.execute(db_queries.SQL_INSERT_TAG, (tag_name,))
+        tag_id = cur.fetchone()[0]
+        tag_ids.append(tag_id)
 
-        """2. User 1 ~ 3명 생성"""
-        user_ids = []
+    """2. User 1 ~ 3명 생성"""
+    user_ids = []
+    for _ in range(random.randint(1, 3)):
+        email = faker.email()
+        username = faker.user_name()
+        password = faker.password()
+        image = "https://api.realworld.io/images/smiley-cyrus.jpeg"
+        bio = faker.sentence()
+        cur.execute(db_queries.SQL_INSERT_USER, (email, username, password, image, bio, True))
+        user_id = cur.fetchone()[0]
+        user_ids.append(user_id)
+
+        """3.User 당 Article 1~3개 생성"""
         for _ in range(random.randint(1, 3)):
-            email = faker.email()
-            username = faker.user_name()
-            password = faker.password()
-            image = "https://api.realworld.io/images/smiley-cyrus.jpeg"
-            bio = faker.sentence()
-            cur.execute(db_queries.SQL_INSERT_USER, (email, username, password, image, bio, True))
-            user_id = cur.fetchone()[0]
-            user_ids.append(user_id)
+            slug = faker.slug()
+            title = faker.sentence()
+            description = faker.sentence()
+            body = faker.paragraph()
+            now = datetime.now()
 
-            """3.User 당 Article 1~3개 생성"""
-            for _ in range(random.randint(1, 3)):
-                slug = faker.slug()
-                title = faker.sentence()
-                description = faker.sentence()
-                body = faker.paragraph()
-                now = datetime.now()
+            cur.execute(db_queries.SQL_INSERT_ARTICLE, (slug, title, description, body, now, now, user_id))
+            article_id = cur.fetchone()[0]
 
-                cur.execute(db_queries.SQL_INSERT_ARTICLE, (slug, title, description, body, now, now, user_id))
-                article_id = cur.fetchone()[0]
+            """4. ArticleToTag 연결 2 ~ 4개"""
+            linked_tag_ids = random.sample(tag_ids, k=random.randint(2, 4))
+            for tag_id in linked_tag_ids:
+                cur.execute(db_queries.SQL_INSERT_ARTICLE_TAG, (article_id, tag_id))
 
-                """4. ArticleToTag 연결 2 ~ 4개"""
-                linked_tag_ids = random.sample(tag_ids, k=random.randint(2, 4))
-                for tag_id in linked_tag_ids:
-                    cur.execute(db_queries.SQL_INSERT_ARTICLE_TAG, (article_id, tag_id))
-
-        conn.commit()
-        print("✅ Seed 데이터 삽입 완료")
-
-    except Exception as e:
-        conn.rollback()
-        print("❌ Seed 데이터 삽입 실패:", e)
-
-    finally:
-        cur.close()
-        conn.close()
+    conn.commit()
+    
+    cur.close()
+    conn.close()
 
 def get_article_count_by_tag_name(tag_name):
     """특정 태그 이름(tag_name)을 가진 게시글의 수를 반환 (_ArticleToTag 테이블과 Tag 테이블을 조인하여 카운트)"""
