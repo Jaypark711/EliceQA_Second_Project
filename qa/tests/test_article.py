@@ -143,14 +143,14 @@ class TestAriclePage:
     ])
     def test_confirm_article_detail(self, driver, input_title, input_desc, input_body, input_tags):
         self.logger.info("▶️ 특정 게시글의 상세 페이지 접근 및 내용(제목, 본문) 확인 테스트 시작")
-
+        run_prisma_seed()
         homePage = HomePage(driver)
         signupPage = SignUpPage(driver)
         editorPage = EditorPage(driver)
 
         try:
             # 다른 계정 글 확인용 dummy 데이터 삽입하기
-            run_prisma_seed()
+            
             
             # 테스트 환경 세팅
             homePage.header.click_sign_up_link()
