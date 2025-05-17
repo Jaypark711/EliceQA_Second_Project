@@ -2,12 +2,8 @@ import os
 import psycopg2
 import subprocess
 from dotenv import load_dotenv
-from datetime import datetime
-from faker import Faker
+
 from db import db_queries
-import random
-import time
-faker = Faker()
 
 def get_connection():
     """.env 파일에서 DB 연결 정보를 로드하고 PostgreSQL 커넥션 객체 반환"""
@@ -34,27 +30,25 @@ def init_db():
     cur.close()
     conn.close()
 
-import os
-import subprocess
+# def run_prisma_seed():
+#     """backend 디렉토리 기준으로 Prisma seed 명령어 실행 (초기 데이터 입력용)"""
+#     backend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'backend'))
+
+#     subprocess.run(
+#         ["npx", "prisma", "db", "seed"],
+#         cwd=backend_dir,
+#         shell=True,
+#         check=True
+#     )
 
 def run_prisma_seed():
-    env = os.environ.copy()
-    """현재 위치가 qa/ 기준일 때, ../backend 디렉토리에서 시드 명령 실행"""
-    load_dotenv(dotenv_path='config/.env')
-    backend_dir = os.getenv("BACKEND_DIR")
+    """Docker backend 컨테이너 안에서 prisma seed 실행"""
     try:
-        result = subprocess.run(
-            ["npx", "prisma", "db", "seed"],
-            cwd=backend_dir,  
-            shell=True,
-            check=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            env=env
+        subprocess.run(
+            ["docker-compose", "exec", "-T", "realworld_backend", "npx", "prisma", "db", "seed"],
+            check=True
         )
-        print("STDOUT:\n", result.stdout)
-        print("STDERR:\n", result.stderr)
-        print("Return code:", result.returncode)
+        print("✅ Prisma seed 실행 완료")
     except subprocess.CalledProcessError as e:
         print(f"❌ Prisma seed 실행 실패: {e}")
 
