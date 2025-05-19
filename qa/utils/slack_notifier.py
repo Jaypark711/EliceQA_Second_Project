@@ -1,4 +1,5 @@
 import os
+import csv
 import json
 import requests
 from dotenv import load_dotenv
@@ -43,19 +44,16 @@ def send_pytest_result_to_slack():
         failed_summary = "없음"
 
     message = {
-"text": f"""
-==========================================================
-📢 *UI 자동화 테스트 결과 (by {runner_name})*
+        "text": f"""
+        📢 *UI 자동화 테스트 결과 (by {runner_name})*
+        ✅ Passed: {passed}
+        ❌ Failed: {failed}
+        ⏭️ Skipped: {skipped}
+        📊 Total: {total}
 
-✅ Passed: {passed}
-❌ Failed: {failed}
-⏭️ Skipped: {skipped}
-📊 Total: {total}
-
-🧪 *실패한 테스트 목록:*
-{failed_summary}
-==========================================================
-"""
+        🧪 *실패한 테스트 목록:*
+        {failed_summary}
+        """
     }
 
     response = requests.post(slack_webhook_url, json=message)
@@ -98,29 +96,26 @@ def send_newman_result_to_slack():
 
         # Slack 메시지 구성
         message = {
-"text": f"""
-==========================================================
-📢 *API 자동화 테스트 결과 (by {runner_name})*
+            "text": f"""
+            📢 *API 자동화 테스트 결과 (by {runner_name})*
+        • Requests:
+         ✅ Passed: {requests_total - requests_failed}
+         ❌ Failed: {requests_failed}
+        • Prerequest Scripts:
+         ✅ Passed: {prereq_total - prereq_failed} 
+         ❌ Failed: {prereq_failed}
+        • Test Scripts: 
+         ✅ Passed: {test_scripts_total - test_scripts_failed}  
+         ❌ Failed: {test_scripts_failed}
+        • Assertions: 
+         ✅ Passed: {assertions_total - assertions_failed} 
+         ❌ Failed: {assertions_failed}
+        • Skipped Tests: 
+         ⏭️ Skipped: {skipped_tests}
 
-• Requests:
-    ✅ Passed: {requests_total - requests_failed}
-    ❌ Failed: {requests_failed}
-• Prerequest Scripts:
-    ✅ Passed: {prereq_total - prereq_failed} 
-    ❌ Failed: {prereq_failed}
-• Test Scripts: 
-    ✅ Passed: {test_scripts_total - test_scripts_failed}  
-    ❌ Failed: {test_scripts_failed}
-• Assertions: 
-    ✅ Passed: {assertions_total - assertions_failed} 
-    ❌ Failed: {assertions_failed}
-• Skipped Tests: 
-    ⏭️ Skipped: {skipped_tests}
-
-🧪 *실패한 테스트 목록:*
-{failed_summary}
-==========================================================
-"""
+        🧪 *실패한 테스트 목록:*
+        {failed_summary}
+        """
         }
 
         response = requests.post(slack_webhook_url, json=message)
@@ -128,3 +123,67 @@ def send_newman_result_to_slack():
 
     except Exception as e:
         print(f"❌ Newman 결과 파싱 실패: {e}")
+
+def send_jmeter_result_to_slack(jmx_list, report_dir="reports/performance"):
+    report_lines = []
+
+    for jmx_file in jmx_list:
+        base = os.path.splitext(jmx_file)[0]
+        jtl_path = os.path.join(report_dir, f"{jmx_file}_result.jtl")
+
+        if not os.path.exists(jtl_path):
+            report_lines.append(f"⚠️ *{jmx_file}*: 결과 파일 없음")
+            continue
+
+        stats = {
+            "total": 0,
+            "passed": 0,
+            "failed": 0,
+            "avg": 0,
+            "min": float("inf"),
+            "max": float("-inf")
+        }
+        times = []
+
+        try:
+            with open(jtl_path, newline='', encoding='utf-8') as csvfile:
+                reader = csv.DictReader(csvfile)
+                for row in reader:
+                    elapsed = int(row["elapsed"])
+                    success = row["success"].lower() == "true"
+
+                    stats["total"] += 1
+                    stats["passed"] += int(success)
+                    stats["failed"] += int(not success)
+                    stats["min"] = min(stats["min"], elapsed)
+                    stats["max"] = max(stats["max"], elapsed)
+                    times.append(elapsed)
+
+            stats["avg"] = sum(times) // len(times) if times else 0
+        except Exception as e:
+            report_lines.append(f"⚠️ *{jmx_file}*: 파싱 실패 → {e}")
+            continue
+
+        error_pct = (stats["failed"] / stats["total"] * 100) if stats["total"] else 0
+
+        report_lines.append(
+            f"""• *{base}*
+   - 요청 수: {stats['total']}
+   - 성공: {stats['passed']} / 실패: {stats['failed']} ({error_pct:.1f}%)
+   - 평균 응답 시간: {stats['avg']}ms / 최대: {stats['max']}ms"""
+        )
+
+    message = {
+        "text": f"""
+:bar_chart: *Performance 자동화 테스트 결과 (by {runner_name})*
+
+{chr(10).join(report_lines)}
+"""
+    }
+
+    try:
+        response = requests.post(slack_webhook_url, json=message)
+        print(f"Slack 응답 코드: {response.status_code}")
+        print("✅ Performance Test Result를 Slack에 전송 완료")
+    except Exception as e:
+        print(f"❌ Slack 전송 실패: {e}")

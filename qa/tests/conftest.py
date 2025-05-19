@@ -7,8 +7,9 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 from db.db_utils import init_db
 from utils.allure_reporter import clean_allure_dirs, generate_allure_report
-from utils.slack_notifier import send_pytest_result_to_slack, send_newman_result_to_slack
+from utils.slack_notifier import send_pytest_result_to_slack, send_newman_result_to_slack, send_jmeter_result_to_slack
 from utils.api_runner import run_newman
+from utils.performance_runner import run_jmeter
 
 def pytest_sessionstart(session):
     print("\n🚀 pytest_sessionstart")
@@ -33,6 +34,12 @@ def pytest_sessionfinish(session, exitstatus):
 
     send_newman_result_to_slack()
     print("✅ API Test Result를 Slack에 전송 완료")
+
+    run_jmeter()
+    print("✅ jmeter 실행 및 Report 생성 완료")
+
+    send_jmeter_result_to_slack(["SignUp.jmx", "SignIn.jmx", "Article.jmx", "Comment.jmx"])
+    print("✅ Performance Test Result를 Slack에 전송 완료")
 
 @pytest.fixture(scope='function')
 def driver():
