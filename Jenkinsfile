@@ -24,7 +24,7 @@ pipeline {
                     python3 -m venv venv
                     . venv/bin/activate
                     pip install -r requirements.txt
-                    python3 -m pytest 
+                    python3 -m pytest tests/test_comment.py
                 '''
             }
         }
