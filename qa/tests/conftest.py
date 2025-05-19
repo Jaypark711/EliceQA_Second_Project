@@ -33,7 +33,10 @@ def pytest_sessionfinish(session, exitstatus):
     print("✅ newman 실행 및 Report 생성 완료")
 
     send_newman_result_to_slack()
-    print("✅ API Test Result를 Slack에 전송 완료")
+    print("✅ API Test Result를 Slack에 전송 완료")    
+    
+    init_db()
+    print("✅ DB 초기화 완료")
 
     run_jmeter()
     print("✅ jmeter 실행 및 Report 생성 완료")
