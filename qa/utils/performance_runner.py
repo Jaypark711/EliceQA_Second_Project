@@ -29,6 +29,7 @@ def run_jmx(jmx_filename):
         ],
         check=True,
         shell=True
+        cwd=os.path.dirname(jmx_path)
     )
 
     # 2️⃣ HTML 리포트 생성
