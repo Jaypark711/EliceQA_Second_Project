@@ -28,7 +28,7 @@ def run_jmx(jmx_filename):
             "-j", log_path
         ],
         check=True,
-        shell=True,
+        shell=False, #디버깅 True  였음
         cwd=os.path.dirname(jmx_path)
     )
 
@@ -40,7 +40,8 @@ def run_jmx(jmx_filename):
             "-o", html_path
         ],
         check=True,
-        shell=True
+        shell=False, #디버깅 True  였음
+        cwd=os.path.dirname(jmx_path) #디버깅
     )
 
     print(f"✅ {jmx_filename} 실행 완료 / HTML 리포트 생성됨: {html_path}/index.html")
