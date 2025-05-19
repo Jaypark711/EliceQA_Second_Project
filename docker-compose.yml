@@ -1,0 +1,55 @@
+version: "3.9"
+
+networks:
+  realworld-network:
+    external: false  # 외부가 아니라 Compose에서 직접 관리하도록 변경
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.25.0.0/16  # 예: 적절한 서브넷 지정
+          gateway: 172.25.0.1
+
+services:
+  realworld_db:
+    image: postgres:14-alpine
+    container_name: realworld_db
+    environment:
+      - POSTGRES_USER=realworld_user
+      - POSTGRES_PASSWORD=050707
+      - POSTGRES_DB=realworld_db
+    ports:
+      - "5432:5432"
+    mem_limit: 2g
+    mem_reservation: 1g
+    networks:
+      realworld-network:
+        ipv4_address: 172.25.0.10
+
+  realworld_backend:
+    build: ./backend
+    container_name: realworld-backend
+    env_file: ./backend/.env
+    depends_on:
+      - realworld_db
+    ports:
+      - "3000:3000"
+    mem_limit: 2g
+    mem_reservation: 1g
+    networks:
+      realworld-network:
+        ipv4_address: 172.25.0.20
+
+  realworld_frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: realworld-frontend
+    depends_on:
+      - realworld_backend
+    ports:
+      - "4100:4100"
+    mem_limit: 2g
+    mem_reservation: 1g
+    networks:
+      realworld-network:
+        ipv4_address: 172.25.0.30
