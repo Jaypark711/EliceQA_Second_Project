@@ -7,6 +7,8 @@ load_dotenv(dotenv_path=env_path)
 
 JMETER_PATH = os.getenv("JMETER_PATH")
 
+os.environ["JVM_ARGS"] = "-Djava.awt.headless=true"
+
 def run_jmx(jmx_filename):
     """주어진 JMX 파일을 JMeter로 실행하고 HTML 리포트 생성"""
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
