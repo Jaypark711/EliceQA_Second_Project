@@ -28,7 +28,7 @@ def run_jmx(jmx_filename):
             "-j", log_path
         ],
         check=True,
-        shell=True
+        shell=True,
         cwd=os.path.dirname(jmx_path)
     )
 
