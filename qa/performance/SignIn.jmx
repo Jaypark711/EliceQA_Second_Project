@@ -29,7 +29,7 @@
         </collectionProp>
       </Arguments>
       <hashTree/>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="SignIn" enabled="true">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="SignIn">
         <intProp name="ThreadGroup.num_threads">1</intProp>
         <intProp name="ThreadGroup.ramp_time">1</intProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
@@ -52,7 +52,7 @@
         <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config (signin_data)">
           <stringProp name="delimiter">,</stringProp>
           <stringProp name="fileEncoding"></stringProp>
-          <stringProp name="filename">/var/jenkins_home/workspace/team04_jenkins/qa/testdata/signin_data.csv</stringProp>
+          <stringProp name="filename">/var/jenkins_home/workspace/team04_jenkins/qa/performance/testdata/signin_data.csv</stringProp>
           <boolProp name="ignoreFirstLine">true</boolProp>
           <boolProp name="quotedData">false</boolProp>
           <boolProp name="recycle">true</boolProp>
@@ -102,7 +102,7 @@
 def baseDir = new File(org.apache.jmeter.util.JMeterUtils.getProperty(&quot;user.dir&quot;))
 
 // testdata/tokens.csv 경로 설정
-def file = new File(baseDir, &quot;/var/jenkins_home/workspace/team04_jenkins/qa/testdata/tokens.csv&quot;)
+def file = new File(baseDir, &quot;/var/jenkins_home/workspace/team04_jenkins/qa/performance/testdata/tokens.csv&quot;)
 
 // 폴더 없으면 생성
 if (!file.parentFile.exists()) {
