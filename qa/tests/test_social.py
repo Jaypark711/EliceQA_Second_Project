@@ -36,7 +36,7 @@ class TestSocial:
         signupPage = SignUpPage(driver)
         
         try:
-            # 테스트 환경 세팅
+            # 테스트 환경 세팅 
             homePage.header.click_sign_up_link()
             signupPage.sign_up.sign_up()
 
