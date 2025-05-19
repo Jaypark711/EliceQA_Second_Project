@@ -7,8 +7,9 @@ load_dotenv(dotenv_path=env_path)
 
 JMETER_PATH = os.getenv("JMETER_PATH")
 
-# GUI 없는 환경에서도 실행되도록 JVM 설정
-os.environ["JVM_ARGS"] = "-Djava.awt.headless=true"
+# 공통 환경 변수 구성
+env = os.environ.copy()
+env["JVM_ARGS"] = "-Djava.awt.headless=true"
 
 # 실행 경로(CSV 참조 기준)를 JMX가 있는 디렉토리로 지정
 JMX_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'performance'))
@@ -33,7 +34,8 @@ def run_jmx(jmx_filename):
         ],
         check=True,
         shell=True,
-        cwd=JMX_DIR 
+        cwd=JMX_DIR,
+        env=env 
     )
 
     # 2️⃣ HTML 리포트 생성
@@ -44,7 +46,9 @@ def run_jmx(jmx_filename):
             "-o", html_path
         ],
         check=True,
-        shell=True
+        shell=True,
+        cwd=JMX_DIR,
+        env=env 
     )
 
     print(f"✅ {jmx_filename} 실행 완료 / HTML 리포트 생성됨: {html_path}/index.html")
