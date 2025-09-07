@@ -144,3 +144,9 @@ Project root/
 ├── docker-compose.yml						# 전체 서비스(docker) 실행 정의 파일
 └── pytest.ini								# pytest 설정 파일 (테스트 옵션 지정)
 ```
+
+## Test Case
+링크 : 
+```
+https://docs.google.com/spreadsheets/d/1IggaI5biJJYo-Tz6klsjFcf8Zka6YXoz90u7UpSzidk/edit?usp=sharing
+```
